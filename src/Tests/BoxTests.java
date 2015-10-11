@@ -5,8 +5,6 @@ import Game.Box;
 import Game.Color;
 import org.junit.Test;
 
-import java.util.function.BinaryOperator;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -36,7 +34,7 @@ public class BoxTests {
         assertTrue(board.placePawn(3, 2, Color.Black));
     }
 
-    /*
+
     @Test
     public void pawnAllwedHerePicture_2_Test()
     {
@@ -97,6 +95,7 @@ public class BoxTests {
 
     }
 
+
     @Test
     public void pawnAllwedHerePicture_5_Test(){
         board = new Board(4);
@@ -141,7 +140,7 @@ public class BoxTests {
         assertTrue(board.placePawn(0, 0, Color.White));
 
     }
-*/
+
 
     @Test
     public void pawnAllowHere_TakenTest() {
@@ -182,24 +181,11 @@ public class BoxTests {
     @Test
     public void pawnAllowHere_nextIslandTest()
     {
-        /*
+
         board = new Board(10);
         board.initBoard();
-        Box box1 = board.getBox(2,0);
-        Box box2 = board.getBox(2,0);
-        Box box3= board.getBox(2,0);
-        Box box4 = board.getBox(2,0);
-        Box box5 = board.getBox(2,0);
 
-        // place a pawn in box
-        box1.placePawn(Color.Black);
-        box2.placePawn(Color.Black);
-        box3.placePawn(Color.Black);
-        box4.placePawn(Color.Black);
 
-        assertFalse("There is already a pawn in the box",
-                board.getBox(0, 0).placePawn(Color.Black));
-                */
     }
 
     @Test
@@ -299,4 +285,34 @@ public class BoxTests {
 
     }
 
+    @Test
+    public void inDiagonalTest()
+    {
+        board = new Board(10);
+        board.initBoard();
+
+        assertFalse("can't be diagonal with null box", board.getBox(0,0).inDiagonal(null));
+
+        for (int y = 0; y < board.getSize() ; y++){
+            for (int x = 0 ; x < board.getSize(); x++ ){
+
+                Box mainBox = board.getBox(y,x);
+                for (int line = 0 ; line < board.getSize() ; line++){
+                    for (int column = 0 ; column < board.getSize(); column++){
+                        if ((line == y-1 && column == x-1)
+                                || (line == y-1 && column == x+1 )
+                                || (line == y+1 && column == x-1)
+                                || (line == y+1 && column == x+1 ))
+                        {
+                            assertTrue( "("+y+";"+x+") et ("+line+";"+column+") are diagonals" ,
+                                    board.getBox(y, x).inDiagonal(board.getBox(line, column)));
+                        } else {
+                            assertFalse("("+y+";"+x+") et ("+line+";"+column+") are not diagonals" ,
+                                    board.getBox(y, x).inDiagonal(board.getBox(line, column)));
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

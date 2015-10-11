@@ -26,13 +26,10 @@ public class SandBar {
         this.pawnList = new Pawn[MAX_SIZE];
         this.pawnList[0] = pawn;
         this.size++;
-
     }
 
 
-
-    public boolean addPawn(Pawn pawn)
-    {
+    public boolean addPawn(Pawn pawn) {
         // different condition to add a Pawn
         if (pawn != null
                 && this.size < this.MAX_SIZE
@@ -43,15 +40,36 @@ public class SandBar {
             // add pawn to list
             this.pawnList[this.size] = pawn;
             this.size++;
+
+            pawn.setSandBar(this);
+
             // added successfully
             return true;
         }
         return false;
     }
 
-    public boolean isIsland()
-    {
+    public boolean isIsland() {
         return this.size == MAX_SIZE;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public boolean mergeSandBar(SandBar sandBar){
+        if (mergeSandBarAllowed(sandBar)){
+            for (Pawn pawn : sandBar.pawnList){
+                this.addPawn(pawn);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean mergeSandBarAllowed(SandBar sandBar)
+    {
+        return (sandBar != null && this != sandBar && sandBar.size + this.size <= 4 && sandBar.color == this.color);
     }
 
 }

@@ -134,12 +134,6 @@ public class Board {
     public boolean placePawn(int line, int colum, Color color){
         Box box = getBox(line, colum);
         if ( box != null){
-
-            // test touching
-
-
-
-            // end of test
             return box.placePawn(color);
         }
         return false;

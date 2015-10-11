@@ -1,7 +1,6 @@
 package Tests;
 
 import Game.*;
-import junit.framework.TestCase;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -80,5 +79,99 @@ public class SandBarTests {
         assertTrue("should be an Island", board.getSandBarInBox(0, 1).isIsland());
     }
 
-    
+    @Test
+    public void updateSandBar_merge2sandBar()
+    {
+        Board board = new Board(4);
+        board.initBoard();
+
+        assertTrue(board.placePawn(2, 0, Color.Black));
+        assertTrue("should have a sandbar", board.getSandBarInBox(2, 0) != null);
+
+        assertTrue(board.placePawn(2, 1, Color.Black));
+        assertTrue("should be the same sandbar",
+                board.getSandBarInBox(2, 0).equals(board.getSandBarInBox(2, 1)));
+
+        // not orhogonal to other sandbar
+        assertTrue(board.placePawn(3, 2, Color.Black));
+        assertFalse("should not be the same sandbar",
+                board.getSandBarInBox(2, 1).equals(board.getSandBarInBox(3, 2)));
+
+        // merging the two sand bar
+        assertTrue(board.placePawn(2, 2, Color.Black));
+
+        assertTrue("should be the same sandbar than left one",
+                board.getSandBarInBox(2, 2).equals(board.getSandBarInBox(2, 1)));
+        assertTrue("should be the same sandbar than down one",
+                board.getSandBarInBox(2, 2).equals(board.getSandBarInBox(3, 2)));
+
+        assertTrue("should be an Island", board.getSandBarInBox(2, 2).isIsland());
+    }
+
+    @Test
+    public void mergeSandBar_ColorTest(){
+        sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        SandBar sandBar1 = new SandBar(new Pawn(Color.White, new Box(0,1)));
+        SandBar sandBar2 = new SandBar(new Pawn(Color.Black, new Box(1,0)));
+
+        assertFalse("not same color", sandBar.mergeSandBar(sandBar1));
+        assertTrue("same color", sandBar.mergeSandBar(sandBar2));
+    }
+
+    @Test
+    public void mergeSandBar_SizeTest()
+    {
+        sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        sandBar.addPawn(new Pawn(Color.Black, new Box(0,0)));
+
+        SandBar sandBar1 = new SandBar(new Pawn(Color.Black, new Box(0,1)));
+        sandBar1.addPawn(new Pawn(Color.Black, new Box(0,0)));
+        sandBar1.addPawn(new Pawn(Color.Black, new Box(0, 0)));
+
+        assertFalse(" 2 pawn + 3 pawn > 4", sandBar.mergeSandBar(sandBar1));
+
+        SandBar sandBar2 = new SandBar(new Pawn(Color.Black, new Box(1,0)));
+        assertTrue(" 3 pawn + 1 pawn = 4", sandBar1.mergeSandBar(sandBar2));
+
+        sandBar2.addPawn(new Pawn(Color.Black, new Box(0, 0)));
+        assertTrue(" 2 pawn + 2 pawn = 4", sandBar.mergeSandBar(sandBar2));
+
+    }
+
+    @Test
+    public void mergeSandBar_nullSandbar()
+    {
+        sandBar = new SandBar(new Pawn(Color.Black, new Box(1,1)));
+        assertFalse("can't merge null sandbar", sandBar.mergeSandBar(null));
+    }
+
+    @Test
+    public void mergeSandBar_SameSandBar()
+    {
+        Board board = new Board(4);
+        board.initBoard();
+
+        board.placePawn(0, 0, Color.Black);
+        SandBar sandBar = board.getSandBarInBox(0,0);
+        SandBar sandBar1 = board.getSandBarInBox(0,0);
+
+        assertFalse("can't merge same sandBar", sandBar.mergeSandBar(sandBar1));
+    }
+
+    @Test
+    public void mergeSandBar_3sandBar()
+    {
+        Board board = new Board(4);
+        board.initBoard();
+
+        assertTrue(board.placePawn(3, 0, Color.Black));
+        assertTrue(board.placePawn(3, 2, Color.Black));
+        assertTrue(board.placePawn(2, 1, Color.Black));
+        assertTrue(board.placePawn(3, 1, Color.Black));
+
+        assertTrue(board.getSandBarInBox(3,1).equals(board.getSandBarInBox(3, 0)));
+        assertTrue(board.getSandBarInBox(3,1).equals(board.getSandBarInBox(3, 2)));
+        assertTrue(board.getSandBarInBox(3,1).equals(board.getSandBarInBox(2,1)));
+    }
+
 }

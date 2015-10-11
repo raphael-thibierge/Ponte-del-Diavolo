@@ -12,8 +12,6 @@ import org.junit.rules.ExpectedException;
  */
 public class PawnTests
 {
-
-
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
@@ -39,7 +37,7 @@ public class PawnTests
     @Test
     public void updateSandBar()
     {
-
+        // tested in box
     }
 
 }

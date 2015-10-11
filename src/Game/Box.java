@@ -1,5 +1,7 @@
 package Game;
 
+import org.omg.PortableInterceptor.DISCARDING;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,15 +56,43 @@ public class Box {
 
     public boolean pawnAllowedHere(Color color)
     {
+        // first condition
         if ( color != null
                 && !isLocked()
                 && !isTaken()
                 )
         {
+            // new sandBar size
+            int sandBarSize = 1; // because if we place pawn, there is on more pawn in sandBar
 
+            // get nearbyBox of all direction
+            for (Box nearbyBox : this.nearbyBoxes.values()){
+                // if there is a nearby box in this direction
+                if (nearbyBox != null){
+                    //try to get pawn
+                    Pawn pawn1 = nearbyBox.pawn;
+                    // if there is a same color sandBand
+                    if (pawn1 != null && pawn1.getColor()  == color) {
+                        // if it's an island
+                        if (pawn1.belongsToIsland()) {
+                            // pawn not allowed
+                            return false;
+                        }
+
+                        // if the sandbar is not in diagonal
+                        if (!this.inDiagonal(nearbyBox))
+                        {
+                            //  we count merging all nearby sandBar
+                            sandBarSize += pawn1.getSandBar().getSize();
+                            if (sandBarSize > 4)
+                                return false;
+                        }
+
+                    }
+                }
+            }
             return true;
         }
-
         return false;
     }
 
@@ -134,6 +164,18 @@ public class Box {
         map.remove(Direction.SOUTH_EST);
         map.remove(Direction.SOUTH_WEST);
         return map;
+    }
+
+    public boolean inDiagonal(Box box)
+    {
+        if (box != null &&
+                ( box == this.nearbyBoxes.get(Direction.NORTH_EST)
+                        || box == this.nearbyBoxes.get(Direction.NORTH_WEST)
+                        || box == this.nearbyBoxes.get(Direction.SOUTH_EST)
+                        || box == this.nearbyBoxes.get(Direction.SOUTH_WEST)
+                ))
+            return true;
+        return false;
     }
 
 }

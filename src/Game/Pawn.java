@@ -33,24 +33,29 @@ public class Pawn {
         if ( this.box !=null)
         {
             boolean founded = false;
+
             for (Box nearbyBox : this.box.getNearbyBoxesOrthogonal().values()){
                 if (nearbyBox != null
-                        && ! founded
                         && nearbyBox.isTaken()
-                        && nearbyBox.getPawn().getColor() == this.color){
-                    this.sandBar = nearbyBox.getPawn().getSandBar();
-                    founded = this.sandBar.addPawn(this);
-                    break;
+                        && nearbyBox.getPawn().getColor() == this.color)
+                {
+                    if (!founded){
+                        this.sandBar = nearbyBox.getPawn().getSandBar();
+                        founded = this.sandBar.addPawn(this);
+                    } else {
+                        this.sandBar.mergeSandBar(nearbyBox.getPawn().sandBar);
+                    }
                 }
             }
+
             if (!founded){
                 this.sandBar = new SandBar(this);
             }
         }
     }
 
-
     // ACCESSORS
+
 
     public Box getBox() {
         return box;
@@ -62,5 +67,9 @@ public class Pawn {
 
     public SandBar getSandBar() {
         return sandBar;
+    }
+
+    public void setSandBar(SandBar sandBar) {
+        this.sandBar = sandBar;
     }
 }
