@@ -16,16 +16,16 @@ public class Box {
     private Map<Direction, Box> nearbyBoxes;
 
 
+
 // states
     boolean locked = false;
     boolean taken = false;
 
 
+
     public Box(int line, int column){
         this.line = line;
         this.column = column;
-        pawn = null;
-
 
         // init nearbyBoxes
         this.nearbyBoxes = new HashMap<>();
@@ -87,7 +87,6 @@ public class Box {
                             if (sandBarSize > 4)
                                 return false;
                         }
-
                     }
                 }
             }
@@ -157,6 +156,7 @@ public class Box {
         return nearbyBoxes;
     }
 
+
     public Map<Direction, Box> getNearbyBoxesOrthogonal() {
         Map<Direction, Box> map = this.nearbyBoxes;
         map.remove(Direction.NORTH_EST);
@@ -177,5 +177,7 @@ public class Box {
             return true;
         return false;
     }
+
+
 
 }

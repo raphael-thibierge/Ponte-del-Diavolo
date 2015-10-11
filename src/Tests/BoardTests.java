@@ -2,6 +2,7 @@ package Tests;
 
 import Game.Board;
 import Game.Box;
+import Game.Color;
 import Game.Direction;
 import org.junit.Test;
 
@@ -110,5 +111,130 @@ public class BoardTests {
 
     }
 
+
+
+    @Test
+    public void pawnBetween2BoxesTest()
+    {
+        board = new Board(5);
+
+        board.initBoard();
+
+        // main pawn
+        assertTrue(board.placePawn(2, 2, Color.Black));
+        Box box1 = board.getBox(2,2);
+        //other one
+        assertTrue(board.placePawn(0,0, Color.Black));
+        assertTrue(board.placePawn(0,2, Color.Black));
+        assertTrue(board.placePawn(0,4, Color.Black));
+        assertTrue(board.placePawn(2,0, Color.Black));
+        assertTrue(board.placePawn(2,4, Color.Black));
+        assertTrue(board.placePawn(3,0, Color.Black));
+        assertTrue(board.placePawn(3,4, Color.Black));
+        assertTrue(board.placePawn(4, 1, Color.Black));
+        assertTrue(board.placePawn(4,3, Color.Black));
+
+        // no pawn
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(0, 0)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(0, 2)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(0, 4)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(2, 0)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(2, 4)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(3, 0)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(3, 4)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(4, 1)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(4, 3)));
+
+        assertTrue(board.placePawn(1, 2, Color.White));
+        assertTrue(board.placePawn(1, 3, Color.White));
+        assertTrue(board.placePawn(2, 3, Color.White));
+        assertTrue(board.placePawn(3, 1, Color.White));
+
+        // no pawn
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(0,0)));
+        assertTrue(" pawn between", board.pawnBetween2Boxes(box1, board.getBox(0, 2)));
+        assertTrue("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(0, 4)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(2, 0)));
+        assertTrue("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(2, 4)));
+        assertTrue("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(3, 0)));
+        assertTrue("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(3, 4)));
+        assertTrue("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(4, 1)));
+        assertFalse("no pawn between", board.pawnBetween2Boxes(box1, board.getBox(4, 3)));
+    }
+
+    @Test
+    public void canBridgeTest()
+    {
+        // TODO
+    }
+
+    @Test
+    public void placeBridge_Picture1()
+    {
+        board = new Board(5); board.initBoard();
+
+        // pawn
+        assertTrue(board.placePawn(0,0,Color.Black));
+        assertTrue(board.placePawn(0,1,Color.Black));
+        assertTrue(board.placePawn(0,2,Color.Black));
+        assertTrue(board.placePawn(1,2,Color.Black));
+        assertTrue(board.placePawn(2,0,Color.Black));
+        assertTrue(board.placePawn(3,1,Color.Black));
+        assertTrue(board.placePawn(2,4,Color.Black));
+
+        // bridge
+        assertTrue(board.placeBridge(0,0,2,0));
+        assertTrue(board.placeBridge(1,2,3,1));
+        assertTrue(board.placeBridge(0,2,2,4));
+
+    }
+
+    @Test
+    public void placeBridge_Picture2()
+    {
+        board = new Board(5); board.initBoard();
+
+        // pawn
+        assertTrue(board.placePawn(0, 0, Color.Black));
+        assertTrue(board.placePawn(0, 1, Color.Black));
+        assertTrue(board.placePawn(0, 2, Color.Black));
+        assertTrue(board.placePawn(1, 2, Color.Black));
+        assertTrue(board.placePawn(2, 0, Color.Black));
+        assertTrue(board.placePawn(3, 1, Color.Black));
+        assertTrue(board.placePawn(2, 4, Color.Black));
+        assertTrue(board.placePawn(1, 3, Color.White));
+
+        // bridge
+        assertTrue(board.placeBridge(0,0,2,0));
+        assertTrue(board.placeBridge(1,2,3,1));
+        assertFalse(board.placeBridge(0, 2, 2, 4));
+        assertFalse(board.placeBridge(0, 1, 2, 0));
+    }
+
+    @Test
+    public void placeBridge_Picture3()
+    {
+        board = new Board(5); board.initBoard();
+
+        // pawn
+        assertTrue(board.placePawn(0,0,Color.Black));
+        assertTrue(board.placePawn(0,1,Color.Black));
+        assertTrue(board.placePawn(0,2,Color.Black));
+        assertTrue(board.placePawn(1,2,Color.Black));
+        assertTrue(board.placePawn(2,0,Color.Black));
+        assertTrue(board.placePawn(3,1,Color.Black));
+        assertTrue(board.placePawn(2, 4, Color.Black));
+
+        // bridge
+        assertTrue(board.placeBridge(0,0,2,0));
+        assertTrue(board.placeBridge(1, 2, 3, 1));
+        assertTrue(board.placeBridge(0, 2, 2, 4));
+
+        // new Pawn
+        assertFalse(board.placePawn(1,0, Color.White));
+        assertFalse(board.placePawn(2,1, Color.White));
+        assertFalse(board.placePawn(2,2, Color.White));
+        assertFalse(board.placePawn(1,3, Color.White));
+    }
 
 }

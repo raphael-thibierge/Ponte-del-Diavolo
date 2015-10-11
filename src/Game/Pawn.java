@@ -8,6 +8,7 @@ public class Pawn {
     Color color;
 
     private SandBar sandBar;
+    private Bridge bridge;
 
 
     public Pawn(Color color, Box box) throws NullPointerException
@@ -54,6 +55,11 @@ public class Pawn {
         }
     }
 
+    public boolean hasBridge(){
+        return !(this.bridge == null);
+    }
+
+
     // ACCESSORS
 
 
@@ -71,5 +77,13 @@ public class Pawn {
 
     public void setSandBar(SandBar sandBar) {
         this.sandBar = sandBar;
+    }
+
+    public Bridge getBridge() {
+        return this.bridge;
+    }
+
+    public void setBridge(Bridge bridge) {
+        this.bridge = bridge;
     }
 }

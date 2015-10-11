@@ -1,7 +1,11 @@
 package Game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.lang.Math.abs;
 
 /**
  * Created by raphael on 10/10/2015.
@@ -9,6 +13,7 @@ import java.util.Map;
 public class Board {
     private int size;
     private Box[][] grid;
+    private List<Bridge> bridgeList = new ArrayList<>();
 
 
 
@@ -131,8 +136,8 @@ public class Board {
         }
     }
 
-    public boolean placePawn(int line, int colum, Color color){
-        Box box = getBox(line, colum);
+    public boolean placePawn(int line, int column, Color color){
+        Box box = getBox(line, column);
         if ( box != null){
             return box.placePawn(color);
         }
@@ -141,6 +146,61 @@ public class Board {
 
 
 
+    public boolean canBridge(int line1, int column1, int line2, int column2)
+    {
+        Box box1 = getBox(line1, column1);
+        Box box2 = getBox(line2, column2);
+        // boxes are compatible
+        if (box1 != null && box2 != null && Bridge.compatiblePositions(line1, column1, line2, column2)){
+            Pawn pawn2 = box2.getPawn();
+            Pawn pawn1 = box1.getPawn();
+
+            if (pawn1 != null && pawn2 != null ){
+
+                if (pawn1.getColor() == pawn2.color // if pawn are the same color
+                        && !pawn1.hasBridge() // has no bridge
+                        && !pawn2.hasBridge()
+                        && !pawnBetween2Boxes(box1, box2) // already a pawn between to pawn
+                        ){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean placeBridge(int line1, int column1, int line2, int column2){
+        if (canBridge(line1, column1,  line2, column2)){
+            Bridge bridge = new Bridge(getBox(line1, column1).getPawn(), getBox(line2, column2).getPawn());
+            bridge.lockPawnBetween2Boxes(this);
+            bridgeList.add(bridge);
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean pawnBetween2Boxes(Box box1, Box box2){
+
+        if (box1 != null && box2 != null){
+            int lineOffset = box1.getLine() + box2.getLine();
+            int columnOffset = box1.getColumn() + box2.getColumn();
+
+            if ( lineOffset % 2 == 0){
+                if ( columnOffset % 2 == 0)
+                    return getBox(lineOffset/2, columnOffset/2).isTaken();
+
+                else
+                    return (getBox(lineOffset/2, columnOffset/2).isTaken()
+                            || getBox(lineOffset/2, columnOffset/2+1).isTaken() );
+            }
+            else
+                return (getBox(lineOffset/2, columnOffset/2).isTaken()
+                            || getBox(lineOffset/2+1, columnOffset/2).isTaken() );
+
+        }
+        return false;
+    }
 
 
     /* ========================
