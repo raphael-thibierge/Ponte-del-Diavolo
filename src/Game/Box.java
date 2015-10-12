@@ -15,13 +15,9 @@ public class Box {
     private Pawn pawn;
     private Map<Direction, Box> nearbyBoxes;
 
-
-
-// states
+    // states
     boolean locked = false;
     boolean taken = false;
-
-
 
     public Box(int line, int column){
         this.line = line;
@@ -102,6 +98,18 @@ public class Box {
         return false;
     }
 
+    public boolean inDiagonal(Box box)
+    {
+        if (box != null &&
+                ( box == this.nearbyBoxes.get(Direction.NORTH_EST)
+                        || box == this.nearbyBoxes.get(Direction.NORTH_WEST)
+                        || box == this.nearbyBoxes.get(Direction.SOUTH_EST)
+                        || box == this.nearbyBoxes.get(Direction.SOUTH_WEST)
+                ))
+            return true;
+        return false;
+    }
+
 
     /* ========================
      *        ACCESSORS
@@ -110,10 +118,6 @@ public class Box {
 
     public int getColumn() {
         return column;
-    }
-
-    public void setColumn(int column) {
-        this.column = column;
     }
 
     public boolean isLocked() {
@@ -128,16 +132,8 @@ public class Box {
         return taken;
     }
 
-    public void setTaken(boolean taken) {
-        this.taken = taken;
-    }
-
     public int getLine() {
         return line;
-    }
-
-    public void setLine(int line) {
-        this.line = line;
     }
 
     public Pawn getPawn() {
@@ -156,7 +152,6 @@ public class Box {
         return nearbyBoxes;
     }
 
-
     public Map<Direction, Box> getNearbyBoxesOrthogonal() {
         Map<Direction, Box> map = this.nearbyBoxes;
         map.remove(Direction.NORTH_EST);
@@ -165,19 +160,4 @@ public class Box {
         map.remove(Direction.SOUTH_WEST);
         return map;
     }
-
-    public boolean inDiagonal(Box box)
-    {
-        if (box != null &&
-                ( box == this.nearbyBoxes.get(Direction.NORTH_EST)
-                        || box == this.nearbyBoxes.get(Direction.NORTH_WEST)
-                        || box == this.nearbyBoxes.get(Direction.SOUTH_EST)
-                        || box == this.nearbyBoxes.get(Direction.SOUTH_WEST)
-                ))
-            return true;
-        return false;
-    }
-
-
-
 }

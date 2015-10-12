@@ -1,0 +1,6 @@
+courriel=raphael.thibierge@etu.u-bordeaux.fr
+compte=rthibierge
+nom=Thibierge
+application=out/production/Ponte-del-Diavolo
+groupe=S3A
+

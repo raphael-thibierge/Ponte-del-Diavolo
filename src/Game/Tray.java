@@ -10,14 +10,14 @@ import static java.lang.Math.abs;
 /**
  * Created by raphael on 10/10/2015.
  */
-public class Board {
+public class Tray {
     private int size;
     private Box[][] grid;
     private List<Bridge> bridgeList = new ArrayList<>();
 
 
 
-    public Board(int size)
+    public Tray(int size)
     {
 
         // in case negative number
@@ -143,7 +143,6 @@ public class Board {
         }
         return false;
     }
-
 
 
     public boolean canBridge(int line1, int column1, int line2, int column2)

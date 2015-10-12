@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
  */
 
 
-public class BridgeTest {
+public class BridgeTests {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -63,7 +63,7 @@ public class BridgeTest {
     @Test
     public void lockPawnBetween2BoxesTest()
     {
-        // TODO but same methods already tested in board ( pawnBetweenTwoBridge(...) )
+        // TODO but same methods already tested in tray ( pawnBetweenTwoBridge(...) )
     }
 
 }

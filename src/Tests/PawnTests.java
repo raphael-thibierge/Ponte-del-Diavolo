@@ -1,11 +1,15 @@
 package Tests;
 
+import Game.Tray;
 import Game.Box;
 import Game.Color;
 import Game.Pawn;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by raphael on 10/10/2015.
@@ -35,9 +39,22 @@ public class PawnTests
     }
 
     @Test
-    public void updateSandBar()
+    public void updateSandBar_NotSameColorTest()
     {
-        // tested in box
+        Tray tray = new Tray(4);
+        tray.initBoard();
+
+        // place a black pawn
+        assertTrue("Can place pawn", tray.placePawn(0,0, Color.Black));
+
+        // place a white pawn next
+        assertTrue("Can place pawn", tray.placePawn(0,1,Color.Black));
+
+        // test white and black sand bar
+        assertFalse("can't be the same sandbar", tray.getSandBarInBox(0,1).equals(tray.getSandBarInBox(1,1)));
+
+        //
+
     }
 
 }

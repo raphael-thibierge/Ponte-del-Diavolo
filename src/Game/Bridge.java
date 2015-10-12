@@ -21,7 +21,6 @@ public class Bridge {
 
         base1.setBridge(this);
         base2.setBridge(this);
-
     }
 
     public static boolean compatiblePositions(int y1, int x1, int y2, int x2) {
@@ -35,8 +34,7 @@ public class Bridge {
         return false;
     }
 
-    public void lockPawnBetween2Boxes(Board board){
-
+    public void lockPawnBetween2Boxes(Tray tray){
         Box box1 = base1.getBox();
         Box box2 = base2.getBox();
         if (box1 != null && box2 != null){
@@ -45,21 +43,17 @@ public class Bridge {
 
             if ( lineOffset % 2 == 0){
                 if ( columnOffset % 2 == 0)
-                    board.getBox(lineOffset / 2, columnOffset / 2).setLocked(true);
+                    tray.getBox(lineOffset / 2, columnOffset / 2).setLocked(true);
 
                 else {
-                    board.getBox(lineOffset / 2, columnOffset / 2).setLocked(true);
-                    board.getBox(lineOffset / 2, columnOffset / 2 + 1).setLocked(true);
+                    tray.getBox(lineOffset / 2, columnOffset / 2).setLocked(true);
+                    tray.getBox(lineOffset / 2, columnOffset / 2 + 1).setLocked(true);
                 }
             }
             else {
-                board.getBox(lineOffset / 2, columnOffset / 2).setLocked(true);
-                board.getBox(lineOffset/2+1, columnOffset/2).setLocked(true);
+                tray.getBox(lineOffset / 2, columnOffset / 2).setLocked(true);
+                tray.getBox(lineOffset/2+1, columnOffset/2).setLocked(true);
             }
         }
     }
-
-
-
-
 }

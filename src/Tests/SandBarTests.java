@@ -31,14 +31,18 @@ public class SandBarTests {
     {
         sandBar = new SandBar(new Pawn(Color.Black, new Box(0, 0)));
         // null pawn
-        assertFalse(sandBar.addPawn(null));
-        // not same color
-        assertFalse(sandBar.addPawn(new Pawn(Color.White, new Box(0, 0))));
+        assertFalse("can't add a null pawn in sandbar",sandBar.addPawn(null));
 
+        // not same color
+        assertFalse("can't add a pawn with a different color than sandbar's one",
+                sandBar.addPawn(new Pawn(Color.White, new Box(0, 0))));
+
+        // add normal pawn
         assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
         assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
         assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
-        assertFalse("to much pawn in the andbar", sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+
+        assertFalse("to much pawn in the sandbar", sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
     }
 
     @Test
@@ -51,61 +55,60 @@ public class SandBarTests {
         sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0)));
         assertFalse("Only three pawn", sandBar.isIsland());
         sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0)));
-
         assertTrue("There is fourth  pawn", sandBar.isIsland());
     }
 
     @Test
     public void updateSandBar_ConstructNormalIsland()
     {
-        Board board = new Board(4);
-        board.initBoard();
+        Tray tray = new Tray(4);
+        tray.initBoard();
 
-        assertTrue(board.placePawn(0, 1, Color.Black));
-        assertTrue("should have a sandbar", board.getSandBarInBox(0, 1) != null);
+        assertTrue(tray.placePawn(0, 1, Color.Black));
+        assertTrue("should have a sandbar", tray.getSandBarInBox(0, 1) != null);
 
-        assertTrue(board.placePawn(0, 2, Color.Black));
+        assertTrue(tray.placePawn(0, 2, Color.Black));
         assertTrue("should be the same sandbar",
-                board.getSandBarInBox(0, 1).equals(board.getSandBarInBox(0, 2)));
+                tray.getSandBarInBox(0, 1).equals(tray.getSandBarInBox(0, 2)));
 
-        assertTrue(board.placePawn(0, 3, Color.Black));
+        assertTrue(tray.placePawn(0, 3, Color.Black));
         assertTrue("should be the same sandbar",
-                board.getSandBarInBox(0, 1).equals(board.getSandBarInBox(0, 3)));
+                tray.getSandBarInBox(0, 1).equals(tray.getSandBarInBox(0, 3)));
 
-        assertTrue(board.placePawn(1, 3, Color.Black));
+        assertTrue(tray.placePawn(1, 3, Color.Black));
         assertTrue("should be the same sandbar",
-                board.getSandBarInBox(0, 1).equals(board.getSandBarInBox(1, 3)));
+                tray.getSandBarInBox(0, 1).equals(tray.getSandBarInBox(1, 3)));
 
-        assertTrue("should be an Island", board.getSandBarInBox(0, 1).isIsland());
+        assertTrue("should be an Island", tray.getSandBarInBox(0, 1).isIsland());
     }
 
     @Test
     public void updateSandBar_merge2sandBar()
     {
-        Board board = new Board(4);
-        board.initBoard();
+        Tray tray = new Tray(4);
+        tray.initBoard();
 
-        assertTrue(board.placePawn(2, 0, Color.Black));
-        assertTrue("should have a sandbar", board.getSandBarInBox(2, 0) != null);
+        assertTrue(tray.placePawn(2, 0, Color.Black));
+        assertTrue("should have a sandbar", tray.getSandBarInBox(2, 0) != null);
 
-        assertTrue(board.placePawn(2, 1, Color.Black));
+        assertTrue(tray.placePawn(2, 1, Color.Black));
         assertTrue("should be the same sandbar",
-                board.getSandBarInBox(2, 0).equals(board.getSandBarInBox(2, 1)));
+                tray.getSandBarInBox(2, 0).equals(tray.getSandBarInBox(2, 1)));
 
         // not orhogonal to other sandbar
-        assertTrue(board.placePawn(3, 2, Color.Black));
+        assertTrue(tray.placePawn(3, 2, Color.Black));
         assertFalse("should not be the same sandbar",
-                board.getSandBarInBox(2, 1).equals(board.getSandBarInBox(3, 2)));
+                tray.getSandBarInBox(2, 1).equals(tray.getSandBarInBox(3, 2)));
 
         // merging the two sand bar
-        assertTrue(board.placePawn(2, 2, Color.Black));
+        assertTrue(tray.placePawn(2, 2, Color.Black));
 
         assertTrue("should be the same sandbar than left one",
-                board.getSandBarInBox(2, 2).equals(board.getSandBarInBox(2, 1)));
+                tray.getSandBarInBox(2, 2).equals(tray.getSandBarInBox(2, 1)));
         assertTrue("should be the same sandbar than down one",
-                board.getSandBarInBox(2, 2).equals(board.getSandBarInBox(3, 2)));
+                tray.getSandBarInBox(2, 2).equals(tray.getSandBarInBox(3, 2)));
 
-        assertTrue("should be an Island", board.getSandBarInBox(2, 2).isIsland());
+        assertTrue("should be an Island", tray.getSandBarInBox(2, 2).isIsland());
     }
 
     @Test
@@ -148,12 +151,12 @@ public class SandBarTests {
     @Test
     public void mergeSandBar_SameSandBar()
     {
-        Board board = new Board(4);
-        board.initBoard();
+        Tray tray = new Tray(4);
+        tray.initBoard();
 
-        board.placePawn(0, 0, Color.Black);
-        SandBar sandBar = board.getSandBarInBox(0,0);
-        SandBar sandBar1 = board.getSandBarInBox(0,0);
+        tray.placePawn(0, 0, Color.Black);
+        SandBar sandBar = tray.getSandBarInBox(0,0);
+        SandBar sandBar1 = tray.getSandBarInBox(0,0);
 
         assertFalse("can't merge same sandBar", sandBar.mergeSandBar(sandBar1));
     }
@@ -161,17 +164,17 @@ public class SandBarTests {
     @Test
     public void mergeSandBar_3sandBar()
     {
-        Board board = new Board(4);
-        board.initBoard();
+        Tray tray = new Tray(4);
+        tray.initBoard();
 
-        assertTrue(board.placePawn(3, 0, Color.Black));
-        assertTrue(board.placePawn(3, 2, Color.Black));
-        assertTrue(board.placePawn(2, 1, Color.Black));
-        assertTrue(board.placePawn(3, 1, Color.Black));
+        assertTrue(tray.placePawn(3, 0, Color.Black));
+        assertTrue(tray.placePawn(3, 2, Color.Black));
+        assertTrue(tray.placePawn(2, 1, Color.Black));
+        assertTrue(tray.placePawn(3, 1, Color.Black));
 
-        assertTrue(board.getSandBarInBox(3,1).equals(board.getSandBarInBox(3, 0)));
-        assertTrue(board.getSandBarInBox(3,1).equals(board.getSandBarInBox(3, 2)));
-        assertTrue(board.getSandBarInBox(3,1).equals(board.getSandBarInBox(2,1)));
+        assertTrue(tray.getSandBarInBox(3,1).equals(tray.getSandBarInBox(3, 0)));
+        assertTrue(tray.getSandBarInBox(3,1).equals(tray.getSandBarInBox(3, 2)));
+        assertTrue(tray.getSandBarInBox(3,1).equals(tray.getSandBarInBox(2,1)));
     }
 
 }
