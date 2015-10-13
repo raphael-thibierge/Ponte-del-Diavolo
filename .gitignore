@@ -9,7 +9,6 @@
 *.war
 *.ear
 *.iml
-vcs.xml
 
 /.idea/*
 
