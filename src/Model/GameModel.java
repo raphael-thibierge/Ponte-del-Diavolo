@@ -18,6 +18,7 @@ public class GameModel {
     ClientTCP clientTCP;
 
 
+
     public GameModel(String serveurIPAddress, int port, int size){
         // init tray
         this.tray = new Tray();
@@ -40,6 +41,11 @@ public class GameModel {
 
         //end of the game, disconnect of serveur
         clientTCP.disconnect();
+    }
+
+    public void runForTest()
+    {
+
     }
 
     private void runGame()
@@ -90,6 +96,46 @@ public class GameModel {
         return 0;
     }
 
+    public static void printInConsole(Tray tray)
+    {
+        for (int line = 0 ; line < tray.getSize() ; line++){
+            for (int column = 0 ; column < tray.getSize(); column++){
+                System.out.print("+----");
+            }
+            System.out.print("+\n");
 
+            for (int column = 0 ; column < tray.getSize(); column++){
+                System.out.print("| " );
+                if (tray.getBox(line, column).getPawn() != null) {
+                    switch (tray.getBox(line, column).getPawn().getColor()) {
+                        case Black:
+                            if (tray.getBox(line, column).getPawn().hasBridge())
+                                System.out.print("B/ ");
+                            else
+                                System.out.print("B  ");
+                            break;
+                        case White:
+                            if (tray.getBox(line, column).getPawn().hasBridge())
+                                System.out.print("W/ ");
+                            else
+                                System.out.print("W  ");
+                            break;
+                        default:
+                            break;
+                    }
+                } else{
+                    if (tray.getBox(line, column).isLocked())
+                        System.out.print(" x ");
+                    else
+                        System.out.print("   ");
+                }
+            }
+            System.out.print("|\n" );
+        }
+        for (int column = 0 ; column < tray.getSize(); column++){
+            System.out.print("+----");
+        }
+        System.out.print("+\n");
+    }
 
 }

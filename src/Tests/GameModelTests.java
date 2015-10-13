@@ -86,6 +86,22 @@ public class GameModelTests {
         assertTrue(tray.placeBridge(5, 4, 3, 4));
 
         assertTrue(GameModel.scoreFromTrayForColor(Color.White, tray) == 10);
+        System.out.println("Big Picture");
+        GameModel.printInConsole(tray);
+
+    }
+
+    @Test
+    public void displayTest()
+    {
+        Tray tray = new Tray();
+        tray.init(5);
+        tray.placePawn(0, 0, Color.Black);
+        tray.placePawn(0, 2, Color.Black);
+        tray.placePawn(1, 2, Color.Black);
+        tray.placeBridge(0, 0, 1, 2);
+        tray.placePawn(1, 0, Color.White);
+        //GameModel.printInConsole(tray);
     }
 
 }

@@ -16,11 +16,11 @@ public class Tray {
     private List<Bridge> bridgeList = null ;
     boolean initialised = false;
 
+
     public Tray()
     {
 
     }
-
 
     public void init(int size)
     {
@@ -197,7 +197,6 @@ public class Tray {
         }
         return false;
     }
-
 
     /* ========================
      *        ACCESSORS
