@@ -7,6 +7,7 @@ import Game.Direction;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -167,9 +168,65 @@ public class TrayTests {
     }
 
     @Test
-    public void canBridgeTest()
+    public void canBridge_DiagonalTest()
     {
-        // TODO
+        tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(2,2, Color.Black));
+
+        // place pawn
+        assertTrue(tray.placePawn(0,0, Color.Black));
+        assertTrue(tray.placePawn(0,1, Color.Black));
+        assertTrue(tray.placePawn(1,0, Color.Black));
+
+        assertTrue(tray.placePawn(3,0, Color.Black));
+        assertTrue(tray.placePawn(4,0, Color.Black));
+        assertTrue(tray.placePawn(4,1, Color.Black));
+
+        assertTrue(tray.placePawn(4,3, Color.Black));
+        assertTrue(tray.placePawn(4,4, Color.Black));
+        assertTrue(tray.placePawn(3,4, Color.Black));
+
+        assertTrue(tray.placePawn(0,3, Color.Black));
+        assertTrue(tray.placePawn(0,4, Color.Black));
+        assertTrue(tray.placePawn(1,4, Color.Black));
+
+        assertTrue("can bridge !", tray.canBridge(2, 2, 0, 0));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 0, 1));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 1, 0));
+
+        assertTrue("can bridge !", tray.canBridge(2, 2, 3, 0));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 4, 0));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 4, 1));
+
+        assertTrue("can bridge !", tray.canBridge(2, 2, 4, 3));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 4, 4));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 3, 4));
+
+        assertTrue("can bridge !", tray.canBridge(2, 2, 0, 3));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 0, 4));
+        assertTrue("can bridge !", tray.canBridge(2 ,2 ,1 ,4));
+    }
+
+    @Test
+    public void canBridge_OrthogonalTest()
+    {
+        tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(2,2, Color.Black));
+
+        // place pawn
+        assertTrue(tray.placePawn(0,2, Color.Black));
+        assertTrue(tray.placePawn(2,0, Color.Black));
+        assertTrue(tray.placePawn(2,4, Color.Black));
+        assertTrue(tray.placePawn(4,2, Color.Black));
+
+        assertTrue("can bridge !", tray.canBridge(2, 2, 0, 2));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 2, 0));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 2, 4));
+        assertTrue("can bridge !", tray.canBridge(2, 2, 4, 2));
     }
 
     @Test
@@ -191,7 +248,6 @@ public class TrayTests {
         assertTrue(tray.placeBridge(0,0,2,0));
         assertTrue(tray.placeBridge(1,2,3,1));
         assertTrue(tray.placeBridge(0,2,2,4));
-
     }
 
     @Test
@@ -259,7 +315,7 @@ public class TrayTests {
         tray = new Tray();
         tray.init(5);
 
-        assertTrue(tray.placePawn(0,0, Color.Black));
+        assertTrue(tray.placePawn(0, 0, Color.Black));
         assertTrue(tray.placePawn(0,3, Color.Black));
         Box box1 = tray.getBox(0,0);
         Box box2 = tray.getBox(0,3);
