@@ -11,30 +11,26 @@ import static java.lang.Math.abs;
  * Created by raphael on 10/10/2015.
  */
 public class Tray {
-    private int size;
-    private Box[][] grid;
-    private List<Bridge> bridgeList = new ArrayList<>();
+    private int size = 0;
+    private Box[][] grid = null;
+    private List<Bridge> bridgeList = null ;
+    boolean initialised = false;
 
-
-
-    public Tray(int size)
+    public Tray()
     {
-
-        // in case negative number
-        if (size == 0)
-            size = 1;
-        else if (size < 0)
-            size *= -1;
-        this.size = size;
-
-        grid = null;
 
     }
 
 
-
-    public void initBoard()
+    public void init(int size)
     {
+        // in case negative number
+        if (size == 0)
+            size = 1;
+        else if (size < 0)
+            size = size * -1;
+        this.size = size;
+
         // init board
         grid = new Box[this.size][this.size];
 
@@ -44,8 +40,9 @@ public class Tray {
                 grid[line][column] = new Box(line, column);
             }
         }
-
         this.initNearbyBoxes();
+        this.initialised = true;
+        bridgeList = new ArrayList<>();
     }
 
     private void initNearbyBoxes()
@@ -214,4 +211,7 @@ public class Tray {
         return grid;
     }
 
+    public boolean isInitialised() {
+        return initialised;
+    }
 }

@@ -1,6 +1,8 @@
 package Tests;
 
 import Game.*;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -61,8 +63,8 @@ public class SandBarTests {
     @Test
     public void updateSandBar_ConstructNormalIsland()
     {
-        Tray tray = new Tray(4);
-        tray.initBoard();
+        Tray tray = new Tray();
+        tray.init(5);
 
         assertTrue(tray.placePawn(0, 1, Color.Black));
         assertTrue("should have a sandbar", tray.getSandBarInBox(0, 1) != null);
@@ -85,8 +87,8 @@ public class SandBarTests {
     @Test
     public void updateSandBar_merge2sandBar()
     {
-        Tray tray = new Tray(4);
-        tray.initBoard();
+        Tray tray = new Tray();
+        tray.init(5);
 
         assertTrue(tray.placePawn(2, 0, Color.Black));
         assertTrue("should have a sandbar", tray.getSandBarInBox(2, 0) != null);
@@ -151,8 +153,8 @@ public class SandBarTests {
     @Test
     public void mergeSandBar_SameSandBar()
     {
-        Tray tray = new Tray(4);
-        tray.initBoard();
+        Tray tray = new Tray();
+        tray.init(5);
 
         tray.placePawn(0, 0, Color.Black);
         SandBar sandBar = tray.getSandBarInBox(0,0);
@@ -164,8 +166,8 @@ public class SandBarTests {
     @Test
     public void mergeSandBar_3sandBar()
     {
-        Tray tray = new Tray(4);
-        tray.initBoard();
+        Tray tray = new Tray();
+        tray.init(5);
 
         assertTrue(tray.placePawn(3, 0, Color.Black));
         assertTrue(tray.placePawn(3, 2, Color.Black));
@@ -174,7 +176,46 @@ public class SandBarTests {
 
         assertTrue(tray.getSandBarInBox(3,1).equals(tray.getSandBarInBox(3, 0)));
         assertTrue(tray.getSandBarInBox(3,1).equals(tray.getSandBarInBox(3, 2)));
-        assertTrue(tray.getSandBarInBox(3,1).equals(tray.getSandBarInBox(2,1)));
+        assertTrue(tray.getSandBarInBox(3, 1).equals(tray.getSandBarInBox(2, 1)));
+    }
+
+    @Test
+    public void makeIsland_configSquare()
+    {
+        Tray tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(0, 0, Color.Black)); // top left
+        assertTrue(tray.placePawn(0, 1, Color.Black)); // top right
+        assertTrue(tray.placePawn(1, 0, Color.Black)); // down left
+        assertTrue(tray.placePawn(1, 1, Color.Black)); // down right
+        TestCase.assertTrue("must be an island", tray.getSandBarInBox(0, 0).isIsland());
+
+        assertTrue(tray.placePawn(0, 2, Color.White)); // top left
+        assertTrue(tray.placePawn(1, 3, Color.White)); // down right
+        assertTrue(tray.placePawn(1, 2, Color.White)); // down left
+        assertTrue(tray.placePawn(0, 3, Color.White)); // top right
+        TestCase.assertTrue("must be an island", tray.getSandBarInBox(0, 2).isIsland());
+
+    }
+
+    @Test
+    public void makeIsland_configTetris()
+    {
+        Tray tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(0, 0, Color.Black)); // top left
+        assertTrue(tray.placePawn(0, 2, Color.Black)); // top right
+        assertTrue(tray.placePawn(1, 1, Color.Black)); // down middle
+        assertTrue(tray.placePawn(0, 1, Color.Black)); // to middle
+        TestCase.assertTrue("must be an island", tray.getSandBarInBox(0, 0).isIsland());
+
+        assertTrue(tray.placePawn(1, 2, Color.White)); // down left
+        assertTrue(tray.placePawn(1, 4, Color.White)); // down right
+        assertTrue(tray.placePawn(1, 3, Color.White)); // down middle
+        assertTrue(tray.placePawn(0, 3, Color.White)); // top middle
+        TestCase.assertTrue("must be an island", tray.getSandBarInBox(1, 2).isIsland());
     }
 
 }

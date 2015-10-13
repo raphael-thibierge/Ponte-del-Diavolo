@@ -1,9 +1,6 @@
 package Tests;
 
-import Game.Pawn;
-import Game.Tray;
-import Game.Box;
-import Game.Color;
+import Game.*;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -20,10 +17,10 @@ public class BoxTests {
     @Test
     public void pawnAllwedHerePicture_1_Test()
     {
-        tray = new Tray(4);
+        tray = new Tray();
+        tray.init(4);
 
         // ===== PICTURE ONE ========
-        tray.initBoard();
         // pawn already set
         assertTrue(tray.placePawn(0, 1 ,Color.Black));
         assertTrue(tray.placePawn(0, 2, Color.Black));
@@ -40,8 +37,8 @@ public class BoxTests {
     @Test
     public void pawnAllwedHerePicture_2_Test()
     {
-        tray = new Tray(4);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(4);
 
         // pawn already set
         assertTrue(tray.placePawn(0, 1 ,Color.Black));
@@ -59,8 +56,8 @@ public class BoxTests {
     @Test
     public void pawnAllwedHerePicture_3_Test()
     {
-        tray = new Tray(4);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(4);
 
         // pawn already set
         assertTrue(tray.placePawn(0, 1 ,Color.Black));
@@ -79,10 +76,10 @@ public class BoxTests {
 
     @Test
     public void pawnAllwedHerePicture_4_Test(){
-        tray = new Tray(4);
+        tray = new Tray();
+        tray.init(4);
 
         // ===== PICTURE FOUR ========
-        tray.initBoard();
         // pawn already set
         assertTrue(tray.placePawn(0, 1 ,Color.Black));
         assertTrue(tray.placePawn(0, 2, Color.Black));
@@ -100,8 +97,8 @@ public class BoxTests {
 
     @Test
     public void pawnAllwedHerePicture_5_Test(){
-        tray = new Tray(4);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(4);
 
         // pawn already set
         assertTrue(tray.placePawn(0, 1 ,Color.Black));
@@ -121,8 +118,8 @@ public class BoxTests {
 
     @Test
     public void pawnAllwedHerePicture_6_Test() {
-        tray = new Tray(4);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(4);
 
         // pawn already set
         assertTrue(tray.placePawn(0, 1 ,Color.Black));
@@ -147,8 +144,8 @@ public class BoxTests {
     @Test
     public void pawnAllowHere_TakenTest() {
 
-        tray = new Tray(traySize);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(traySize);
         Box box = tray.getBox(0, 0);
 
         // No pawn in box
@@ -164,8 +161,8 @@ public class BoxTests {
 
     @Test public void pawnAllowHere_LockedByPawnTest()
     {
-        tray = new Tray(traySize);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(traySize);
 
         Box box = tray.getBox(0,0);
 
@@ -183,14 +180,14 @@ public class BoxTests {
 
     @Test public void pawnAllowHere_LockedByBridgeTest()
     {
-        tray = new Tray(traySize);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(traySize);
 
         Box box = tray.getBox(0,1);
 
         // place a pawn in box
         assertTrue(tray.placePawn(0,0,Color.Black));
-        assertTrue(tray.placePawn(0,2,Color.Black));
+        assertTrue(tray.placePawn(0, 2, Color.Black));
 
         // No pawn in box and no bridge
         assertFalse("no pawn in the box, and no bridge", box.isLocked());
@@ -208,14 +205,14 @@ public class BoxTests {
     @Test
     public void pawnAllowHere_nextIslandTest()
     {
-        tray = new Tray(10);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(10);
 
         // place a Island on the tray
-        assertTrue(tray.placePawn(1,2, Color.Black));
-        assertTrue(tray.placePawn(1,3, Color.Black));
-        assertTrue(tray.placePawn(1,4, Color.Black));
-        assertTrue(tray.placePawn(1,5, Color.Black));
+        assertTrue(tray.placePawn(1, 2, Color.Black));
+        assertTrue(tray.placePawn(1, 3, Color.Black));
+        assertTrue(tray.placePawn(1, 4, Color.Black));
+        assertTrue(tray.placePawn(1, 5, Color.Black));
 
         // try place a same color pawn next the island
         for (int i = 0 ; i < 4; i++)
@@ -237,8 +234,8 @@ public class BoxTests {
     @Test
     public void pawnAllowHereTest()
     {
-        tray = new Tray(traySize);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(traySize);
         Box box = tray.getBox(0,0);
 
         // No pawn in box
@@ -260,8 +257,8 @@ public class BoxTests {
     @Test
     public void placePawnTest()
     {
-        tray = new Tray(traySize);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(traySize);
         Box box = tray.getBox(0,0);
 
         // No pawn in box
@@ -280,8 +277,8 @@ public class BoxTests {
 
     @Test
     public void isTakenTest(){
-        tray = new Tray(traySize);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(traySize);
 
         Box box = tray.getBox(0,0);
         assertFalse("No pawn in box", box.isTaken());
@@ -292,8 +289,8 @@ public class BoxTests {
 
     @Test
     public void isLockedTest(){
-        tray = new Tray(traySize);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(traySize);
 
         Box box = tray.getBox(0,0);
         assertFalse("No pawn in box and no bridge", box.isLocked());
@@ -305,8 +302,8 @@ public class BoxTests {
     @Test
     public void isNearbyOfTest()
     {
-        tray = new Tray(traySize);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(traySize);
 
         Box box = tray.getBox(0,0);
 
@@ -323,8 +320,8 @@ public class BoxTests {
     @Test
     public void inDiagonalTest()
     {
-        tray = new Tray(10);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(10);
 
         assertFalse("can't be diagonal with null box", tray.getBox(0,0).inDiagonal(null));
 
@@ -349,5 +346,57 @@ public class BoxTests {
                 }
             }
         }
+        Box box = tray.getBox(1,1);
+        assertTrue(box.inDiagonal(tray.getBox(0,0)));
+        assertTrue(box.inDiagonal(tray.getBox(0,2)));
+        assertTrue(box.inDiagonal(tray.getBox(2,2)));
+        assertTrue(box.inDiagonal(tray.getBox(2,0)));
+
+
     }
+
+    @Test
+    public void pawnAllowHere_touchingDiagonalSandBar()
+    {
+        // like PICTURE 2 but without paw in box (0,1)
+        Tray tray = new Tray();
+        tray.init(4);
+
+        assertTrue(tray.placePawn(0, 2, Color.Black));
+        assertTrue(tray.placePawn(0, 3, Color.Black));
+        assertTrue(tray.placePawn(1, 3, Color.Black));
+
+        assertTrue(tray.placePawn(2, 0, Color.Black));
+        assertTrue(tray.placePawn(2, 1, Color.Black));
+        assertTrue(tray.placePawn(3, 2, Color.Black));
+
+        assertFalse("pawn here forbidden !", tray.getBox(2, 2).pawnAllowedHere(Color.Black));
+        assertFalse("pawn here forbidden !", tray.placePawn(2, 2, Color.Black));
+
+    }
+
+    @Test
+    public void getnearbyBoxes_Test()
+    {
+        tray = new Tray();
+        tray.init(4);
+
+        Box box = tray.getBox(1,1);
+
+        assertTrue(box.getNearbyBox(Direction.NORTH_WEST).equals(tray.getBox(0,0)));
+        assertTrue(box.getNearbyBox(Direction.NORTH).equals(tray.getBox(0,1)));
+        assertTrue(box.getNearbyBox(Direction.NORTH_EST).equals(tray.getBox(0,2)));
+        assertTrue(box.getNearbyBox(Direction.WEST).equals(tray.getBox(1,0)));
+        assertTrue(box.getNearbyBox(Direction.EST).equals(tray.getBox(1,2)));
+        assertTrue(box.getNearbyBox(Direction.SOUTH_WEST).equals(tray.getBox(2,0)));
+        assertTrue(box.getNearbyBox(Direction.SOUTH).equals(tray.getBox(2,1)));
+        assertTrue(box.getNearbyBox(Direction.SOUTH_EST).equals(tray.getBox(2,2)));
+
+        for (int line = 0 ; line < tray.getSize() ; line++){
+            for (int column = 0 ; column < tray.getSize() ; column++){
+                assertFalse(tray.getBox(line, column) == null);
+            }
+        }
+    }
+
 }

@@ -41,8 +41,8 @@ public class PawnTests
     @Test
     public void updateSandBar_NotSameColorTest()
     {
-        Tray tray = new Tray(4);
-        tray.initBoard();
+        Tray tray = new Tray();
+        tray.init(4);
 
         // place a black pawn
         assertTrue("Can place pawn", tray.placePawn(0,0, Color.Black));

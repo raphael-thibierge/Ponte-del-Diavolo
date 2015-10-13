@@ -1,8 +1,11 @@
 package Game;
 
+import javafx.util.Pair;
 import org.omg.PortableInterceptor.DISCARDING;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,6 +55,8 @@ public class Box {
 
     public boolean pawnAllowedHere(Color color)
     {
+        // TODO need to be optimized
+
         // first condition
         if ( color != null
                 && !isLocked()
@@ -60,6 +65,9 @@ public class Box {
         {
             // new sandBar size
             int sandBarSize = 1; // because if we place pawn, there is on more pawn in sandBar
+            List<SandBar> sandbarFounds = new ArrayList<>();
+            List<SandBar> diagSandBarFounds = new ArrayList<>();
+            SandBar lastSandbar = null;
 
             // get nearbyBox of all direction
             for (Box nearbyBox : this.nearbyBoxes.values()){
@@ -76,20 +84,29 @@ public class Box {
                         }
 
                         // if the sandbar is not in diagonal
-                        if (!this.inDiagonal(nearbyBox))
-                        {
+                        if (!this.inDiagonal(nearbyBox) && pawn1.getSandBar() != lastSandbar){
                             //  we count merging all nearby sandBar
                             sandBarSize += pawn1.getSandBar().getSize();
+                            lastSandbar = pawn1.getSandBar();
+                            sandbarFounds.add(pawn1.getSandBar());
                             if (sandBarSize > 4)
                                 return false;
+                        } else if (this.inDiagonal( nearbyBox) && pawn1.getSandBar() != lastSandbar){
+                            diagSandBarFounds.add(pawn1.getSandBar());
                         }
                     }
                 }
+            }
+
+            for (SandBar sandBar : diagSandBarFounds) {
+                if (!sandbarFounds.contains(sandBar) && sandBarSize == 4)
+                    return false;
             }
             return true;
         }
         return false;
     }
+
 
     public boolean isNearbyOf(Box box){
         if (box != null && this.nearbyBoxes.containsValue(box)){

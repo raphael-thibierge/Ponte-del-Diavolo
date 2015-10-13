@@ -20,8 +20,8 @@ public class TrayTests {
     @Test
     public void initBoardTest()
     {
-        tray = new Tray(size);
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(size);
 
         for (int line = 0 ; line < size ;  line++){
             for (int column = 0 ; column < size ; column++)
@@ -36,9 +36,10 @@ public class TrayTests {
     public void initNearbyBoxes_InCornerTest()
     {
         // A ECRIRE
-        tray = new Tray(size);
+        tray = new Tray();
         initBoardTest();
 
+        tray.init(5);
 
         // top left corner
         Box box = tray.getBox(0,0);
@@ -84,17 +85,21 @@ public class TrayTests {
         assertTrue("sould be null", box.getNearbyBox(Direction.SOUTH_EST) == null);
         assertTrue("sould be null", box.getNearbyBox(Direction.NORTH_EST) == null);
         assertTrue("sould be null", box.getNearbyBox(Direction.EST) == null);
+
+
+
+
     }
 
     @Test
     public void getBoxTest()
     {
-        tray = new Tray(size);
+        tray = new Tray();
 
         // boxes not initialised
         assertTrue(tray.getBox(0, 0) == null);
+        tray.init(size);
 
-        tray.initBoard();
 
         // box exist
         assertTrue(tray.getBox(0, 0) != null);
@@ -116,9 +121,8 @@ public class TrayTests {
     @Test
     public void pawnBetween2BoxesTest()
     {
-        tray = new Tray(5);
-
-        tray.initBoard();
+        tray = new Tray();
+        tray.init(5);
 
         // main pawn
         assertTrue(tray.placePawn(2, 2, Color.Black));
@@ -171,7 +175,8 @@ public class TrayTests {
     @Test
     public void placeBridge_Picture1()
     {
-        tray = new Tray(5); tray.initBoard();
+        tray = new Tray();
+        tray.init(5);
 
         // pawn
         assertTrue(tray.placePawn(0,0,Color.Black));
@@ -192,7 +197,8 @@ public class TrayTests {
     @Test
     public void placeBridge_Picture2()
     {
-        tray = new Tray(5); tray.initBoard();
+        tray = new Tray();
+        tray.init(5);
 
         // pawn
         assertTrue(tray.placePawn(0, 0, Color.Black));
@@ -214,11 +220,12 @@ public class TrayTests {
     @Test
     public void placeBridge_Picture3()
     {
-        tray = new Tray(5); tray.initBoard();
+        tray = new Tray();
+        tray.init(5);
 
         // pawn
         assertTrue(tray.placePawn(0,0,Color.Black));
-        assertTrue(tray.placePawn(0,1,Color.Black));
+        assertTrue(tray.placePawn(0, 1, Color.Black));
         assertTrue(tray.placePawn(0,2,Color.Black));
         assertTrue(tray.placePawn(1,2,Color.Black));
         assertTrue(tray.placePawn(2,0,Color.Black));
@@ -226,15 +233,38 @@ public class TrayTests {
         assertTrue(tray.placePawn(2, 4, Color.Black));
 
         // bridge
-        assertTrue(tray.placeBridge(0,0,2,0));
+        assertTrue(tray.placeBridge(0, 0, 2, 0));
         assertTrue(tray.placeBridge(1, 2, 3, 1));
         assertTrue(tray.placeBridge(0, 2, 2, 4));
 
         // new Pawn
-        assertFalse(tray.placePawn(1,0, Color.White));
-        assertFalse(tray.placePawn(2,1, Color.White));
-        assertFalse(tray.placePawn(2,2, Color.White));
-        assertFalse(tray.placePawn(1,3, Color.White));
+        assertFalse(tray.placePawn(1, 0, Color.White));
+        assertFalse(tray.placePawn(2, 1, Color.White));
+        assertFalse(tray.placePawn(2, 2, Color.White));
+        assertFalse(tray.placePawn(1, 3, Color.White));
+    }
+
+    @Test
+    public void isInitialized_Test()
+    {
+        tray = new Tray();
+        assertFalse("Tray is not already initialized", tray.isInitialised());
+        tray.init(5);
+        assertTrue("Tray is initialized", tray.isInitialised());
+    }
+
+    @Test
+    public void pawnBetween2Boxes_Test()
+    {
+        tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(0,0, Color.Black));
+        assertTrue(tray.placePawn(0,3, Color.Black));
+        Box box1 = tray.getBox(0,0);
+        Box box2 = tray.getBox(0,3);
+        assertFalse(tray.pawnBetween2Boxes(box1, box2));
+
     }
 
 }

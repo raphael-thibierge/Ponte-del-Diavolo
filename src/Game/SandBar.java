@@ -14,6 +14,7 @@ public class SandBar {
     private int size = 0;
 
     private int MAX_SIZE = 4;
+    private boolean linked;
 
     public SandBar(Pawn pawn) throws NullPointerException
     {
@@ -55,6 +56,18 @@ public class SandBar {
 
     public int getSize() {
         return size;
+    }
+
+    public boolean isLinked() {
+        return linked;
+    }
+
+    public void setLinked(boolean linked) {
+        this.linked = linked;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public boolean mergeSandBar(SandBar sandBar){

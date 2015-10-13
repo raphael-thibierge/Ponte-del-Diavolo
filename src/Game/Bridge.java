@@ -19,8 +19,11 @@ public class Bridge {
         this.base1 = base1;
         this.base2 = base2;
 
-        base1.setBridge(this);
-        base2.setBridge(this);
+        this.base1.getSandBar().setLinked(true);
+        this.base2.getSandBar().setLinked(true);
+
+        this.base1.setBridge(this);
+        this.base2.setBridge(this);
     }
 
     public static boolean compatiblePositions(int y1, int x1, int y2, int x2) {

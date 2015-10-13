@@ -1,9 +1,6 @@
 package Tests;
 
-import Game.Box;
-import Game.Bridge;
-import Game.Color;
-import Game.Pawn;
+import Game.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -57,6 +54,24 @@ public class BridgeTests {
                     testTwoCaseFalse(2,2, y, x);
             }
         }
+    }
+
+    @Test
+    public void createBridge_SandbarIsLinked()
+    {
+        Tray tray = new Tray();
+        tray.init(5);
+
+        // place pawn
+        assertTrue(tray.placePawn(0,0,Color.Black));
+        assertTrue(tray.placePawn(0,2,Color.Black));
+
+        // place bridge
+        assertTrue(tray.placeBridge(0,0,0,2));
+
+        // test link
+        assertTrue("Sansbar must be linked", tray.getSandBarInBox(0,0).isLinked());
+        assertTrue("Sansbar must be linked", tray.getSandBarInBox(0,2).isLinked());
     }
 
 
