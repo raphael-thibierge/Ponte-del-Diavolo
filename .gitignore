@@ -4,11 +4,12 @@
 .mtj.tmp/
 
 # Package Files #
+*.xml
 *.jar
 *.war
 *.ear
 *.iml
-*.xml
+vcs.xml
 
 /.idea/*
 
