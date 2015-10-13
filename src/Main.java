@@ -6,9 +6,9 @@ public class Main {
 
         String IpAddress = "192.168.2.40";
         int port = 1024;
-        int size = 6;
+        int size = 10;
 
         GameModel game = new GameModel(IpAddress, port, 6);
-        game.run();
+        game.runForTest();
     }
 }

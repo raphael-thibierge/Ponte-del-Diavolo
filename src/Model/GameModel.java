@@ -16,6 +16,8 @@ import static java.lang.Math.abs;
 public class GameModel {
     Tray tray;
     ClientTCP clientTCP;
+    Player firstPlayer;
+    Player secondPlayer;
 
 
 
@@ -46,11 +48,39 @@ public class GameModel {
     public void runForTest()
     {
 
+        firstPlayer = new IA(1);
+        secondPlayer = new IA(2);
+
+        firstPlayer.setColor(Color.White);
+        secondPlayer.setColor(Color.Black);
+
+        this.runGame();
+
     }
+
+    private boolean partyFinished() {
+        return false;
+    }
+
 
     private void runGame()
     {
+        boolean quit = false;
+        while (!quit){
 
+            if (firstPlayer.canPlay(tray)) {
+                firstPlayer.playInTray(this.tray);
+                displayInConsole(this.tray);
+            }
+            if(secondPlayer.canPlay(tray)){
+                secondPlayer.playInTray(this.tray);
+                displayInConsole(this.tray);
+            }
+            else quit = true;
+
+            System.out.println("\nPlayer 1 score : " + scoreFromTrayForColor(firstPlayer.getColor(), tray));
+            System.out.println("Player 2 score : " + scoreFromTrayForColor(secondPlayer.getColor(), tray) + "\n");
+        }
     }
 
     private void setPlayerNumber()
@@ -96,7 +126,7 @@ public class GameModel {
         return 0;
     }
 
-    public static void printInConsole(Tray tray)
+    public static void displayInConsole(Tray tray)
     {
         for (int line = 0 ; line < tray.getSize() ; line++){
             for (int column = 0 ; column < tray.getSize(); column++){

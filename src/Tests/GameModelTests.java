@@ -87,7 +87,7 @@ public class GameModelTests {
 
         assertTrue(GameModel.scoreFromTrayForColor(Color.White, tray) == 10);
         System.out.println("Big Picture");
-        GameModel.printInConsole(tray);
+        GameModel.displayInConsole(tray);
 
     }
 
@@ -101,7 +101,7 @@ public class GameModelTests {
         tray.placePawn(1, 2, Color.Black);
         tray.placeBridge(0, 0, 1, 2);
         tray.placePawn(1, 0, Color.White);
-        //GameModel.printInConsole(tray);
+        //GameModel.displayInConsole(tray);
     }
 
 }
