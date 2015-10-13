@@ -43,6 +43,11 @@ public class Manual extends Player {
         }
     }
 
+    @Override
+    public void chooseColor() {
+        this.color = Color.White;
+    }
+
     private void placePawn(Tray tray, int i)
     {
 

@@ -1,7 +1,6 @@
 package Network;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
@@ -14,8 +13,8 @@ public class ClientTCP
     private int port;
 
     private Socket socket;
-    private BufferedReader input;
-    private DataOutputStream output;
+    private InputStream input;
+    private OutputStream output;
 
     boolean connected;
 
@@ -34,7 +33,11 @@ public class ClientTCP
         if (isConnected()) {
             try {
 
-                readed = input.readLine();
+                byte[] b = new byte[1000]; //définition d'un tableau pour lire les données arrivées
+                int bitsRecus = input.read(b); //il n'est pas sûr que l'on recoive 1000 bits
+                if(bitsRecus>0) {
+                    readed = new String(b,0, bitsRecus);
+                }
 
             } catch (IOException ie) {
 
@@ -46,13 +49,13 @@ public class ClientTCP
     public void write(String string) {
         if (isConnected()) {
             try {
-
-                output.writeBytes(string + '\n');
-
+                output = socket.getOutputStream();
+                output.write(string.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        else System.out.println("euuuh..");
     }
 
     public boolean isConnected()
@@ -63,8 +66,8 @@ public class ClientTCP
                 this.socket = new Socket(this.address ,this.port);
 
                 // open input and output
-                input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                output = new DataOutputStream(socket.getOutputStream());
+                input = socket.getInputStream();
+                output = socket.getOutputStream();
 
                 this.connected = true;
 
