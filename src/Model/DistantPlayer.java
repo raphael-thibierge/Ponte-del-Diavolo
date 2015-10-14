@@ -1,6 +1,5 @@
 package Model;
 
-import Game.Color;
 import Game.Tray;
 import Network.ClientTCP;
 
@@ -19,10 +18,10 @@ public class DistantPlayer extends Player {
     }
 
     @Override
-    public void playInTray(Tray tray) {
+    public String playInTray(Tray tray) {
         String string = clientTCP.read();
 
-        if (string != "F" ){
+        if (!string.equals("F") ){
             int line1 = Integer.parseInt(String.valueOf(string.charAt(0)));
             int column1 = Integer.parseInt(String.valueOf(string.charAt(1)));
             int line2 = Integer.parseInt(String.valueOf(string.charAt(3)));
@@ -39,11 +38,11 @@ public class DistantPlayer extends Player {
         }
         else
             clientTCP.disconnect();
-
+        return string;
     }
 
     @Override
-    public void chooseColor() {
-        game.treatServer();
+    public String chooseColor() {
+        return clientTCP.read();
     }
 }
