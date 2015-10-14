@@ -16,9 +16,12 @@ import static java.lang.Math.abs;
 public class GameModel {
     Tray tray;
     ClientTCP clientTCP;
-    Player firstPlayer;
-    Player secondPlayer;
+    Player whitePlayer;
+    Player blackPlayer;
 
+    // state
+    boolean onLineMode = false;
+    boolean displayGame = true;
 
 
     public GameModel(String serveurIPAddress, int port, int size){
@@ -31,28 +34,43 @@ public class GameModel {
 
     public void run(){
         // connect to serveur
-        if (clientTCP.isConnected()){
-            // wait to know player order
+        if ( onLineMode ) {
+            if (clientTCP.isConnected()) {
+                // wait to know player order
 
-            treatServer();
+                // to begin online game
+                treatServer();
+                // then run game
+                runGame();
 
-            runGame();
-
+                //end of the game, disconnect of serveur
+                clientTCP.disconnect();
+            }
+        } else {
+            runForTest();
         }
 
-        //end of the game, disconnect of serveur
-        clientTCP.disconnect();
     }
 
     public void runForTest()
     {
+        whitePlayer = new IA(1, clientTCP);
+        blackPlayer = new IA(2, clientTCP);
 
-        firstPlayer = new IA(1, clientTCP);
-        secondPlayer = new IA(2, clientTCP);
+        whitePlayer.setColor(Color.White);
+        blackPlayer.setColor(Color.Black);
 
-        firstPlayer.setColor(Color.White);
-        secondPlayer.setColor(Color.Black);
+        whitePlayer.playInTray(this.tray);
+        if (blackPlayer.chooseColor() ==  "c"){
+            Player player = whitePlayer;
+            whitePlayer = blackPlayer;
+            blackPlayer = player;
+        }
 
+        whitePlayer.setColor(Color.White);
+        blackPlayer.setColor(Color.Black);
+
+        blackPlayer.playInTray(tray);
         this.runGame();
     }
 
@@ -61,20 +79,105 @@ public class GameModel {
     private void runGame()
     {
         boolean quit = false;
+
+        displayInConsole(this.tray);
+
         while (!quit){
+            // to get move string
+            String move;
 
-            if (firstPlayer.canPlay(tray)) {
-                firstPlayer.playInTray(this.tray);
-                displayInConsole(this.tray);
-            }
-            if(secondPlayer.canPlay(tray)){
-                secondPlayer.playInTray(this.tray);
-                displayInConsole(this.tray);
-            }
-            else quit = true;
+            // =======================================
+            // white player is always the first player
+            // =======================================
 
-            System.out.println("\nPlayer 1 score : " + scoreFromTrayForColor(firstPlayer.getColor(), tray));
-            System.out.println("Player 2 score : " + scoreFromTrayForColor(secondPlayer.getColor(), tray) + "\n");
+            // he plays
+            move = whitePlayer.playInTray(this.tray);
+            // if it's an online game, and the player is the the IA
+            if (onLineMode && whitePlayer instanceof IA)
+                // send the move to server
+                clientTCP.write(move);
+            // then display in console
+
+            if (displayGame)
+                displayInConsole(this.tray);
+            // TODO PROV ( TO DELEDE )
+            System.out.println("Move White " + move + "\n");
+
+            // if he can't play, game is finished at the end of the turn
+            if (move == "a")
+                quit = true;
+
+            // =================================
+            // black player is the second player
+            // =================================
+            // he plays
+            move = blackPlayer.playInTray(this.tray);
+            // if it's an online game, and the player is the the IA
+            if (onLineMode && whitePlayer instanceof IA)
+                // send the move to server
+                clientTCP.write(move);
+            // then display in console
+            if (displayGame)
+                displayInConsole(this.tray);
+            // TODO PROV ( TO DELEDE )
+            System.out.println("Move Black " + move + "\n");
+
+
+            // if he can't play, game is finished at the end of the turn
+            if (move == "a")
+                quit = true;
+
+            System.out.println("Player 1 score : " + scoreFromTrayForColor(whitePlayer.getColor(), tray));
+            System.out.println("Player 2 score : " + scoreFromTrayForColor(blackPlayer.getColor(), tray) + "\n");
+        }
+    }
+
+    private void beginOnlineGame(String str)
+    {
+        onLineMode = true;
+
+        switch (str) {
+            case "P": // IA is the first player
+                whitePlayer = new IA(1, clientTCP);
+                blackPlayer = new DistantPlayer(2, this.clientTCP, this);
+
+                clientTCP.write(
+                        whitePlayer.playInTray(this.tray));
+
+                if (blackPlayer.chooseColor() == "c") {
+                    // invert black and white player
+                    Player player = whitePlayer;
+                    whitePlayer = blackPlayer;
+                    blackPlayer = player;
+                }
+
+                whitePlayer.setColor(Color.White);
+                blackPlayer.setColor(Color.Black);
+
+                String move = blackPlayer.playInTray(this.tray);
+                if (blackPlayer instanceof IA){
+                    clientTCP.write(move);
+                }
+
+                break;
+
+            case "S": // IA is the second player
+                whitePlayer = new DistantPlayer(1, this.clientTCP, this);
+                blackPlayer = new IA(2, clientTCP);
+
+                whitePlayer.playInTray(this.tray);
+
+                if (blackPlayer.chooseColor() == "c") {
+                    clientTCP.write("f");
+                    // invert black and white player
+                    Player player = whitePlayer;
+                    whitePlayer = blackPlayer;
+                    blackPlayer = player;
+                } else clientTCP.write("c");
+
+                whitePlayer.setColor(Color.White);
+                blackPlayer.setColor(Color.Black);
+                break;
         }
     }
 
@@ -88,36 +191,26 @@ public class GameModel {
 
             switch (message){
                 case "P": // IA is the first player
-                    firstPlayer = new IA(1, clientTCP);
-                    secondPlayer = new DistantPlayer(2, this.clientTCP, this);
-                    firstPlayer.playInTray(tray);
-                    // TODO 2nd player
+                    beginOnlineGame("P");
                     break;
 
                 case "S": // IA is the second player
-                    secondPlayer = new IA(2, clientTCP);
-                    firstPlayer = new DistantPlayer(1, this.clientTCP, this);
-                    secondPlayer.chooseColor();
-                    if (secondPlayer.getColor() == Color.Black)
-                        clientTCP.write("f");
-                    else clientTCP.write("c");
-
-                    // TODO first player
+                    beginOnlineGame("S");
                     break;
 
                 case "f": // IA is the first player and play with black pawns
-                    if (firstPlayer != null && secondPlayer != null) {
-                        firstPlayer.setColor(Color.Black);
-                        secondPlayer.setColor(Color.White);
+                    if (whitePlayer != null && blackPlayer != null) {
+                        whitePlayer.setColor(Color.Black);
+                        blackPlayer.setColor(Color.White);
                     } else {
                         System.err.println("Players not inited !");
                     }
                     break;
 
                 case "c": // IA is the first player and play with white pawns
-                    if (firstPlayer != null && secondPlayer != null) {
-                        firstPlayer.setColor(Color.White);
-                        secondPlayer.setColor(Color.Black);
+                    if (whitePlayer != null && blackPlayer != null) {
+                        whitePlayer.setColor(Color.White);
+                        blackPlayer.setColor(Color.Black);
                     } else {
                         System.err.println("Players not inited !");
                     }

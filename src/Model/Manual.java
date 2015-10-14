@@ -17,7 +17,8 @@ public class Manual extends Player {
 
 
     @Override
-    public void playInTray(Tray tray) {
+    public String playInTray(Tray tray) {
+        String string = "a";
         if (tray != null){
 
             System.out.println("It's player " + this.number + " turn !");
@@ -31,27 +32,31 @@ public class Manual extends Player {
             } while (value != 1 && value != 2);
 
             if (value == 1){
-                this.placePawn(tray, 1);
-                this.placePawn(tray, 2);
+                string = this.placePawn(tray, 1);
+                string += "+";
+                string += this.placePawn(tray, 2);
             }
             else {
-                this.placeBridge(tray);
+                string = this.placeBridge(tray);
             }
 
             System.out.println("Next Player !");
 
         }
+        return string;
     }
 
     @Override
-    public void chooseColor() {
+    public String chooseColor() {
         this.color = Color.White;
+        return "c";
     }
 
-    private void placePawn(Tray tray, int i)
+    private String placePawn(Tray tray, int i)
     {
+        String string = "";
 
-        Scanner scLine = new Scanner(System.in);;
+        Scanner scLine = new Scanner(System.in);
         Scanner scColumn = new Scanner(System.in);
         int line, column;
         do {
@@ -65,11 +70,17 @@ public class Manual extends Player {
 
 
         } while (!tray.placePawn(line, column, this.color));
+
+        // to string
+        string += line;
+        string += column;
+        return string;
     }
 
-    private void placeBridge(Tray tray)
+    private String placeBridge(Tray tray)
     {
-        Scanner scLine = new Scanner(System.in);;
+        String string = "";
+        Scanner scLine = new Scanner(System.in);
         Scanner scColumn = new Scanner(System.in);
         int line1, column1, line2, column2;
         do {
@@ -91,8 +102,11 @@ public class Manual extends Player {
             System.out.println("Column :");
             column2 = scColumn.nextInt() ;
 
-
         } while (!tray.placeBridge(line1, column1, line2, column2));
+        string += line1 ; string += column1 ;
+        string += "-";
+        string += line2 ; string += column2;
+        return string;
     }
 
 }

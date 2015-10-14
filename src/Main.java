@@ -6,11 +6,11 @@ public class Main {
 
         String IpAddress = "192.168.2.46";
         int port = 1025;
-        int size = 10;
+        int size = 5;
 
 
 
-        GameModel game = new GameModel(IpAddress, port, 4);
+        GameModel game = new GameModel(IpAddress, port, size);
         game.run();
     }
 }

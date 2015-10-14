@@ -20,32 +20,41 @@ public class IA extends Player {
     }
 
     @Override
-    public void playInTray(Tray tray) {
-        System.out.println("IA " + this.number + " :");
+    public String playInTray(Tray tray) {
+        System.out.println("IA " + this.color.name() + " :");
         String string ="";
-        int line, column;
-        Random random = new Random();
-        for (int i = 0; i < 2; i++) {
-            do {
-                line = random.nextInt()%tray.getSize();
-                column = random.nextInt()%tray.getSize();
-            } while (!tray.placePawn(line, column, this.color));
-            System.out.println("Pawn " + i + " placed !");
-            string += line;
-            string += column;
-            if (i==0)
-                string += "+";
-        }
-        clientTCP.write(string);
+        if (canPlay(tray))
+        {
+            int line, column;
+            Random random = new Random();
+            for (int i = 0; i < 2; i++) {
+                do {
+                    line = random.nextInt()%tray.getSize();
+                    column = random.nextInt()%tray.getSize();
+                } while (!tray.placePawn(line, column, this.color));
+
+                // to string
+                string += line;
+                string += column;
+                if (i==0)
+                    string += "+";
+            }
+        } else string = "a";
+        return string;
     }
 
     @Override
-    public void chooseColor() {
+    public String chooseColor() {
+        String color = "";
         Random random = new Random();
         if (random.nextInt()%2 == 0){
             this.color = Color.White;
-        } else
+            color = "c";
+        } else {
             this.color = Color.Black;
+            color = "w";
+        }
         System.out.println("Color choosen by IA : " + this.color.name());
+        return color;
     }
 }

@@ -16,7 +16,7 @@ public abstract class Player {
             this.color = Color.White;
     }
 
-    public abstract void playInTray(Tray tray);
+    public abstract String playInTray(Tray tray);
 
     public Color getColor() {
         return color;
@@ -44,5 +44,5 @@ public abstract class Player {
     }
 
 
-    public abstract void chooseColor();
+    public abstract String chooseColor();
 }
