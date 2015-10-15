@@ -4,6 +4,7 @@ import Game.Color;
 import Game.SandBar;
 import Game.Tray;
 import Network.ClientTCP;
+import Network.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +15,16 @@ import static java.lang.Math.abs;
  * Created by raphael on 12/10/2015.
  */
 public class GameModel {
-    Tray tray;
-    ClientTCP clientTCP;
-    Player whitePlayer;
-    Player blackPlayer;
+    private Tray tray;
+    private ClientTCP clientTCP;
+    private Player firstPlayerIA;
+    private Player secondPlayerDistant;
 
-    // state
-    boolean onLineMode = false;
-    boolean displayGame = true;
+    private boolean onLineMode = true;
+    private boolean displayGame = true;
 
+    private boolean quit = false;
+    private Color turn;
 
     public GameModel(String serveurIPAddress, int port, int size){
         // init tray
@@ -32,155 +34,39 @@ public class GameModel {
         clientTCP = new ClientTCP("thibierge", port, serveurIPAddress);
     }
 
+    private void nextPlayer()
+    {
+        if (this.turn == Color.White)
+            this.turn = Color.Black;
+        else
+            turn = Color.White;
+    }
+
     public void run(){
         // connect to serveur
-        if ( onLineMode ) {
-            if (clientTCP.isConnected()) {
-                // wait to know player order
+        if ( this.onLineMode ) {
+            if ( this.clientTCP.isConnected()) {
 
-                // to begin online game
-                treatServer();
-                // then run game
-                runGame();
+                // run game
+                while(!this.quit) {
+                    // to treating server messages
+                    this.treatServer();
+
+                    if (this.turn == this.firstPlayerIA.getColor()) {
+                        this.clientTCP.write(firstPlayerIA.playInTray(tray));
+                        this.nextPlayer();
+                    }
+                    GameModel.displayInConsole(this.tray);
+                }
+
+                System.out.println("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
+                System.out.println("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
 
                 //end of the game, disconnect of serveur
                 clientTCP.disconnect();
             }
-        } else {
-            runForTest();
-        }
-
-    }
-
-    public void runForTest()
-    {
-        whitePlayer = new IA(1, clientTCP);
-        blackPlayer = new IA(2, clientTCP);
-
-        whitePlayer.setColor(Color.White);
-        blackPlayer.setColor(Color.Black);
-
-        whitePlayer.playInTray(this.tray);
-        if (blackPlayer.chooseColor() ==  "c"){
-            Player player = whitePlayer;
-            whitePlayer = blackPlayer;
-            blackPlayer = player;
-        }
-
-        whitePlayer.setColor(Color.White);
-        blackPlayer.setColor(Color.Black);
-
-        blackPlayer.playInTray(tray);
-        this.runGame();
-    }
-
-
-
-    private void runGame()
-    {
-        boolean quit = false;
-
-        displayInConsole(this.tray);
-
-        while (!quit){
-            // to get move string
-            String move;
-
-            // =======================================
-            // white player is always the first player
-            // =======================================
-
-            // he plays
-            move = whitePlayer.playInTray(this.tray);
-            // if it's an online game, and the player is the the IA
-            if (onLineMode && whitePlayer instanceof IA)
-                // send the move to server
-                clientTCP.write(move);
-            // then display in console
-
-            if (displayGame)
-                displayInConsole(this.tray);
-            // TODO PROV ( TO DELEDE )
-            System.out.println("Move White " + move + "\n");
-
-            // if he can't play, game is finished at the end of the turn
-            if (move == "a")
-                quit = true;
-
-            // =================================
-            // black player is the second player
-            // =================================
-            // he plays
-            move = blackPlayer.playInTray(this.tray);
-            // if it's an online game, and the player is the the IA
-            if (onLineMode && whitePlayer instanceof IA)
-                // send the move to server
-                clientTCP.write(move);
-            // then display in console
-            if (displayGame)
-                displayInConsole(this.tray);
-            // TODO PROV ( TO DELEDE )
-            System.out.println("Move Black " + move + "\n");
-
-
-            // if he can't play, game is finished at the end of the turn
-            if (move == "a")
-                quit = true;
-
-            System.out.println("Player 1 score : " + scoreFromTrayForColor(whitePlayer.getColor(), tray));
-            System.out.println("Player 2 score : " + scoreFromTrayForColor(blackPlayer.getColor(), tray) + "\n");
         }
     }
-
-    private void beginOnlineGame(String str)
-    {
-        onLineMode = true;
-
-        switch (str) {
-            case "P": // IA is the first player
-                whitePlayer = new IA(1, clientTCP);
-                blackPlayer = new DistantPlayer(2, this.clientTCP, this);
-
-                clientTCP.write(
-                        whitePlayer.playInTray(this.tray));
-
-                if (blackPlayer.chooseColor() == "c") {
-                    // invert black and white player
-                    Player player = whitePlayer;
-                    whitePlayer = blackPlayer;
-                    blackPlayer = player;
-                }
-
-                whitePlayer.setColor(Color.White);
-                blackPlayer.setColor(Color.Black);
-
-                String move = blackPlayer.playInTray(this.tray);
-                if (blackPlayer instanceof IA){
-                    clientTCP.write(move);
-                }
-
-                break;
-
-            case "S": // IA is the second player
-                whitePlayer = new DistantPlayer(1, this.clientTCP, this);
-                blackPlayer = new IA(2, clientTCP);
-
-                whitePlayer.playInTray(this.tray);
-
-                if (blackPlayer.chooseColor() == "c") {
-                    clientTCP.write("f");
-                    // invert black and white player
-                    Player player = whitePlayer;
-                    whitePlayer = blackPlayer;
-                    blackPlayer = player;
-                } else clientTCP.write("c");
-
-                whitePlayer.setColor(Color.White);
-                blackPlayer.setColor(Color.Black);
-                break;
-        }
-    }
-
 
     public void treatServer()
     {
@@ -190,48 +76,94 @@ public class GameModel {
             String message = clientTCP.read();
 
             switch (message){
-                case "P": // IA is the first player
-                    beginOnlineGame("P");
+
+                case Message.FIRST: // IA is the first player
+                    // init players
+                    firstPlayerIA = new IA(Color.White, clientTCP);
+                    secondPlayerDistant = new DistantPlayer(Color.Black, this.clientTCP);
+                    // IA place two pawn on the tray
+                    clientTCP.write(firstPlayerIA.playInTray(this.tray));
+                    turn = Color.Black;
                     break;
 
-                case "S": // IA is the second player
-                    beginOnlineGame("S");
-                    break;
+                case Message.SECOND: // IA is the second player
+                    // init player
+                    firstPlayerIA = new IA(Color.Black, clientTCP);
+                    secondPlayerDistant = new DistantPlayer(Color.White, this.clientTCP);
 
-                case "f": // IA is the first player and play with black pawns
-                    if (whitePlayer != null && blackPlayer != null) {
-                        whitePlayer.setColor(Color.Black);
-                        blackPlayer.setColor(Color.White);
-                    } else {
-                        System.err.println("Players not inited !");
+                    String message2 = clientTCP.read();
+
+                    // TODO Refactoring
+                    int line_1 = Integer.parseInt(String.valueOf(message2.charAt(0)));
+                    int column_1 = Integer.parseInt(String.valueOf(message2.charAt(1)));
+                    int line_2 = Integer.parseInt(String.valueOf(message2.charAt(3)));
+                    int column_2 = Integer.parseInt(String.valueOf(message2.charAt(4)));
+
+                    if (!this.tray.placePawn(line_1, column_1, secondPlayerDistant.getColor())
+                            || !this.tray.placePawn(line_2, column_2, secondPlayerDistant.getColor()))
+                        System.err.println("Can't place distant pawn !");
+
+                    // TODO End Refactoring
+
+
+                    String colorChoice = firstPlayerIA.chooseColor();
+                    clientTCP.write(colorChoice);
+
+                    if (firstPlayerIA.getColor() == Color.White){
+                        secondPlayerDistant.setColor(Color.Black);
                     }
+                    turn = Color.Black;
                     break;
 
-                case "c": // IA is the first player and play with white pawns
-                    if (whitePlayer != null && blackPlayer != null) {
-                        whitePlayer.setColor(Color.White);
-                        blackPlayer.setColor(Color.Black);
-                    } else {
-                        System.err.println("Players not inited !");
-                    }
+                case Message.BLACK: // Distant player chose black pawn
+                    secondPlayerDistant.setColor(Color.Black);
+                    firstPlayerIA.setColor(Color.White);
                     break;
 
-                case "a": // Other player pass his turn
-                    // TODO other player pass his turn
+                case Message.WHITE: // Distant player chose white pawn
+                    secondPlayerDistant.setColor(Color.White);
+                    firstPlayerIA.setColor(Color.Black);
                     break;
 
-                case "F" : // End of the game
-                    // TODO
+                case Message.STOP: // Other player pass his turn
+                    firstPlayerIA.playInTray(this.tray);
+                    this.quit = true;
+                    break;
+
+                case Message.END : // End of the game
+                    this.quit = true;
                     break;
 
                 default:
-                    // it's the other player move !
-                    // TODO
+                    if (message.length() == 5){
+                        // get lines and columns
+                        int line1 = Integer.parseInt(String.valueOf(message.charAt(0)));
+                        int column1 = Integer.parseInt(String.valueOf(message.charAt(1)));
+                        int line2 = Integer.parseInt(String.valueOf(message.charAt(3)));
+                        int column2 = Integer.parseInt(String.valueOf(message.charAt(4)));
 
+                        // if distant player wants to place a bridge
+                        if (message.charAt(2) == '-'){
+                            if (!this.tray.placeBridge(line1, column1, line2, column2))
+                                System.err.println("Can't place distant player bridge !");
+                        }
+                        else { // distant player wants to place 2 pawns
+                            if (!this.tray.placePawn(line1, column1, secondPlayerDistant.getColor())
+                                    || !this.tray.placePawn(line2, column2, secondPlayerDistant.getColor()))
+                                System.err.println("Can't place distant pawn !");
+                        }
+                        this.nextPlayer();
+                    } else {
+                        System.err.println("Strange message received !");
+                    }
+                    break;
             }
-
         }
     }
+
+
+
+
 
 
     public static int scoreFromTrayForColor(Color color, Tray tray) {
@@ -271,8 +203,7 @@ public class GameModel {
         return 0;
     }
 
-    public static void displayInConsole(Tray tray)
-    {
+    public static void displayInConsole(Tray tray) {
         for (int line = 0 ; line < tray.getSize() ; line++){
             for (int column = 0 ; column < tray.getSize(); column++){
                 System.out.print("+----");
@@ -312,5 +243,6 @@ public class GameModel {
         }
         System.out.print("+\n");
     }
+
 
 }

@@ -1,5 +1,6 @@
 package Model;
 
+import Game.Color;
 import Game.Tray;
 import Network.ClientTCP;
 
@@ -9,12 +10,10 @@ import Network.ClientTCP;
 public class DistantPlayer extends Player {
 
     ClientTCP clientTCP;
-    GameModel game;
 
-    public DistantPlayer(int number, ClientTCP clientTCP, GameModel gameModel) {
-        super(number);
+    public DistantPlayer(Color color, ClientTCP clientTCP) {
+        super(color);
         this.clientTCP = clientTCP;
-        this.game = gameModel;
     }
 
     @Override

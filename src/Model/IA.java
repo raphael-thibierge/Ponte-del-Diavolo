@@ -3,6 +3,7 @@ package Model;
 import Game.Color;
 import Game.Tray;
 import Network.ClientTCP;
+import Network.Message;
 
 import java.util.Random;
 
@@ -13,9 +14,9 @@ public class IA extends Player {
 
     ClientTCP clientTCP;
 
-    public IA(int number, ClientTCP clientTCP)
+    public IA(Color color, ClientTCP clientTCP)
     {
-        super(number);
+        super(color);
         this.clientTCP = clientTCP;
     }
 
@@ -39,22 +40,22 @@ public class IA extends Player {
                 if (i==0)
                     string += "+";
             }
-        } else string = "a";
+        } else string = Message.END;
         return string;
     }
 
     @Override
     public String chooseColor() {
-        String color = "";
+        String colorChoice = "";
         Random random = new Random();
         if (random.nextInt()%2 == 0){
             this.color = Color.White;
-            color = "c";
+            colorChoice = Message.WHITE;
         } else {
             this.color = Color.Black;
-            color = "w";
+            colorChoice = Message.BLACK;
         }
         System.out.println("Color choosen by IA : " + this.color.name());
-        return color;
+        return colorChoice;
     }
 }

@@ -1,6 +1,8 @@
 package Network;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 /**
@@ -33,11 +35,20 @@ public class ClientTCP
         if (isConnected()) {
             try {
 
+                System.out.println("TCP Client is reading");
+//                int receive = input.read();
+//                while (receive >= 0 && receive <= 255){
+//                    readed += (char)receive;
+//                    receive =input.read();
+
+
                 byte[] b = new byte[1000]; //définition d'un tableau pour lire les données arrivées
                 int bitsRecus = input.read(b); //il n'est pas sûr que l'on recoive 1000 bits
                 if(bitsRecus>0) {
                     readed = new String(b,0, bitsRecus);
                 }
+                System.out.println("TCP Client : " + readed);
+                System.out.println("TCP Client end reading");
 
             } catch (IOException ie) {
 
@@ -49,8 +60,16 @@ public class ClientTCP
     public void write(String string) {
         if (isConnected()) {
             try {
+                System.out.println("Try write : " + string);
                 output = socket.getOutputStream();
+                int toSend;
+//                for (char c : string.toCharArray()){
+//                    toSend = (int)c;
+//                    output.write(toSend);
+//                }
+
                 output.write(string.getBytes());
+                System.out.println("End write" );
             } catch (IOException e) {
                 e.printStackTrace();
             }

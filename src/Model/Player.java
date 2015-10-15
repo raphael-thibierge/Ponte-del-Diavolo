@@ -8,12 +8,11 @@ import Game.Tray;
  * Created by raphael on 13/10/15.
  */
 public abstract class Player {
-    int number;
-    Color color;
 
-    public Player(int number){
-        if (number == 1)
-            this.color = Color.White;
+    protected Color color;
+
+    public Player(Color color){
+        this.color = color;
     }
 
     public abstract String playInTray(Tray tray);

@@ -10,9 +10,9 @@ import java.util.Scanner;
  */
 public class Manual extends Player {
 
-    public Manual(int number)
+    public Manual(Color color)
     {
-        super(number);
+        super(color);
     }
 
 
@@ -21,26 +21,33 @@ public class Manual extends Player {
         String string = "a";
         if (tray != null){
 
-            System.out.println("It's player " + this.number + " turn !");
-
+            System.out.println("It's player " + this.color + " turn !");
 
             Scanner scChoice = new Scanner(System.in);
-            int value;
+
+            boolean valid;
+
+
             do {
-                System.out.println("Enter \"1\" to place 2 pawn or \"2\" to place a bridge :");
-                value = scChoice.nextInt();
-            } while (value != 1 && value != 2);
+                System.out.println("Enter your move :");
+                string = scChoice.nextLine();
 
-            if (value == 1){
-                string = this.placePawn(tray, 1);
-                string += "+";
-                string += this.placePawn(tray, 2);
-            }
-            else {
-                string = this.placeBridge(tray);
-            }
 
-            System.out.println("Next Player !");
+                if (string.equals("a")) {
+                    valid = true;
+                } else {
+                    int line1 = Integer.parseInt(String.valueOf(string.charAt(0)));
+                    int column1 = Integer.parseInt(String.valueOf(string.charAt(1)));
+                    int line2 = Integer.parseInt(String.valueOf(string.charAt(3)));
+                    int column2 = Integer.parseInt(String.valueOf(string.charAt(4)));
+                    if (string.charAt(2) == '-') {
+                         valid = tray.placeBridge(line1, column1, line2, column2);
+                    }
+                    else {
+                        valid = tray.placePawn(line1, column1, this.color) && tray.placePawn(line2, column2, this.color);
+                    }
+                }
+            } while (!valid);
 
         }
         return string;
@@ -48,8 +55,19 @@ public class Manual extends Player {
 
     @Override
     public String chooseColor() {
-        this.color = Color.White;
-        return "c";
+        Scanner sc = new Scanner(System.in);
+        String s ;
+
+        do {
+            System.out.println("Choose your color : ");
+            s = sc.nextLine();
+        } while (!s.equals( "f" ) && !s.equals( "c" ));
+
+        if (s.equals("f"))
+            this.color = Color.Black;
+        else this.color = Color.White;
+
+        return s;
     }
 
     private String placePawn(Tray tray, int i)
