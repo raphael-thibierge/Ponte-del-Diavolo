@@ -24,6 +24,7 @@ public class GameModel {
     private boolean onLineMode = true;
 
     private boolean quit = false;
+    private boolean end = false;
     private Color turn;
 
     public GameModel(String serveurIPAddress, int port, int size){
@@ -54,11 +55,11 @@ public class GameModel {
             if ( this.clientTCP.isConnected()) {
 
                 // run game
-                while(!this.quit) {
+                while(!this.end) {
                     // to treating server messages
-                    this.treatServer();
+                    this.treatServer(clientTCP.read());
 
-                    if (this.turn == this.firstPlayerIA.getColor()) {
+                    if (!quit && this.turn == this.firstPlayerIA.getColor()) {
                         this.clientTCP.write(firstPlayerIA.playInTray(tray));
                         this.nextPlayer();
                     }
@@ -74,98 +75,88 @@ public class GameModel {
         }
     }
 
-    public void treatServer()
-    {
-        // get server message
-        if (clientTCP.isConnected())
-        {
-            String message = clientTCP.read();
-
-            switch (message){
-
-                case Message.FIRST: // IA is the first player
-                    // init players
-                    firstPlayerIA = new IA(Color.White, clientTCP);
-                    secondPlayerDistant = new DistantPlayer(Color.Black, this.clientTCP);
-                    // IA place two pawn on the tray
-                    clientTCP.write(firstPlayerIA.playInTray(this.tray));
-                    turn = Color.Black;
-                    break;
-
-                case Message.SECOND: // IA is the second player
-                    // init player
-                    firstPlayerIA = new IA(Color.Black, clientTCP);
-                    secondPlayerDistant = new DistantPlayer(Color.White, this.clientTCP);
-
-                    String message2 = clientTCP.read();
-
-                    // TODO Refactoring
-                    int line_1 = Integer.parseInt(String.valueOf(message2.charAt(0)));
-                    int column_1 = Integer.parseInt(String.valueOf(message2.charAt(1)));
-                    int line_2 = Integer.parseInt(String.valueOf(message2.charAt(3)));
-                    int column_2 = Integer.parseInt(String.valueOf(message2.charAt(4)));
-
-                    if (!this.tray.placePawn(line_1, column_1, secondPlayerDistant.getColor())
-                            || !this.tray.placePawn(line_2, column_2, secondPlayerDistant.getColor()))
-                        System.err.println("Can't place distant pawn !");
-
-                    // TODO End Refactoring
+    public void treatServer(String message) {
 
 
-                    String colorChoice = firstPlayerIA.chooseColor();
-                    clientTCP.write(colorChoice);
+        switch (message) {
 
-                    if (firstPlayerIA.getColor() == Color.White){
-                        secondPlayerDistant.setColor(Color.Black);
-                    }
-                    turn = Color.Black;
-                    break;
+            case "" :
+                break;
 
-                case Message.BLACK: // Distant player chose black pawn
+            case " ":
+                break;
+
+            case Message.FIRST: // IA is the first player
+                // init players
+                firstPlayerIA = new IA(Color.White, clientTCP);
+                secondPlayerDistant = new DistantPlayer(Color.Black, this.clientTCP);
+                // IA place two pawn on the tray
+                clientTCP.write(firstPlayerIA.playInTray(this.tray));
+                turn = Color.Black;
+                break;
+
+            case Message.SECOND: // IA is the second player
+                // init player
+                firstPlayerIA = new IA(Color.Black, clientTCP);
+                secondPlayerDistant = new DistantPlayer(Color.White, this.clientTCP);
+
+
+                this.treatServer(clientTCP.read());
+
+                String colorChoice = firstPlayerIA.chooseColor();
+                clientTCP.write(colorChoice);
+
+                if (firstPlayerIA.getColor() == Color.White) {
                     secondPlayerDistant.setColor(Color.Black);
-                    firstPlayerIA.setColor(Color.White);
-                    break;
+                }
+                turn = Color.Black;
+                break;
 
-                case Message.WHITE: // Distant player chose white pawn
-                    secondPlayerDistant.setColor(Color.White);
-                    firstPlayerIA.setColor(Color.Black);
-                    break;
+            case Message.BLACK: // Distant player chose black pawn
+                secondPlayerDistant.setColor(Color.Black);
+                firstPlayerIA.setColor(Color.White);
+                break;
 
-                case Message.STOP: // Other player pass his turn
-                    firstPlayerIA.playInTray(this.tray);
-                    this.quit = true;
-                    break;
+            case Message.WHITE: // Distant player chose white pawn
+                secondPlayerDistant.setColor(Color.White);
+                firstPlayerIA.setColor(Color.Black);
+                break;
 
-                case Message.END : // End of the game
-                    this.quit = true;
-                    break;
+            case Message.STOP: // Other player pass his turn
+                firstPlayerIA.playInTray(this.tray);
+                this.quit = true;
+                break;
 
-                default:
-                    if (message.length() == 5){
-                        // get lines and columns
-                        int line1 = Integer.parseInt(String.valueOf(message.charAt(0)));
-                        int column1 = Integer.parseInt(String.valueOf(message.charAt(1)));
-                        int line2 = Integer.parseInt(String.valueOf(message.charAt(3)));
-                        int column2 = Integer.parseInt(String.valueOf(message.charAt(4)));
+            case Message.END: // End of the game
+                this.end = true;
+                break;
 
-                        // if distant player wants to place a bridge
-                        if (message.charAt(2) == '-'){
-                            if (!this.tray.placeBridge(line1, column1, line2, column2))
-                                System.err.println("Can't place distant player bridge !");
-                        }
-                        else { // distant player wants to place 2 pawns
-                            if (!this.tray.placePawn(line1, column1, secondPlayerDistant.getColor())
-                                    || !this.tray.placePawn(line2, column2, secondPlayerDistant.getColor()))
-                                System.err.println("Can't place distant pawn !");
-                        }
-                        this.nextPlayer();
-                    } else {
-                        System.err.println("Strange message received !");
+            default:
+                if (message.length() == 5) {
+                    // get lines and columns
+                    int line1 = Integer.parseInt(String.valueOf(message.charAt(0)));
+                    int column1 = Integer.parseInt(String.valueOf(message.charAt(1)));
+                    int line2 = Integer.parseInt(String.valueOf(message.charAt(3)));
+                    int column2 = Integer.parseInt(String.valueOf(message.charAt(4)));
+
+                    // if distant player wants to place a bridge
+                    if (message.charAt(2) == '-') {
+                        if (!this.tray.placeBridge(line1, column1, line2, column2))
+                            System.err.println("Can't place distant player bridge !");
+                    } else { // distant player wants to place 2 pawns
+                        if (!this.tray.placePawn(line1, column1, secondPlayerDistant.getColor())
+                                || !this.tray.placePawn(line2, column2, secondPlayerDistant.getColor()))
+                            System.err.println("Can't place distant pawn !");
                     }
-                    break;
-            }
+                    this.nextPlayer();
+                } else {
+                    System.err.println("Strange message received ! : \"" + message + "\"");
+                }
+                break;
+
         }
     }
+
 
 
     public static int scoreFromTrayForColor(Color color, Tray tray) {
