@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  * Created by raphael on 10/10/2015.
@@ -22,7 +21,7 @@ public class ClientTCP
     boolean connected = false;
 
 
-    public ClientTCP(String address, int port) throws UnknownHostException
+    public ClientTCP(String address, int port) throws IOException
     {
         this.port = port;
 
@@ -31,8 +30,6 @@ public class ClientTCP
 
         // try connect
         this.connect();
-
-
 
     }
 
@@ -92,32 +89,27 @@ public class ClientTCP
     public boolean isConnected()
     {
         if (!this.connected) {
-            connect();
+
+            try {
+                connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
         return this.connected;
     }
 
-    public void connect()
+    public void connect() throws IOException
     {
         if (!this.connected) {
             // connect socket
-            try {
-                this.socket = new Socket(this.address, this.port);
-                this.connected = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                this.connected = false;
-            }
+            this.socket = new Socket(this.address, this.port);
+            this.connected = true;
+            // init input and output stream
 
-            if (this.connected) {
-                // init input and output stream
-                try {
-                    this.input = socket.getInputStream();
-                    this.output = socket.getOutputStream();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            this.input = socket.getInputStream();
+            this.output = socket.getOutputStream();
         }
     }
 

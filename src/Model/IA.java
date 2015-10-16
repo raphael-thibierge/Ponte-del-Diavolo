@@ -2,7 +2,6 @@ package Model;
 
 import Game.Color;
 import Game.Tray;
-import Network.ClientTCP;
 import Network.Message;
 
 import java.util.Random;
@@ -37,7 +36,7 @@ public class IA extends Player {
                 if (i==0)
                     string += "+";
             }
-        } else string = Message.END;
+        } else string = Message.STOP;
         return string;
     }
 
