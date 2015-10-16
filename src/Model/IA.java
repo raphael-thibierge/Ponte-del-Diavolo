@@ -12,12 +12,9 @@ import java.util.Random;
  */
 public class IA extends Player {
 
-    ClientTCP clientTCP;
-
-    public IA(Color color, ClientTCP clientTCP)
+    public IA(Color color)
     {
         super(color);
-        this.clientTCP = clientTCP;
     }
 
     @Override

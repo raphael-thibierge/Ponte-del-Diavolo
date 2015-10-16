@@ -1,5 +1,6 @@
 package Model;
 
+import ArthurIA.ArthurIA;
 import Game.Color;
 import Game.SandBar;
 import Game.Tray;
@@ -9,6 +10,7 @@ import Network.Message;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import static java.lang.Math.abs;
 
@@ -38,6 +40,7 @@ public class GameModel {
         } catch (UnknownHostException e) {
             e.printStackTrace();
             this.onLineMode = false;
+            clientTCP = null;
         }
     }
 
@@ -73,6 +76,25 @@ public class GameModel {
                 clientTCP.disconnect();
             }
         }
+        else {
+            // run game
+            while(!this.end) {
+                // to treating server messages
+                System.out.println("message :");
+                Scanner sc = new Scanner(System.in);
+                this.treatServer(sc.nextLine());
+
+                if (!quit && this.turn == this.firstPlayerIA.getColor()) {
+                    this.clientTCP.write(firstPlayerIA.playInTray(tray));
+                    this.nextPlayer();
+                }
+                displayInConsole(this.tray);
+            }
+
+            System.out.println("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
+            System.out.println("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
+
+        }
     }
 
     public void treatServer(String message) {
@@ -88,7 +110,7 @@ public class GameModel {
 
             case Message.FIRST: // IA is the first player
                 // init players
-                firstPlayerIA = new IA(Color.White, clientTCP);
+                firstPlayerIA = new IA(Color.White);
                 secondPlayerDistant = new DistantPlayer(Color.Black, this.clientTCP);
                 // IA place two pawn on the tray
                 clientTCP.write(firstPlayerIA.playInTray(this.tray));
@@ -97,11 +119,16 @@ public class GameModel {
 
             case Message.SECOND: // IA is the second player
                 // init player
-                firstPlayerIA = new IA(Color.Black, clientTCP);
+                firstPlayerIA = new IA(Color.Black);
                 secondPlayerDistant = new DistantPlayer(Color.White, this.clientTCP);
 
-
-                this.treatServer(clientTCP.read());
+                if (this.onLineMode)
+                    this.treatServer(clientTCP.read());
+                else {
+                    System.out.println("message :");
+                    Scanner sc = new Scanner(System.in);
+                    this.treatServer(sc.nextLine());
+                }
 
                 String colorChoice = firstPlayerIA.chooseColor();
                 clientTCP.write(colorChoice);
