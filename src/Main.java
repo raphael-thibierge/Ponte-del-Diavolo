@@ -12,5 +12,6 @@ public class Main {
 
         GameModel game = new GameModel(IpAddress, port, size);
         game.run();
+        System.out.println("End of the game !");
     }
 }

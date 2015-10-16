@@ -6,9 +6,10 @@ import Game.Tray;
 import Network.ClientTCP;
 import Network.Message;
 
-import java.net.UnknownHostException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import static java.lang.Math.abs;
 
@@ -35,8 +36,8 @@ public class GameModel {
         try{
             clientTCP = new ClientTCP(serveurIPAddress, port);
             this.onLineMode = true;
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+           // e.printStackTrace();
             this.onLineMode = false;
         }
     }
@@ -51,13 +52,17 @@ public class GameModel {
 
     public void run(){
         // connect to serveur
-        if ( this.onLineMode ) {
+        if ( this.onLineMode && this.clientTCP.isConnected()) {
+
+            firstPlayerIA = new IA(Color.White);
+            secondPlayerDistant = new DistantPlayer(Color.Black, clientTCP);
+
             if ( this.clientTCP.isConnected()) {
 
                 // run game
                 while(!this.end) {
                     // to treating server messages
-                    this.treatServer(clientTCP.read());
+                    this.treatMessage(clientTCP.read());
 
                     if (!quit && this.turn == this.firstPlayerIA.getColor()) {
                         this.clientTCP.write(firstPlayerIA.playInTray(tray));
@@ -73,10 +78,29 @@ public class GameModel {
                 clientTCP.disconnect();
             }
         }
+        else
+        {
+            firstPlayerIA = new IA(Color.White);
+            secondPlayerDistant = new Manual(Color.Black);
+            // run game
+            while(!this.end) {
+                // to treating server messages
+                this.treatMessage(readConsole());
+
+                if (!quit && this.turn == this.firstPlayerIA.getColor()) {
+                    System.out.println("Played by IA : " + firstPlayerIA.playInTray(tray));
+                    this.nextPlayer();
+                }
+                displayInConsole(this.tray);
+            }
+
+            System.out.println("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
+            System.out.println("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
+
+        }
     }
 
-    public void treatServer(String message) {
-
+    public void treatMessage(String message) {
 
         switch (message) {
 
@@ -88,20 +112,29 @@ public class GameModel {
 
             case Message.FIRST: // IA is the first player
                 // init players
-                firstPlayerIA = new IA(Color.White, clientTCP);
-                secondPlayerDistant = new DistantPlayer(Color.Black, this.clientTCP);
+                firstPlayerIA.setColor(Color.White);
+                secondPlayerDistant.setColor(Color.Black);
                 // IA place two pawn on the tray
-                clientTCP.write(firstPlayerIA.playInTray(this.tray));
+                String msg = firstPlayerIA.playInTray(this.tray);
+                if (this.onLineMode)
+                    this.clientTCP.write(msg);
+                else
+                    printInConsole(msg);
+
+
                 turn = Color.Black;
                 break;
 
             case Message.SECOND: // IA is the second player
                 // init player
-                firstPlayerIA = new IA(Color.Black, clientTCP);
-                secondPlayerDistant = new DistantPlayer(Color.White, this.clientTCP);
+                firstPlayerIA.setColor(Color.Black);
+                secondPlayerDistant.setColor(Color.White);
 
+                if (this.onLineMode)
+                    this.treatMessage(clientTCP.read());
+                else
+                    this.treatMessage(readConsole());
 
-                this.treatServer(clientTCP.read());
 
                 String colorChoice = firstPlayerIA.chooseColor();
                 clientTCP.write(colorChoice);
@@ -151,6 +184,8 @@ public class GameModel {
                     this.nextPlayer();
                 } else {
                     System.err.println("Strange message received ! : \"" + message + "\"");
+                    if (!onLineMode)
+                        treatMessage(readConsole());
                 }
                 break;
 
@@ -235,6 +270,18 @@ public class GameModel {
             System.out.print("+----");
         }
         System.out.print("+\n");
+    }
+
+
+    private String readConsole()
+    {
+        System.out.println("Read console :");
+        Scanner sc = new Scanner(System.in);
+        return sc.nextLine();
+    }
+
+    private void printInConsole(String message){
+        System.out.println(message);
     }
 
 
