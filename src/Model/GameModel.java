@@ -137,7 +137,10 @@ public class GameModel {
 
 
                 String colorChoice = firstPlayerIA.chooseColor();
-                clientTCP.write(colorChoice);
+                if (onLineMode)
+                    clientTCP.write(colorChoice);
+                else
+                    printInConsole(colorChoice);
 
                 if (firstPlayerIA.getColor() == Color.White) {
                     secondPlayerDistant.setColor(Color.Black);
