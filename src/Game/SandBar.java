@@ -2,7 +2,6 @@ package Game;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by raphael on 10/10/2015.
@@ -15,6 +14,8 @@ public class SandBar {
 
     private int MAX_SIZE = 4;
     private boolean linked;
+
+    private List<SandBar> sandBarsNeighbor= new ArrayList<>();
 
     public SandBar(Pawn pawn) throws NullPointerException
     {
@@ -33,7 +34,7 @@ public class SandBar {
     public boolean addPawn(Pawn pawn) {
         // different condition to add a Pawn
         if (pawn != null
-                && this.size < this.MAX_SIZE
+                && canReceiveAPawn()
                 && pawn.getColor() == this.color){
 
                 // Vérifier case d'à côté
@@ -49,6 +50,34 @@ public class SandBar {
         }
         return false;
     }
+
+    public boolean canReceiveAPawn(){
+        if (this.size < 3)
+            return true;
+        else if (this.size == 3 && !hasNeighbors())
+            return true;
+        return false;
+    }
+
+    public boolean hasNeighbors(){
+        return this.sandBarsNeighbor.size() > 0;
+    }
+
+    public boolean addNeighbor(SandBar sandBar){
+        if (sandBar != null && sandBar != this && !sandBar.isIsland() && !this.isIsland()){
+            this.sandBarsNeighbor.add(sandBar);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isNeighbor(SandBar sandBar)
+    {
+        return sandBar != null && sandBar != this && this.sandBarsNeighbor.contains(sandBar);
+    }
+
+
+
 
     public boolean isIsland() {
         return this.size == MAX_SIZE;

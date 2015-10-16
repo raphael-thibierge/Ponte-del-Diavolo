@@ -1,16 +1,12 @@
 package Tests;
 
 import Game.*;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import org.junit.Rule;
 import org.junit.Test;
-
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertFalse;
-
-
 import org.junit.rules.ExpectedException;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by raphael on 10/10/2015.
@@ -189,13 +185,13 @@ public class SandBarTests {
         assertTrue(tray.placePawn(0, 1, Color.Black)); // top right
         assertTrue(tray.placePawn(1, 0, Color.Black)); // down left
         assertTrue(tray.placePawn(1, 1, Color.Black)); // down right
-        TestCase.assertTrue("must be an island", tray.getSandBarInBox(0, 0).isIsland());
+        assertTrue("must be an island", tray.getSandBarInBox(0, 0).isIsland());
 
         assertTrue(tray.placePawn(0, 2, Color.White)); // top left
         assertTrue(tray.placePawn(1, 3, Color.White)); // down right
         assertTrue(tray.placePawn(1, 2, Color.White)); // down left
         assertTrue(tray.placePawn(0, 3, Color.White)); // top right
-        TestCase.assertTrue("must be an island", tray.getSandBarInBox(0, 2).isIsland());
+        assertTrue("must be an island", tray.getSandBarInBox(0, 2).isIsland());
 
     }
 
@@ -209,13 +205,143 @@ public class SandBarTests {
         assertTrue(tray.placePawn(0, 2, Color.Black)); // top right
         assertTrue(tray.placePawn(1, 1, Color.Black)); // down middle
         assertTrue(tray.placePawn(0, 1, Color.Black)); // to middle
-        TestCase.assertTrue("must be an island", tray.getSandBarInBox(0, 0).isIsland());
+        assertTrue("must be an island", tray.getSandBarInBox(0, 0).isIsland());
 
         assertTrue(tray.placePawn(1, 2, Color.White)); // down left
         assertTrue(tray.placePawn(1, 4, Color.White)); // down right
         assertTrue(tray.placePawn(1, 3, Color.White)); // down middle
         assertTrue(tray.placePawn(0, 3, Color.White)); // top middle
-        TestCase.assertTrue("must be an island", tray.getSandBarInBox(1, 2).isIsland());
+        assertTrue("must be an island", tray.getSandBarInBox(1, 2).isIsland());
     }
+
+
+
+    @Test
+    public void canReveivePawn_IsIsland() {
+        SandBar sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+
+        assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+        assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+        assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+        assertFalse("There is already 4 pawns in sandbar", sandBar.canReceiveAPawn());
+
+
+    }
+
+    @Test
+    public void canReveivePawn_IsNotIsland() {
+        SandBar sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        assertTrue("There is only one pawn sandbar",sandBar.canReceiveAPawn());
+
+        assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+        assertTrue("There is only two pawn sandbar",sandBar.canReceiveAPawn());
+
+        assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+        assertTrue("There is only three pawn sandbar",sandBar.canReceiveAPawn());
+
+        assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+        assertFalse("There is only one pawn sandbar", sandBar.canReceiveAPawn());
+    }
+
+    @Test
+    public void canReveivePawn_hasNeighbor() {
+        SandBar sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        SandBar sandBar1 = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        SandBar sandBar2 = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+
+        assertTrue("can receive a neighbor", sandBar.addNeighbor(sandBar1));
+        assertTrue("can receive a neighbor", sandBar.addNeighbor(sandBar2));
+
+        assertTrue("can receive a paw", sandBar.canReceiveAPawn());
+    }
+
+    @Test
+    public void canReveivePawn_hasNoNeighbor() {
+        SandBar sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+
+        assertTrue("can receive a paw", sandBar.canReceiveAPawn());
+    }
+
+    @Test
+    public void canReveivePawn_hasDiagonalNeighbor_IslandForbidden() {
+        SandBar sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        SandBar sandBar1 = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        SandBar sandBar2 = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+
+        assertTrue("can receive a neighbor", sandBar.addNeighbor(sandBar1));
+        assertTrue("can receive a neighbor", sandBar.addNeighbor(sandBar2));
+
+
+        assertTrue("can receive 2 more pawn", sandBar.canReceiveAPawn());
+        sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0)));
+
+        assertTrue("can receive 1 more pawn", sandBar.canReceiveAPawn());
+        sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0)));
+
+
+        assertFalse("can't receive a pawn, there is already 3 pawn in sandbar", sandBar.canReceiveAPawn());
+    }
+
+    @Test
+    public void addSandBar_Test(){
+        SandBar sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        SandBar sandBar1 = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        assertFalse("can't add null sandbar", sandBar.addNeighbor(null));
+
+        // add 3 pawn in first sandBar
+        assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+        assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+        assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
+
+        assertFalse("can't add Neighbor into an island", sandBar.addNeighbor(sandBar1));
+        assertFalse("can't add an island in sandbarsNeighbor", sandBar1.addNeighbor(sandBar));
+
+        assertFalse("a sandbar can't be the neighbor of him self", sandBar1.addNeighbor(sandBar1));
+
+
+    }
+
+    @Test
+    public void hasNeighbor_Test(){
+        SandBar sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        SandBar sandBar1 = new SandBar(new Pawn(Color.Black, new Box(0,0)));
+        assertFalse("sandbar has neigbor", sandBar.hasNeighbors());
+
+
+        assertTrue("can add Neighbor", sandBar.addNeighbor(sandBar1));
+        assertTrue("sandbar has neigbor", sandBar.hasNeighbors());
+    }
+
+    @Test
+    public void hasNeighbor_inTray_Test(){
+        Tray tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(0, 0, Color.Black));
+
+        SandBar sandBar = tray.getSandBarInBox(0,0);
+        assertFalse("sandbar has no neighbor", sandBar.hasNeighbors());
+
+        assertTrue(tray.placePawn(1, 1, Color.Black));
+        assertTrue("sandbar has neighbor", sandBar.hasNeighbors());
+    }
+
+    @Test
+    public void isNeighbor_Test()
+    {
+        Tray tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(0, 0, Color.Black));
+
+        assertFalse("can't add null sandbar", tray.getSandBarInBox(0, 0).isNeighbor(null));
+        assertFalse("a sandbar can't be the neighbor of him self", tray.getSandBarInBox(0, 0).isNeighbor(tray.getSandBarInBox(0, 0)));
+
+        assertTrue(tray.placePawn(1, 1, Color.Black));
+
+    }
+
+
+
 
 }

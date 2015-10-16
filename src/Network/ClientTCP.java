@@ -3,30 +3,37 @@ package Network;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * Created by raphael on 10/10/2015.
  */
 public class ClientTCP
 {
-    private String name;
-    private String address;
+    private InetAddress address;
     private int port;
 
-    private Socket socket;
-    private InputStream input;
-    private OutputStream output;
+    private Socket socket = null;
+    private InputStream input = null;
+    private OutputStream output = null;
 
-    boolean connected;
+    boolean connected = false;
 
 
-    public ClientTCP(String name, int port, String address)
+    public ClientTCP(String address, int port) throws UnknownHostException
     {
-        this.name = name;
         this.port = port;
-        this.address = address;
-        this.connected = false;
+
+        // get InetAdress, throw execption if can't connect !
+        this.address = InetAddress.getByName(address);
+
+        // try connect
+        this.connect();
+
+
+
     }
 
     public String read(){
@@ -41,17 +48,22 @@ public class ClientTCP
 //                    readed += (char)receive;
 //                    receive =input.read();
 
-
-                byte[] b = new byte[1000]; //définition d'un tableau pour lire les données arrivées
-                int bitsRecus = input.read(b); //il n'est pas sûr que l'on recoive 1000 bits
-                if(bitsRecus>0) {
-                    readed = new String(b,0, bitsRecus);
+//                byte[] b = new byte[10]; //définition d'un tableau pour lire les données arrivées
+//                int bitsRecus = input.read(b); //il n'est pas sûr que l'on recoive 1000 bits
+//                if(bitsRecus>0) {
+//                    readed = new String(b,0, bitsRecus);
+//                }
+                readed += (char) input.read();
+                while (input.available() > 0){
+                    //System.out.println("Restant : " + input.available());
+                    readed += (char) input.read();
                 }
+
                 System.out.println("TCP Client : " + readed);
                 System.out.println("TCP Client end reading");
 
             } catch (IOException ie) {
-
+                ie.printStackTrace();
             }
         }
         return readed;
@@ -63,12 +75,12 @@ public class ClientTCP
                 System.out.println("Try write : " + string);
                 output = socket.getOutputStream();
                 int toSend;
-//                for (char c : string.toCharArray()){
-//                    toSend = (int)c;
-//                    output.write(toSend);
-//                }
+                for (char c : string.toCharArray()){
+                    toSend = (int)c;
+                    output.write(toSend);
+                }
 
-                output.write(string.getBytes());
+                //output.write(string.getBytes());
                 System.out.println("End write" );
             } catch (IOException e) {
                 e.printStackTrace();
@@ -79,23 +91,34 @@ public class ClientTCP
 
     public boolean isConnected()
     {
-        if (!this.connected)
-        {
+        if (!this.connected) {
+            connect();
+        }
+        return this.connected;
+    }
+
+    public void connect()
+    {
+        if (!this.connected) {
+            // connect socket
             try {
-                this.socket = new Socket(this.address ,this.port);
-
-                // open input and output
-                input = socket.getInputStream();
-                output = socket.getOutputStream();
-
+                this.socket = new Socket(this.address, this.port);
                 this.connected = true;
-
             } catch (IOException e) {
                 e.printStackTrace();
                 this.connected = false;
             }
+
+            if (this.connected) {
+                // init input and output stream
+                try {
+                    this.input = socket.getInputStream();
+                    this.output = socket.getOutputStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        return this.connected;
     }
 
     public void disconnect()

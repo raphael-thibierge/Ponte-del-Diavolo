@@ -6,6 +6,7 @@ import Game.Tray;
 import Network.ClientTCP;
 import Network.Message;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,6 @@ public class GameModel {
     private Player secondPlayerDistant;
 
     private boolean onLineMode = true;
-    private boolean displayGame = true;
 
     private boolean quit = false;
     private Color turn;
@@ -31,7 +31,13 @@ public class GameModel {
         this.tray = new Tray();
         tray.init(abs(size));
         // init tcp client
-        clientTCP = new ClientTCP("thibierge", port, serveurIPAddress);
+        try{
+            clientTCP = new ClientTCP(serveurIPAddress, port);
+            this.onLineMode = true;
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            this.onLineMode = false;
+        }
     }
 
     private void nextPlayer()
@@ -56,7 +62,7 @@ public class GameModel {
                         this.clientTCP.write(firstPlayerIA.playInTray(tray));
                         this.nextPlayer();
                     }
-                    GameModel.displayInConsole(this.tray);
+                    displayInConsole(this.tray);
                 }
 
                 System.out.println("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
@@ -160,10 +166,6 @@ public class GameModel {
             }
         }
     }
-
-
-
-
 
 
     public static int scoreFromTrayForColor(Color color, Tray tray) {

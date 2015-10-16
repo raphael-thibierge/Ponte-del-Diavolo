@@ -1,8 +1,5 @@
 package Game;
 
-import javafx.util.Pair;
-import org.omg.PortableInterceptor.DISCARDING;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,6 +75,7 @@ public class Box {
                     // if there is a same color sandBand
                     if (pawn1 != null && pawn1.getColor()  == color) {
                         // if it's an island
+
                         if (pawn1.belongsToIsland()) {
                             // pawn not allowed
                             return false;
@@ -89,9 +87,15 @@ public class Box {
                             sandBarSize += pawn1.getSandBar().getSize();
                             lastSandbar = pawn1.getSandBar();
                             sandbarFounds.add(pawn1.getSandBar());
+
+
+                            if (!pawn1.getSandBar().canReceiveAPawn())
+                                return false;
+
                             if (sandBarSize > 4)
                                 return false;
-                        } else if (this.inDiagonal( nearbyBox) && pawn1.getSandBar() != lastSandbar){
+
+                        } else if (this.inDiagonal(nearbyBox) && pawn1.getSandBar() != lastSandbar){
                             diagSandBarFounds.add(pawn1.getSandBar());
                         }
                     }
@@ -109,22 +113,17 @@ public class Box {
 
 
     public boolean isNearbyOf(Box box){
-        if (box != null && this.nearbyBoxes.containsValue(box)){
-            return true;
-        }
-        return false;
+        return box != null && this.nearbyBoxes.containsValue(box);
     }
 
     public boolean inDiagonal(Box box)
     {
-        if (box != null &&
-                ( box == this.nearbyBoxes.get(Direction.NORTH_EST)
+        return box != null &&
+                (box == this.nearbyBoxes.get(Direction.NORTH_EST)
                         || box == this.nearbyBoxes.get(Direction.NORTH_WEST)
                         || box == this.nearbyBoxes.get(Direction.SOUTH_EST)
                         || box == this.nearbyBoxes.get(Direction.SOUTH_WEST)
-                ))
-            return true;
-        return false;
+                );
     }
 
 
@@ -177,4 +176,5 @@ public class Box {
         map.remove(Direction.SOUTH_WEST);
         return map;
     }
+
 }
