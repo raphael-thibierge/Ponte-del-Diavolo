@@ -83,7 +83,7 @@ public class GameModel {
 
         else
         {
-            firstPlayerIA = new IA(Color.White);
+            firstPlayerIA = new ArthurIA(Color.White);
             secondPlayerDistant = new Manual(Color.Black);
             // run game
             while(!this.end) {
