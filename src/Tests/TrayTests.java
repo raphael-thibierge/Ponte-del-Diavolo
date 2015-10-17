@@ -1,7 +1,7 @@
 package Tests;
 
+import Game.Cell;
 import Game.Tray;
-import Game.Box;
 import Game.Color;
 import Game.Direction;
 import org.junit.Test;
@@ -27,8 +27,8 @@ public class TrayTests {
         for (int line = 0 ; line < size ;  line++){
             for (int column = 0 ; column < size ; column++)
             {
-                assertFalse(tray.getBox(line, column) == null);
-                assertTrue(tray.getBox(line, column).getNearbyBoxes().size() == 8);
+                assertFalse(tray.getCell(line, column) == null);
+                assertTrue(tray.getCell(line, column).getNearbyBoxes().size() == 8);
             }
         }
     }
@@ -44,49 +44,49 @@ public class TrayTests {
         tray.init(5);
 
         // top left corner
-        Box box = tray.getBox(0,0);
-        assertTrue(box.getNearbyBox(Direction.EST).equals(tray.getBox(0, 1)));
-        assertTrue(box.getNearbyBox(Direction.SOUTH).equals(tray.getBox(1, 0)));
-        assertTrue(box.getNearbyBox(Direction.SOUTH_EST).equals(tray.getBox(1, 1)));
+        Cell cell = tray.getCell(0, 0);
+        assertTrue(cell.getNearbyBox(Direction.EST).equals(tray.getCell(0, 1)));
+        assertTrue(cell.getNearbyBox(Direction.SOUTH).equals(tray.getCell(1, 0)));
+        assertTrue(cell.getNearbyBox(Direction.SOUTH_EST).equals(tray.getCell(1, 1)));
 
-        assertTrue("sould be null", box.getNearbyBox(Direction.NORTH) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.WEST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.NORTH_WEST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.NORTH_EST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.SOUTH_WEST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.NORTH) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.WEST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.NORTH_WEST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.NORTH_EST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.SOUTH_WEST) == null);
 
         // top right corner
-        box = tray.getBox(0,size-1);
-        assertTrue(box.getNearbyBox(Direction.WEST).equals(tray.getBox(0, size-2)));
-        assertTrue(box.getNearbyBox(Direction.SOUTH).equals(tray.getBox(1, size-1)));
-        assertTrue(box.getNearbyBox(Direction.SOUTH_WEST).equals(tray.getBox(1, size-2)));
-        assertTrue("sould be null", box.getNearbyBox(Direction.NORTH) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.NORTH_EST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.NORTH_WEST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.SOUTH_EST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.EST) == null);
+        cell = tray.getCell(0, size - 1);
+        assertTrue(cell.getNearbyBox(Direction.WEST).equals(tray.getCell(0, size - 2)));
+        assertTrue(cell.getNearbyBox(Direction.SOUTH).equals(tray.getCell(1, size - 1)));
+        assertTrue(cell.getNearbyBox(Direction.SOUTH_WEST).equals(tray.getCell(1, size - 2)));
+        assertTrue("sould be null", cell.getNearbyBox(Direction.NORTH) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.NORTH_EST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.NORTH_WEST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.SOUTH_EST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.EST) == null);
 
         // down left corner
-        box = tray.getBox(size-1, 0);
-        assertTrue(box.getNearbyBox(Direction.EST).equals(tray.getBox(size-1, 1)));
-        assertTrue(box.getNearbyBox(Direction.NORTH).equals(tray.getBox(size-2, 0)));
-        assertTrue(box.getNearbyBox(Direction.NORTH_EST).equals(tray.getBox(size-2, 1)));
-        assertTrue("sould be null", box.getNearbyBox(Direction.SOUTH) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.SOUTH_WEST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.SOUTH_EST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.NORTH_WEST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.WEST) == null);
+        cell = tray.getCell(size - 1, 0);
+        assertTrue(cell.getNearbyBox(Direction.EST).equals(tray.getCell(size - 1, 1)));
+        assertTrue(cell.getNearbyBox(Direction.NORTH).equals(tray.getCell(size - 2, 0)));
+        assertTrue(cell.getNearbyBox(Direction.NORTH_EST).equals(tray.getCell(size - 2, 1)));
+        assertTrue("sould be null", cell.getNearbyBox(Direction.SOUTH) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.SOUTH_WEST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.SOUTH_EST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.NORTH_WEST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.WEST) == null);
 
         // top right corner
-        box = tray.getBox(size-1, size-1);
-        assertTrue(box.getNearbyBox(Direction.WEST).equals(tray.getBox(size-1, size-2)));
-        assertTrue(box.getNearbyBox(Direction.NORTH).equals(tray.getBox(size-2, size-1)));
-        assertTrue(box.getNearbyBox(Direction.NORTH_WEST).equals(tray.getBox(size-2, size-2)));
-        assertTrue("sould be null", box.getNearbyBox(Direction.SOUTH) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.SOUTH_WEST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.SOUTH_EST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.NORTH_EST) == null);
-        assertTrue("sould be null", box.getNearbyBox(Direction.EST) == null);
+        cell = tray.getCell(size - 1, size - 1);
+        assertTrue(cell.getNearbyBox(Direction.WEST).equals(tray.getCell(size - 1, size - 2)));
+        assertTrue(cell.getNearbyBox(Direction.NORTH).equals(tray.getCell(size - 2, size - 1)));
+        assertTrue(cell.getNearbyBox(Direction.NORTH_WEST).equals(tray.getCell(size - 2, size - 2)));
+        assertTrue("sould be null", cell.getNearbyBox(Direction.SOUTH) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.SOUTH_WEST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.SOUTH_EST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.NORTH_EST) == null);
+        assertTrue("sould be null", cell.getNearbyBox(Direction.EST) == null);
 
     }
 
@@ -95,15 +95,15 @@ public class TrayTests {
         Tray tray = new Tray();
         tray.init(3);
 
-        Box middleBox = tray.getBox(1,1);
-        assertTrue(middleBox.getNearbyBox(Direction.NORTH_WEST).equals(tray.getBox(0,0)));
-        assertTrue(middleBox.getNearbyBox(Direction.NORTH).equals(tray.getBox(0,1)));
-        assertTrue(middleBox.getNearbyBox(Direction.NORTH_EST).equals(tray.getBox(0,2)));
-        assertTrue(middleBox.getNearbyBox(Direction.WEST).equals(tray.getBox(1,0)));
-        assertTrue(middleBox.getNearbyBox(Direction.EST).equals(tray.getBox(1,2)));
-        assertTrue(middleBox.getNearbyBox(Direction.SOUTH_WEST).equals(tray.getBox(2,0)));
-        assertTrue(middleBox.getNearbyBox(Direction.SOUTH).equals(tray.getBox(2,1)));
-        assertTrue(middleBox.getNearbyBox(Direction.SOUTH_EST).equals(tray.getBox(2,2)));
+        Cell middleCell = tray.getCell(1, 1);
+        assertTrue(middleCell.getNearbyBox(Direction.NORTH_WEST).equals(tray.getCell(0, 0)));
+        assertTrue(middleCell.getNearbyBox(Direction.NORTH).equals(tray.getCell(0, 1)));
+        assertTrue(middleCell.getNearbyBox(Direction.NORTH_EST).equals(tray.getCell(0, 2)));
+        assertTrue(middleCell.getNearbyBox(Direction.WEST).equals(tray.getCell(1, 0)));
+        assertTrue(middleCell.getNearbyBox(Direction.EST).equals(tray.getCell(1, 2)));
+        assertTrue(middleCell.getNearbyBox(Direction.SOUTH_WEST).equals(tray.getCell(2, 0)));
+        assertTrue(middleCell.getNearbyBox(Direction.SOUTH).equals(tray.getCell(2, 1)));
+        assertTrue(middleCell.getNearbyBox(Direction.SOUTH_EST).equals(tray.getCell(2, 2)));
 
 
     }
@@ -114,22 +114,22 @@ public class TrayTests {
         tray = new Tray();
 
         // boxes not initialised
-        assertTrue(tray.getBox(0, 0) == null);
+        assertTrue(tray.getCell(0, 0) == null);
         tray.init(size);
 
 
         // box exist
-        assertTrue(tray.getBox(0, 0) != null);
-        assertTrue(tray.getBox(size-1, size-1) != null);
+        assertTrue(tray.getCell(0, 0) != null);
+        assertTrue(tray.getCell(size - 1, size - 1) != null);
 
         // box out of table
-        assertTrue(tray.getBox(size+1, size) == null);
-        assertTrue(tray.getBox(size, size+1) == null);
-        assertTrue(tray.getBox(size+1, size+1) == null);
+        assertTrue(tray.getCell(size + 1, size) == null);
+        assertTrue(tray.getCell(size, size + 1) == null);
+        assertTrue(tray.getCell(size + 1, size + 1) == null);
 
         // negative indice
-        assertTrue(tray.getBox(-1, 0) == null);
-        assertTrue(tray.getBox(0, -1) == null);
+        assertTrue(tray.getCell(-1, 0) == null);
+        assertTrue(tray.getCell(0, -1) == null);
 
     }
 
@@ -143,7 +143,7 @@ public class TrayTests {
 
         // main pawn
         assertTrue(tray.placePawn(2, 2, Color.Black));
-        Box box1 = tray.getBox(2,2);
+        Cell cell1 = tray.getCell(2, 2);
         //other one
         assertTrue(tray.placePawn(0,0, Color.Black));
         assertTrue(tray.placePawn(0,2, Color.Black));
@@ -156,15 +156,15 @@ public class TrayTests {
         assertTrue(tray.placePawn(4,3, Color.Black));
 
         // no pawn
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(0, 0)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(0, 2)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(0, 4)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(2, 0)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(2, 4)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(3, 0)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(3, 4)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(4, 1)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(4, 3)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(0, 0)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(0, 2)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(0, 4)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(2, 0)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(2, 4)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(3, 0)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(3, 4)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(4, 1)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(4, 3)));
 
         assertTrue(tray.placePawn(1, 2, Color.White));
         assertTrue(tray.placePawn(1, 3, Color.White));
@@ -172,15 +172,15 @@ public class TrayTests {
         assertTrue(tray.placePawn(3, 1, Color.White));
 
         // no pawn
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(0,0)));
-        assertTrue(" pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(0, 2)));
-        assertTrue("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(0, 4)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(2, 0)));
-        assertTrue("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(2, 4)));
-        assertTrue("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(3, 0)));
-        assertTrue("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(3, 4)));
-        assertTrue("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(4, 1)));
-        assertFalse("no pawn between", tray.pawnBetween2Boxes(box1, tray.getBox(4, 3)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(0, 0)));
+        assertTrue(" pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(0, 2)));
+        assertTrue("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(0, 4)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(2, 0)));
+        assertTrue("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(2, 4)));
+        assertTrue("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(3, 0)));
+        assertTrue("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(3, 4)));
+        assertTrue("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(4, 1)));
+        assertFalse("no pawn between", tray.pawnBetween2Boxes(cell1, tray.getCell(4, 3)));
     }
 
     @Test
@@ -333,9 +333,9 @@ public class TrayTests {
 
         assertTrue(tray.placePawn(0, 0, Color.Black));
         assertTrue(tray.placePawn(0,3, Color.Black));
-        Box box1 = tray.getBox(0,0);
-        Box box2 = tray.getBox(0,3);
-        assertFalse(tray.pawnBetween2Boxes(box1, box2));
+        Cell cell1 = tray.getCell(0, 0);
+        Cell cell2 = tray.getCell(0, 3);
+        assertFalse(tray.pawnBetween2Boxes(cell1, cell2));
 
     }
 

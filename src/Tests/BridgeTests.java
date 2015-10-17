@@ -24,10 +24,10 @@ public class BridgeTests {
         Bridge bridge;
 
         exception.expect(NullPointerException.class);
-        bridge = new Bridge(null, new Pawn(Color.Black, new Box(0,0)));
+        bridge = new Bridge(null, new Pawn(Color.Black, new Cell(0,0)));
 
         exception.expect(NullPointerException.class);
-        bridge = new Bridge(null, new Pawn(Color.Black, new Box(0, 2)));
+        bridge = new Bridge(null, new Pawn(Color.Black, new Cell(0, 2)));
 
         exception.expect(NullPointerException.class);
         bridge = new Bridge(null, null);

@@ -1,6 +1,5 @@
 package Model;
 
-import Game.Box;
 import Game.Color;
 import Game.Tray;
 
@@ -28,19 +27,14 @@ public abstract class Player {
     protected boolean canPlay(Tray tray){
         int cptPawnPossibilities = 0;
 
-        for (int line = 0 ; line < tray.getSize() ; line++){
-            for (int column = 0 ; column < tray.getSize() ; column++){
-                Box box = tray.getBox(line, column);
-                if (box != null && box.pawnAllowedHere(this.color)){
-                    cptPawnPossibilities++;
-                    if (cptPawnPossibilities == 2)
-                        return true;
-                }
-            }
+        if (tray.nbPawnAllowed(this.color) >= 2 )
+        {
+            return true;
         }
 
         return false;
     }
+
 
 
     public abstract String chooseColor();

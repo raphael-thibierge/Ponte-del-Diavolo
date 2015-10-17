@@ -1,7 +1,6 @@
 package Tests;
 
 import Game.*;
-import Model.GameModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -10,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by raphael on 10/10/2015.
  */
-public class BoxTests {
+public class CellTests {
     Tray tray;
     int traySize = 4;
 
@@ -145,17 +144,17 @@ public class BoxTests {
 
         tray = new Tray();
         tray.init(traySize);
-        Box box = tray.getBox(0, 0);
+        Cell cell = tray.getCell(0, 0);
 
-        // No pawn in box
-        assertFalse("no pawn in the box", box.isTaken());
+        // No pawn in cell
+        assertFalse("no pawn in the cell", cell.isTaken());
 
-        // place a pawn in box
-        assertTrue(box.placePawn(Color.Black));
-        // Test box is Taken and not allowed
-        assertTrue("there is pawn on the box", box.isTaken());
-        assertFalse("There is already a pawn in the box",
-                tray.getBox(0, 0).pawnAllowedHere(Color.Black));
+        // place a pawn in cell
+        assertTrue(cell.placePawn(Color.Black));
+        // Test cell is Taken and not allowed
+        assertTrue("there is pawn on the cell", cell.isTaken());
+        assertFalse("There is already a pawn in the cell",
+                tray.getCell(0, 0).pawnAllowedHere(Color.Black));
     }
 
     @Test public void pawnAllowHere_LockedByPawnTest()
@@ -163,18 +162,18 @@ public class BoxTests {
         tray = new Tray();
         tray.init(traySize);
 
-        Box box = tray.getBox(0,0);
+        Cell cell = tray.getCell(0, 0);
 
-        // No pawn in box
-        assertFalse("no pawn in the box, and no bridge", box.isLocked());
+        // No pawn in cell
+        assertFalse("no pawn in the cell, and no bridge", cell.isLocked());
 
-        // place a pawn in box
-        assertTrue(box.placePawn(Color.Black));
+        // place a pawn in cell
+        assertTrue(cell.placePawn(Color.Black));
 
-        // test box locked and pawn not allowed
-        assertTrue("there is pawn on the box, box must be locked", box.isLocked());
-        assertFalse("Pawn not allowed, there is already one in the box",
-                tray.getBox(0, 0).pawnAllowedHere(Color.Black));
+        // test cell locked and pawn not allowed
+        assertTrue("there is pawn on the cell, cell must be locked", cell.isLocked());
+        assertFalse("Pawn not allowed, there is already one in the cell",
+                tray.getCell(0, 0).pawnAllowedHere(Color.Black));
     }
 
     @Test public void pawnAllowHere_LockedByBridgeTest()
@@ -182,23 +181,23 @@ public class BoxTests {
         tray = new Tray();
         tray.init(traySize);
 
-        Box box = tray.getBox(0,1);
+        Cell cell = tray.getCell(0, 1);
 
-        // place a pawn in box
+        // place a pawn in cell
         assertTrue(tray.placePawn(0,0,Color.Black));
         assertTrue(tray.placePawn(0, 2, Color.Black));
 
-        // No pawn in box and no bridge
-        assertFalse("no pawn in the box, and no bridge", box.isLocked());
-        assertFalse("no pawn in the box, and no bridge", box.isTaken());
+        // No pawn in cell and no bridge
+        assertFalse("no pawn in the cell, and no bridge", cell.isLocked());
+        assertFalse("no pawn in the cell, and no bridge", cell.isTaken());
 
         // place bridge
         assertTrue("can place bridge", tray.placeBridge(0, 0, 0, 2));
 
-        // test box locked and pawn not allowed
-        assertTrue("there is a bridge over, box must be locked", box.isLocked());
+        // test cell locked and pawn not allowed
+        assertTrue("there is a bridge over, cell must be locked", cell.isLocked());
         assertFalse("Pawn not allowed, there is a bridge over it",
-                tray.getBox(0, 0).pawnAllowedHere(Color.Black));
+                tray.getCell(0, 0).pawnAllowedHere(Color.Black));
     }
 
     @Test
@@ -217,14 +216,14 @@ public class BoxTests {
         for (int i = 0 ; i < 4; i++)
         {
             // get pawn
-            Box box = tray.getBox(1, 2+i);
-            Pawn pawn = box.getPawn();
+            Cell cell = tray.getCell(1, 2 + i);
+            Pawn pawn = cell.getPawn();
             assertTrue("Must have a pawn here", pawn != null);
 
             // try place pawn next all nearby boxes of all pawn of this Island
-            for (Box box1 : box.getNearbyBoxes().values()){
-                if (box1 != null){
-                    assertFalse("can't place pawn next island", box1.placePawn(Color.Black));
+            for (Cell cell1 : cell.getNearbyBoxes().values()){
+                if (cell1 != null){
+                    assertFalse("can't place pawn next island", cell1.placePawn(Color.Black));
                 }
             }
         }
@@ -235,22 +234,22 @@ public class BoxTests {
     {
         tray = new Tray();
         tray.init(traySize);
-        Box box = tray.getBox(0,0);
+        Cell cell = tray.getCell(0, 0);
 
-        // No pawn in box
-        assertFalse("pawn can't be null", box.placePawn(null)); // to keep here !
+        // No pawn in cell
+        assertFalse("pawn can't be null", cell.placePawn(null)); // to keep here !
 
-        // Box must be free
-        assertFalse("no pawn in the box", box.isTaken());
-        assertFalse("no pawn in the box, and no bridge", box.isLocked());
+        // Cell must be free
+        assertFalse("no pawn in the cell", cell.isTaken());
+        assertFalse("no pawn in the cell, and no bridge", cell.isLocked());
 
-        // place a pawn in box
-        assertTrue(box.placePawn(Color.Black));
+        // place a pawn in cell
+        assertTrue(cell.placePawn(Color.Black));
         // tests
-        assertTrue("there is pawn on the box", box.isTaken());
-        assertTrue("there is pawn on the box", box.isLocked());
-        assertFalse("There is already a pawn in the box",
-                tray.getBox(0, 0).placePawn(Color.Black));
+        assertTrue("there is pawn on the cell", cell.isTaken());
+        assertTrue("there is pawn on the cell", cell.isLocked());
+        assertFalse("There is already a pawn in the cell",
+                tray.getCell(0, 0).placePawn(Color.Black));
     }
 
     @Test
@@ -258,19 +257,19 @@ public class BoxTests {
     {
         tray = new Tray();
         tray.init(traySize);
-        Box box = tray.getBox(0,0);
+        Cell cell = tray.getCell(0, 0);
 
-        // No pawn in box
-        assertFalse("pawn can't be null", box.placePawn(null));
-        assertFalse("no pawn in the box", box.isTaken());
-        assertFalse("no pawn in the box, and no bridge", box.isLocked());
+        // No pawn in cell
+        assertFalse("pawn can't be null", cell.placePawn(null));
+        assertFalse("no pawn in the cell", cell.isTaken());
+        assertFalse("no pawn in the cell, and no bridge", cell.isLocked());
 
-        // place a pawn in box
-        assertTrue(box.placePawn(Color.Black));
-        assertTrue("there is pawn on the box", box.isTaken());
-        assertTrue("there is pawn on the box", box.isLocked());
-        assertFalse("There is already a pawn in the box",
-                tray.getBox(0, 0).placePawn(Color.Black));
+        // place a pawn in cell
+        assertTrue(cell.placePawn(Color.Black));
+        assertTrue("there is pawn on the cell", cell.isTaken());
+        assertTrue("there is pawn on the cell", cell.isLocked());
+        assertFalse("There is already a pawn in the cell",
+                tray.getCell(0, 0).placePawn(Color.Black));
     }
 
 
@@ -279,11 +278,11 @@ public class BoxTests {
         tray = new Tray();
         tray.init(traySize);
 
-        Box box = tray.getBox(0,0);
-        assertFalse("No pawn in box", box.isTaken());
+        Cell cell = tray.getCell(0, 0);
+        assertFalse("No pawn in cell", cell.isTaken());
 
-        box.placePawn(Color.Black);
-        assertTrue("There is a pawn in the box", box.isTaken());
+        cell.placePawn(Color.Black);
+        assertTrue("There is a pawn in the cell", cell.isTaken());
     }
 
     @Test
@@ -291,11 +290,11 @@ public class BoxTests {
         tray = new Tray();
         tray.init(traySize);
 
-        Box box = tray.getBox(0,0);
-        assertFalse("No pawn in box and no bridge", box.isLocked());
+        Cell cell = tray.getCell(0, 0);
+        assertFalse("No pawn in cell and no bridge", cell.isLocked());
 
-        box.placePawn(Color.Black);
-        assertTrue("There is a pawn in the box", box.isLocked());
+        cell.placePawn(Color.Black);
+        assertTrue("There is a pawn in the cell", cell.isLocked());
     }
 
     @Test
@@ -304,15 +303,15 @@ public class BoxTests {
         tray = new Tray();
         tray.init(traySize);
 
-        Box box = tray.getBox(0,0);
+        Cell cell = tray.getCell(0, 0);
 
-        assertFalse(box.isNearbyOf(null));
+        assertFalse(cell.isNearbyOf(null));
 
-        Box box1 = tray.getBox(0,1);
-        assertTrue(box.isNearbyOf(box1));
+        Cell cell1 = tray.getCell(0, 1);
+        assertTrue(cell.isNearbyOf(cell1));
 
-        box1 = tray.getBox(0,5);
-        assertFalse(box.isNearbyOf(box1));
+        cell1 = tray.getCell(0, 5);
+        assertFalse(cell.isNearbyOf(cell1));
 
     }
 
@@ -322,12 +321,12 @@ public class BoxTests {
         tray = new Tray();
         tray.init(10);
 
-        assertFalse("can't be diagonal with null box", tray.getBox(0, 0).inDiagonal(null));
+        assertFalse("can't be diagonal with null cell", tray.getCell(0, 0).inDiagonal(null));
 
         for (int y = 0; y < tray.getSize() ; y++){
             for (int x = 0 ; x < tray.getSize(); x++ ){
 
-                Box mainBox = tray.getBox(y,x);
+                Cell mainCell = tray.getCell(y, x);
                 for (int line = 0 ; line < tray.getSize() ; line++){
                     for (int column = 0 ; column < tray.getSize(); column++){
                         if ((line == y-1 && column == x-1)
@@ -336,20 +335,20 @@ public class BoxTests {
                                 || (line == y+1 && column == x+1 ))
                         {
                             assertTrue( "("+y+";"+x+") et ("+line+";"+column+") are diagonals" ,
-                                    tray.getBox(y, x).inDiagonal(tray.getBox(line, column)));
+                                    tray.getCell(y, x).inDiagonal(tray.getCell(line, column)));
                         } else {
                             assertFalse("("+y+";"+x+") et ("+line+";"+column+") are not diagonals" ,
-                                    tray.getBox(y, x).inDiagonal(tray.getBox(line, column)));
+                                    tray.getCell(y, x).inDiagonal(tray.getCell(line, column)));
                         }
                     }
                 }
             }
         }
-        Box box = tray.getBox(1,1);
-        assertTrue(box.inDiagonal(tray.getBox(0,0)));
-        assertTrue(box.inDiagonal(tray.getBox(0, 2)));
-        assertTrue(box.inDiagonal(tray.getBox(2,2)));
-        assertTrue(box.inDiagonal(tray.getBox(2, 0)));
+        Cell cell = tray.getCell(1, 1);
+        assertTrue(cell.inDiagonal(tray.getCell(0, 0)));
+        assertTrue(cell.inDiagonal(tray.getCell(0, 2)));
+        assertTrue(cell.inDiagonal(tray.getCell(2, 2)));
+        assertTrue(cell.inDiagonal(tray.getCell(2, 0)));
 
 
     }
@@ -369,7 +368,7 @@ public class BoxTests {
         assertTrue(tray.placePawn(2, 1, Color.Black));
         assertTrue(tray.placePawn(3, 2, Color.Black));
 
-        assertFalse("pawn here forbidden !", tray.getBox(2, 2).pawnAllowedHere(Color.Black));
+        assertFalse("pawn here forbidden !", tray.getCell(2, 2).pawnAllowedHere(Color.Black));
         assertFalse("pawn here forbidden !", tray.placePawn(2, 2, Color.Black));
 
     }
@@ -380,20 +379,20 @@ public class BoxTests {
         tray = new Tray();
         tray.init(4);
 
-        Box box = tray.getBox(1,1);
+        Cell cell = tray.getCell(1, 1);
 
-        assertTrue(box.getNearbyBox(Direction.NORTH_WEST).equals(tray.getBox(0, 0)));
-        assertTrue(box.getNearbyBox(Direction.NORTH).equals(tray.getBox(0, 1)));
-        assertTrue(box.getNearbyBox(Direction.NORTH_EST).equals(tray.getBox(0, 2)));
-        assertTrue(box.getNearbyBox(Direction.WEST).equals(tray.getBox(1, 0)));
-        assertTrue(box.getNearbyBox(Direction.EST).equals(tray.getBox(1, 2)));
-        assertTrue(box.getNearbyBox(Direction.SOUTH_WEST).equals(tray.getBox(2, 0)));
-        assertTrue(box.getNearbyBox(Direction.SOUTH).equals(tray.getBox(2, 1)));
-        assertTrue(box.getNearbyBox(Direction.SOUTH_EST).equals(tray.getBox(2, 2)));
+        assertTrue(cell.getNearbyBox(Direction.NORTH_WEST).equals(tray.getCell(0, 0)));
+        assertTrue(cell.getNearbyBox(Direction.NORTH).equals(tray.getCell(0, 1)));
+        assertTrue(cell.getNearbyBox(Direction.NORTH_EST).equals(tray.getCell(0, 2)));
+        assertTrue(cell.getNearbyBox(Direction.WEST).equals(tray.getCell(1, 0)));
+        assertTrue(cell.getNearbyBox(Direction.EST).equals(tray.getCell(1, 2)));
+        assertTrue(cell.getNearbyBox(Direction.SOUTH_WEST).equals(tray.getCell(2, 0)));
+        assertTrue(cell.getNearbyBox(Direction.SOUTH).equals(tray.getCell(2, 1)));
+        assertTrue(cell.getNearbyBox(Direction.SOUTH_EST).equals(tray.getCell(2, 2)));
 
         for (int line = 0 ; line < tray.getSize() ; line++){
             for (int column = 0 ; column < tray.getSize() ; column++){
-                assertFalse(tray.getBox(line, column) == null);
+                assertFalse(tray.getCell(line, column) == null);
             }
         }
     }

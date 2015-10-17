@@ -36,7 +36,7 @@ public class ClientTCP
     public String read(){
         String readed = "";
 
-        if (isConnected()) {
+        if (connected) {
             try {
 
                 System.out.println("TCP Client is reading");
@@ -67,7 +67,7 @@ public class ClientTCP
     }
 
     public void write(String string) {
-        if (isConnected()) {
+        if (connected) {
             try {
                 System.out.println("Try write : " + string);
                 output = socket.getOutputStream();
@@ -105,11 +105,12 @@ public class ClientTCP
         if (!this.connected) {
             // connect socket
             this.socket = new Socket(this.address, this.port);
-            this.connected = true;
-            // init input and output stream
 
+            // init input and output stream
             this.input = socket.getInputStream();
             this.output = socket.getOutputStream();
+
+            this.connected = true;
         }
     }
 

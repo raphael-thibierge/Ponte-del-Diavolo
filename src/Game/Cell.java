@@ -8,18 +8,18 @@ import java.util.Map;
 /**
  * Created by raphael on 10/10/2015.
  */
-public class Box {
+public class Cell {
 
     private int line;
     private int column;
     private Pawn pawn;
-    private Map<Direction, Box> nearbyBoxes;
+    private Map<Direction, Cell> nearbyBoxes;
 
     // states
     boolean locked = false;
     boolean taken = false;
 
-    public Box(int line, int column){
+    public Cell(int line, int column){
         this.line = line;
         this.column = column;
 
@@ -41,7 +41,7 @@ public class Box {
             // add pawn
             pawn = new Pawn(color, this);
 
-            // set box locked and taken
+            // set cell locked and taken
             this.taken = true;
             this.locked = true;
 
@@ -52,79 +52,25 @@ public class Box {
 
     public boolean pawnAllowedHere(Color color)
     {
-        // TODO need to be optimized
-
         // first condition
         if ( color != null
                 && !isLocked()
-                && !isTaken()
-                )
+                && !isTaken())
         {
-            /*{
-                // new sandBar size
-                int sandBarSize = 1; // because if we place pawn, there is on more pawn in sandBar
-                List<SandBar> sandbarFounds = new ArrayList<>();
-                List<SandBar> diagSandBarFounds = new ArrayList<>();
-                SandBar lastSandbar = null;
-
-                // get nearbyBox of all direction
-                for (Box nearbyBox : this.nearbyBoxes.values()) {
-                    // if there is a nearby box in this direction
-                    if (nearbyBox != null) {
-                        //try to get pawn
-                        Pawn pawn1 = nearbyBox.pawn;
-                        // if there is a same color sandBand
-                        if (pawn1 != null && pawn1.getColor() == color) {
-                            // if it's an island
-
-                            if (pawn1.belongsToIsland()) {
-                                // pawn not allowed
-                                return false;
-                            }
-
-                            // if the sandbar is not in diagonal
-                            if (!this.inDiagonal(nearbyBox) && pawn1.getSandBar() != lastSandbar) {
-                                //  we count merging all nearby sandBar
-                                sandBarSize += pawn1.getSandBar().getSize();
-                                lastSandbar = pawn1.getSandBar();
-                                sandbarFounds.add(pawn1.getSandBar());
-
-
-                                if (!pawn1.getSandBar().canReceiveAPawn())
-                                    return false;
-
-                                if (sandBarSize > 4)
-                                    return false;
-
-                            } else if (this.inDiagonal(nearbyBox) && pawn1.getSandBar() != lastSandbar) {
-                                diagSandBarFounds.add(pawn1.getSandBar());
-                            }
-                        }
-                    }
-                }
-
-                for (SandBar sandBar : diagSandBarFounds) {
-                    if (!sandbarFounds.contains(sandBar) && sandBarSize == 4)
-                        return false;
-                }
-
-            }*/
-
+            // then test all game rules
 
             int newSandBarSize = 1; // because if we place pawn, there is on more pawn in sandBar
             List<SandBar> sandbarFounds = new ArrayList<>();
 
             // testing orthogonal sandbar around to merge to know they would be allowed to be merged
-            for (Box nearbyBox : this.getNearbyBoxesOrthogonal().values()) {
-                if (nearbyBox != null) {
-                    // if there is a pawn in the nearby box and it has the same color as color param
-                    Pawn nearbyPawn = nearbyBox.getPawn();
+            for (Cell nearbyCell : this.getNearbyBoxesOrthogonal().values()) {
+                if (nearbyCell != null) {
+                    // if there is a pawn in the nearby cell and it has the same color as color param
+                    Pawn nearbyPawn = nearbyCell.getPawn();
                     if (nearbyPawn != null && nearbyPawn.getColor() == color) {
                         // if he has a sandbar, he always have to !
                         SandBar nearbySandbar = nearbyPawn.getSandBar();
                         if (nearbySandbar != null) {
-
-                            // TESTS begin here
 
                             // it's forbidden to place a pawn near an Island
                             if (nearbySandbar.isIsland())
@@ -155,10 +101,10 @@ public class Box {
             }
 
             // then testing diagonal sandbar
-            for (Box nearbyBox : this.getNearbyBoxesDiagonal().values()) {
-                if (nearbyBox != null) {
-                    // if there is a pawn in the nearby box and it has the same color as color param
-                    Pawn nearbyPawn = nearbyBox.getPawn();
+            for (Cell nearbyCell : this.getNearbyBoxesDiagonal().values()) {
+                if (nearbyCell != null) {
+                    // if there is a pawn in the nearby cell and it has the same color as color param
+                    Pawn nearbyPawn = nearbyCell.getPawn();
                     if (nearbyPawn != null && nearbyPawn.getColor() == color) {
                         // if he has a sandbar, he always have to !
                         SandBar nearbySandbar = nearbyPawn.getSandBar();
@@ -176,27 +122,23 @@ public class Box {
                     }
                 }
             }
-
-
-
-
             return true;
         }
         return false;
     }
 
 
-    public boolean isNearbyOf(Box box){
-        return box != null && this.nearbyBoxes.containsValue(box);
+    public boolean isNearbyOf(Cell cell){
+        return cell != null && this.nearbyBoxes.containsValue(cell);
     }
 
-    public boolean inDiagonal(Box box)
+    public boolean inDiagonal(Cell cell)
     {
-        return box != null &&
-                (box == this.nearbyBoxes.get(Direction.NORTH_EST)
-                        || box == this.nearbyBoxes.get(Direction.NORTH_WEST)
-                        || box == this.nearbyBoxes.get(Direction.SOUTH_EST)
-                        || box == this.nearbyBoxes.get(Direction.SOUTH_WEST)
+        return cell != null &&
+                (cell == this.nearbyBoxes.get(Direction.NORTH_EST)
+                        || cell == this.nearbyBoxes.get(Direction.NORTH_WEST)
+                        || cell == this.nearbyBoxes.get(Direction.SOUTH_EST)
+                        || cell == this.nearbyBoxes.get(Direction.SOUTH_WEST)
                 );
     }
 
@@ -230,20 +172,20 @@ public class Box {
         return pawn;
     }
 
-    public void setNearbyBoxes(Map<Direction, Box> nearbyBoxes) {
+    public void setNearbyBoxes(Map<Direction, Cell> nearbyBoxes) {
         this.nearbyBoxes = nearbyBoxes;
     }
 
-    public Box getNearbyBox(Direction direction){
+    public Cell getNearbyBox(Direction direction){
         return nearbyBoxes.get(direction);
     }
 
-    public Map<Direction, Box> getNearbyBoxes() {
+    public Map<Direction, Cell> getNearbyBoxes() {
         return nearbyBoxes;
     }
 
-    public Map<Direction, Box> getNearbyBoxesOrthogonal() {
-        Map<Direction, Box> map = new HashMap<>();
+    public Map<Direction, Cell> getNearbyBoxesOrthogonal() {
+        Map<Direction, Cell> map = new HashMap<>();
         map.put(Direction.NORTH, this.nearbyBoxes.get(Direction.NORTH));
         map.put(Direction.EST, this.nearbyBoxes.get(Direction.EST));
         map.put(Direction.WEST, this.nearbyBoxes.get(Direction.WEST));
@@ -251,8 +193,8 @@ public class Box {
         return map;
     }
 
-    public Map<Direction, Box> getNearbyBoxesDiagonal() {
-        Map<Direction, Box> map = new HashMap<>();
+    public Map<Direction, Cell> getNearbyBoxesDiagonal() {
+        Map<Direction, Cell> map = new HashMap<>();
         map.put(Direction.NORTH_EST, this.nearbyBoxes.get(Direction.NORTH_EST));
         map.put(Direction.NORTH_WEST, this.nearbyBoxes.get(Direction.NORTH_WEST));
         map.put(Direction.SOUTH_EST, this.nearbyBoxes.get(Direction.SOUTH_EST));
