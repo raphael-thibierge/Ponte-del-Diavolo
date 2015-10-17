@@ -79,6 +79,8 @@ public class Tray {
                     nearbyBoxes.put(Direction.SOUTH, null);
                 }
 
+
+
                 // NORTH_WEST BOX
                 if (line != 0 && column != 0){
                     nearbyBoxes.put(Direction.NORTH_WEST, getBox(line-1, column-1));

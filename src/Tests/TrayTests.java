@@ -28,6 +28,7 @@ public class TrayTests {
             for (int column = 0 ; column < size ; column++)
             {
                 assertFalse(tray.getBox(line, column) == null);
+                assertTrue(tray.getBox(line, column).getNearbyBoxes().size() == 8);
             }
         }
     }
@@ -87,7 +88,22 @@ public class TrayTests {
         assertTrue("sould be null", box.getNearbyBox(Direction.NORTH_EST) == null);
         assertTrue("sould be null", box.getNearbyBox(Direction.EST) == null);
 
+    }
 
+    @Test
+    public void initNearbyBoxes_middleCaseTest(){
+        Tray tray = new Tray();
+        tray.init(3);
+
+        Box middleBox = tray.getBox(1,1);
+        assertTrue(middleBox.getNearbyBox(Direction.NORTH_WEST).equals(tray.getBox(0,0)));
+        assertTrue(middleBox.getNearbyBox(Direction.NORTH).equals(tray.getBox(0,1)));
+        assertTrue(middleBox.getNearbyBox(Direction.NORTH_EST).equals(tray.getBox(0,2)));
+        assertTrue(middleBox.getNearbyBox(Direction.WEST).equals(tray.getBox(1,0)));
+        assertTrue(middleBox.getNearbyBox(Direction.EST).equals(tray.getBox(1,2)));
+        assertTrue(middleBox.getNearbyBox(Direction.SOUTH_WEST).equals(tray.getBox(2,0)));
+        assertTrue(middleBox.getNearbyBox(Direction.SOUTH).equals(tray.getBox(2,1)));
+        assertTrue(middleBox.getNearbyBox(Direction.SOUTH_EST).equals(tray.getBox(2,2)));
 
 
     }

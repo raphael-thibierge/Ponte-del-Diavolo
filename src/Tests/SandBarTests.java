@@ -1,6 +1,7 @@
 package Tests;
 
 import Game.*;
+import Model.GameModel;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -98,6 +99,7 @@ public class SandBarTests {
         assertFalse("should not be the same sandbar",
                 tray.getSandBarInBox(2, 1).equals(tray.getSandBarInBox(3, 2)));
 
+
         // merging the two sand bar
         assertTrue(tray.placePawn(2, 2, Color.Black));
 
@@ -170,7 +172,7 @@ public class SandBarTests {
         assertTrue(tray.placePawn(2, 1, Color.Black));
         assertTrue(tray.placePawn(3, 1, Color.Black));
 
-        assertTrue(tray.getSandBarInBox(3,1).equals(tray.getSandBarInBox(3, 0)));
+        assertTrue(tray.getSandBarInBox(3, 1).equals(tray.getSandBarInBox(3, 0)));
         assertTrue(tray.getSandBarInBox(3,1).equals(tray.getSandBarInBox(3, 2)));
         assertTrue(tray.getSandBarInBox(3, 1).equals(tray.getSandBarInBox(2, 1)));
     }
@@ -223,7 +225,7 @@ public class SandBarTests {
         assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
         assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
         assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
-        assertFalse("There is already 4 pawns in sandbar", sandBar.canReceiveAPawn());
+        assertFalse("There is already 4 pawns in sandbar", sandBar.canReceiveAPawn(null));
 
 
     }
@@ -231,16 +233,16 @@ public class SandBarTests {
     @Test
     public void canReveivePawn_IsNotIsland() {
         SandBar sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
-        assertTrue("There is only one pawn sandbar",sandBar.canReceiveAPawn());
+        assertTrue("There is only one pawn sandbar",sandBar.canReceiveAPawn(null));
 
         assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
-        assertTrue("There is only two pawn sandbar",sandBar.canReceiveAPawn());
+        assertTrue("There is only two pawn sandbar",sandBar.canReceiveAPawn(null));
 
         assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
-        assertTrue("There is only three pawn sandbar",sandBar.canReceiveAPawn());
+        assertTrue("There is only three pawn sandbar",sandBar.canReceiveAPawn(null));
 
         assertTrue(sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0))));
-        assertFalse("There is only one pawn sandbar", sandBar.canReceiveAPawn());
+        assertFalse("There is only one pawn sandbar", sandBar.canReceiveAPawn(null));
     }
 
     @Test
@@ -252,14 +254,14 @@ public class SandBarTests {
         assertTrue("can receive a neighbor", sandBar.addNeighbor(sandBar1));
         assertTrue("can receive a neighbor", sandBar.addNeighbor(sandBar2));
 
-        assertTrue("can receive a paw", sandBar.canReceiveAPawn());
+        assertTrue("can receive a paw", sandBar.canReceiveAPawn(null));
     }
 
     @Test
     public void canReveivePawn_hasNoNeighbor() {
         SandBar sandBar = new SandBar(new Pawn(Color.Black, new Box(0,0)));
 
-        assertTrue("can receive a paw", sandBar.canReceiveAPawn());
+        assertTrue("can receive a paw", sandBar.canReceiveAPawn(null));
     }
 
     @Test
@@ -272,14 +274,13 @@ public class SandBarTests {
         assertTrue("can receive a neighbor", sandBar.addNeighbor(sandBar2));
 
 
-        assertTrue("can receive 2 more pawn", sandBar.canReceiveAPawn());
+        assertTrue("can receive 2 more pawn", sandBar.canReceiveAPawn(null));
         sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0)));
 
-        assertTrue("can receive 1 more pawn", sandBar.canReceiveAPawn());
+        assertTrue("can receive 1 more pawn", sandBar.canReceiveAPawn(null));
         sandBar.addPawn(new Pawn(Color.Black, new Box(0, 0)));
 
-
-        assertFalse("can't receive a pawn, there is already 3 pawn in sandbar", sandBar.canReceiveAPawn());
+        assertFalse("can't receive a pawn, there is already 3 pawn in sandbar", sandBar.canReceiveAPawn(null));
     }
 
     @Test
@@ -322,8 +323,9 @@ public class SandBarTests {
         SandBar sandBar = tray.getSandBarInBox(0,0);
         assertFalse("sandbar has no neighbor", sandBar.hasNeighbors());
 
+
         assertTrue(tray.placePawn(1, 1, Color.Black));
-        assertTrue("sandbar has neighbor", sandBar.hasNeighbors());
+        assertTrue("sandbar must have has neighbor", sandBar.hasNeighbors());
     }
 
     @Test

@@ -4,8 +4,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-
-
         String IpAddress = args[0];
         int port = Integer.parseInt(args[1]);
         int size = Integer.parseInt(args[2]);
