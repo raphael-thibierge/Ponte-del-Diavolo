@@ -1,5 +1,7 @@
 package Game;
 
+import static junit.framework.Assert.assertTrue;
+
 /**
  * Created by raphael on 10/10/2015.
  */
@@ -14,7 +16,7 @@ public class Pawn {
     public Pawn(Color color, Box box) throws NullPointerException
     {
         if (color == null || box == null)
-            throw new NullPointerException("Try to construct pawn with null color");
+            throw new NullPointerException("Try to construct pawn with null color or null box");
         this.color = color;
         this.box = box;
 
@@ -31,6 +33,7 @@ public class Pawn {
     {
         if ( this.box !=null)
         {
+            // no nearby sandbar founded
             boolean founded = false;
             // check all orthogonal box
             for (Box nearbyBox : this.box.getNearbyBoxesOrthogonal().values()){
@@ -38,10 +41,13 @@ public class Pawn {
                         && nearbyBox.isTaken()
                         && nearbyBox.getPawn().getColor() == this.color)
                 {
+                    //if no previous sandbar has been found
                     if (!founded){
+                        // add the pawn to the existing sandbar
                         this.sandBar = nearbyBox.getPawn().getSandBar();
                         founded = this.sandBar.addPawn(this);
                     } else {
+                        // else we merge the sandbar founded with pawn's sandbar
                         this.sandBar.mergeSandBar(nearbyBox.getPawn().sandBar);
                     }
                 }

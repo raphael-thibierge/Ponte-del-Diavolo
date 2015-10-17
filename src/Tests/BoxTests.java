@@ -1,6 +1,7 @@
 package Tests;
 
 import Game.*;
+import Model.GameModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -24,7 +25,7 @@ public class BoxTests {
         // pawn already set
         assertTrue(tray.placePawn(0, 1 ,Color.Black));
         assertTrue(tray.placePawn(0, 2, Color.Black));
-        assertTrue(tray.placePawn(0, 3 ,Color.Black));
+        assertTrue(tray.placePawn(0, 3, Color.Black));
         assertTrue(tray.placePawn(1, 3, Color.Black));
         assertTrue(tray.placePawn(2, 1, Color.Black));
 
@@ -411,8 +412,9 @@ public class BoxTests {
         assertTrue(tray.placePawn(2, 1, Color.Black));
         assertTrue(tray.placePawn(2, 2, Color.Black));
 
+
         // all other empty box
-        assertFalse(tray.placePawn(0,1, Color.Black));
+        assertFalse(tray.placePawn(0, 1, Color.Black));
         assertFalse(tray.placePawn(1, 0, Color.Black));
         assertFalse(tray.placePawn(1, 1, Color.Black));
         assertFalse(tray.placePawn(1, 2, Color.Black));

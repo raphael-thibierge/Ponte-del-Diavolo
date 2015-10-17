@@ -15,7 +15,7 @@ public class SandBar {
     private int MAX_SIZE = 4;
     private boolean linked;
 
-    private List<SandBar> sandBarsNeighbor= new ArrayList<>();
+    private List<SandBar> nearbySandBars = new ArrayList<>();
 
     public SandBar(Pawn pawn) throws NullPointerException
     {
@@ -34,7 +34,7 @@ public class SandBar {
     public boolean addPawn(Pawn pawn) {
         // different condition to add a Pawn
         if (pawn != null
-                && canReceiveAPawn()
+                && canReceiveAPawn(pawn)
                 && pawn.getColor() == this.color){
 
                 // Vérifier case d'à côté
@@ -51,21 +51,32 @@ public class SandBar {
         return false;
     }
 
-    public boolean canReceiveAPawn(){
+    /*
+    * Can receive null pawn to only know if it's possible but pawn doesn't exist
+    * */
+    public boolean canReceiveAPawn(Pawn pawn){
+
         if (this.size < 3)
             return true;
-        else if (this.size == 3 && !hasNeighbors())
-            return true;
+        else if (this.size == 3)
+            if ( pawn != null && hasNeighbors()){
+                if (this.nearbySandBars.size() == 1
+                        && this.nearbySandBars.contains(pawn.getSandBar())
+                        && (this.nearbySandBars.size() + pawn.getSandBar().getSize()) <= 4)
+                    return true;
+            }
+            else if (!hasNeighbors())
+                return true;
         return false;
     }
 
     public boolean hasNeighbors(){
-        return this.sandBarsNeighbor.size() > 0;
+        return this.nearbySandBars.size() > 0;
     }
 
     public boolean addNeighbor(SandBar sandBar){
         if (sandBar != null && sandBar != this && !sandBar.isIsland() && !this.isIsland()){
-            this.sandBarsNeighbor.add(sandBar);
+            this.nearbySandBars.add(sandBar);
             return true;
         }
         return false;
@@ -73,7 +84,7 @@ public class SandBar {
 
     public boolean isNeighbor(SandBar sandBar)
     {
-        return sandBar != null && sandBar != this && this.sandBarsNeighbor.contains(sandBar);
+        return sandBar != null && sandBar != this && this.nearbySandBars.contains(sandBar);
     }
 
 
@@ -104,6 +115,10 @@ public class SandBar {
             for (Pawn pawn : sandBar.pawnList){
                 this.addPawn(pawn);
             }
+            if (this.nearbySandBars.contains(sandBar))
+                this.nearbySandBars.remove(sandBar);
+
+
             return true;
         }
         return false;
@@ -114,4 +129,7 @@ public class SandBar {
         return (sandBar != null && this != sandBar && sandBar.size + this.size <= 4 && sandBar.color == this.color);
     }
 
+    public List<SandBar> getNearbySandBars() {
+        return nearbySandBars;
+    }
 }
