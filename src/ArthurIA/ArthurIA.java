@@ -85,6 +85,7 @@ public class ArthurIA extends Player {
                         }
                         else
                         {
+                            hasBeenPlaced=tray.placePawn(i,j,this.color);
                             messageReturned += Integer.toString(i) + Integer.toString(j);
                         }
                         cptPawn++;

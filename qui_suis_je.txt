@@ -1,6 +1,6 @@
-courriel=raphael.thibierge@etu.u-bordeaux.fr
-compte=rthibierge
-nom=Thibierge
+courriel=arthur.suner@etu.u-bordeaux.fr
+compte=asuner
+nom=Suner
 application=production/Ponte-del-Diavolo/Main
-groupe=S3A
+groupe=S3B
 
