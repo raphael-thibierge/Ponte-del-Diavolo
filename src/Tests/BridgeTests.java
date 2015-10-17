@@ -81,4 +81,21 @@ public class BridgeTests {
         // TODO but same methods already tested in tray ( pawnBetweenTwoBridge(...) )
     }
 
+    @Test
+    public void crossedBridgeTest(){
+        Tray tray = new Tray();
+        tray.init(3);
+
+        assertTrue(tray.placePawn(0,0, Color.Black));
+        assertTrue(tray.placePawn(0,2, Color.Black));
+        assertTrue(tray.placePawn(2,0, Color.Black));
+        assertTrue(tray.placePawn(2,2, Color.Black));
+
+        assertTrue(tray.placeBridge(0,0,2,2));
+        assertFalse(tray.placeBridge(1,0,1,2));
+        assertFalse(tray.placeBridge(0,1, 2,1));
+        assertFalse(tray.placeBridge(0,2, 2,0));
+
+    }
+
 }

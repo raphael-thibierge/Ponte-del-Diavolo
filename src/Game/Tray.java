@@ -200,15 +200,20 @@ public class Tray {
 
             if ( lineOffset % 2 == 0){
                 if ( columnOffset % 2 == 0)
-                    return getCell(lineOffset / 2, columnOffset / 2).isTaken();
+                    return getCell(lineOffset / 2, columnOffset / 2).isTaken()
+                            || getCell(lineOffset / 2, columnOffset / 2).isLocked();
 
                 else
                     return (getCell(lineOffset / 2, columnOffset / 2).isTaken()
-                            || getCell(lineOffset / 2, columnOffset / 2 + 1).isTaken() );
+                            || getCell(lineOffset / 2, columnOffset / 2).isLocked()
+                            || getCell(lineOffset / 2, columnOffset / 2 + 1).isTaken()
+                            ||getCell(lineOffset / 2, columnOffset / 2 + 1).isLocked());
             }
             else
                 return (getCell(lineOffset / 2, columnOffset / 2).isTaken()
-                            || getCell(lineOffset / 2 + 1, columnOffset / 2).isTaken() );
+                            || getCell(lineOffset / 2, columnOffset / 2).isLocked()
+                            || getCell(lineOffset / 2 + 1, columnOffset / 2).isTaken()
+                            || getCell(lineOffset / 2 + 1, columnOffset / 2).isLocked() );
 
         }
         return false;

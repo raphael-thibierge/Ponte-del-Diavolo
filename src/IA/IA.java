@@ -27,36 +27,64 @@ public class IA extends Player {
         if (canPlay(tray))
         {
 
-            List<Pawn> pawnList = tray.getPawns(color);
-            if (pawnList != null){
-                for (int i = 0 ; i < pawnList.size() ; i ++){
-                    for (int j = 0 ; j < pawnList.size() ; j++){
-                        Cell cell1 = pawnList.get(i).getCell();
-                        Cell cell2 = pawnList.get(j).getCell();
-
-                        if (cell1 != null && cell2 != null){
-
-                            int line1 = cell1.getLine();
-                            int column1 = cell1.getColumn();
-                            int line2 = cell2.getLine();
-                            int column2 = cell2.getColumn();
-
-                            if (tray.placeBridge(line1, column1, line2, column2))
-                                return Message.bridge(line1, column1, line2, column2);
-
-                        }
-
-                    }
-                }
+            if (countNbFreeCell(tray) > 4){
+                string = fullRandom(tray);
             }
+            else if ((string = placeFirstBridge(tray)) != null)
+                return string;
+
+            else
+                string = fillTray(tray);
+
+        }
+        else if ((string = placeFirstBridge(tray)) != null)
+            return string;
+        else
+            return Message.STOP;
 
 
-            string = fillTray(tray);
-
-        } else string = Message.STOP;
         return string;
     }
 
+
+    private String placeFirstBridge(Tray tray){
+        List<Pawn> pawnList = tray.getPawns(color);
+        if (pawnList != null){
+            // tests all bridge possibilities
+            for (int i = 0 ; i < pawnList.size() ; i ++){
+                for (int j = 0 ; j < pawnList.size() ; j++){
+
+                    Cell cell1 = pawnList.get(i).getCell();
+                    Cell cell2 = pawnList.get(j).getCell();
+                    if (cell1 != null && cell2 != null){
+
+                        // get lines and columns
+                        int line1 = cell1.getLine();
+                        int column1 = cell1.getColumn();
+                        int line2 = cell2.getLine();
+                        int column2 = cell2.getColumn();
+
+                        // test bridge
+                        if (tray.placeBridge(line1, column1, line2, column2))
+                            return Message.bridge(line1, column1, line2, column2);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private int countNbFreeCell(Tray tray){
+        int cpt = 0;
+        for (int line = 0 ; line < tray.getSize() ; line++){
+            for (int column = 0 ; column < tray.getSize() ; column++){
+                if (tray.getCell(line, column).pawnAllowedHere(color)){
+                    cpt++;
+                }
+            }
+        }
+        return cpt;
+    }
 
     private String fullRandom(Tray tray){
         int line, column;
@@ -77,7 +105,6 @@ public class IA extends Player {
         return string;
     }
 
-
     private String fillTray(Tray tray){
         String msg = "";
 
@@ -97,8 +124,6 @@ public class IA extends Player {
         }
         return Message.STOP;
     }
-
-
 
     @Override
     public String chooseColor() {

@@ -28,6 +28,7 @@ public class GameModel {
 
     private boolean quit = false;
     private boolean end = false;
+    private boolean lastTurn = false;
     private Color turn;
 
     public GameModel(String serveurIPAddress, int port, int size){
@@ -80,11 +81,11 @@ public class GameModel {
                 displayInConsole(this.tray);
         }
 
-            printInConsole("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
-            printInConsole("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
+        printInConsole("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
+        printInConsole("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
 
-            //end of the game, wait for end signal
-            this.treatMessage(this.readMessage());
+        //end of the game, wait for end signal
+        this.treatMessage(this.readMessage());
 
     }
 
@@ -134,7 +135,8 @@ public class GameModel {
                     nextPlayer();
                 }
 
-                this.quit = true;
+                lastTurn = true;
+                quit = true;
 
                 break;
 
@@ -163,7 +165,10 @@ public class GameModel {
                                 || !this.tray.placePawn(line2, column2, secondPlayerDistant.getColor()))
                             printInConsole("Can't place distant pawn !");
                     }
-                    this.nextPlayer();
+                    if (lastTurn)
+                        this.quit = true;
+                    else
+                        this.nextPlayer();
                 } else {
                     printInConsole("Strange message received ! : \"" + message + "\"");
                     if (!onLineMode)
@@ -255,8 +260,7 @@ public class GameModel {
     }
 
 
-    private String readMessage()
-    {
+    private String readMessage() {
         if (onLineMode){
             return clientTCP.read();
         }
@@ -270,12 +274,14 @@ public class GameModel {
             clientTCP.write(message);
         else
             printInConsole(message);
+        if (message == Message.STOP){
+            lastTurn = true;
+        }
     }
 
     private void printInConsole(String message){
         if (verbose)
             System.out.println(message);
     }
-
 
 }
