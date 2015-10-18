@@ -3,7 +3,7 @@ package Model;
 import Game.Color;
 import Game.SandBar;
 import Game.Tray;
-import IA.IA;
+import IA.AI;
 import Network.ClientTCP;
 import Network.Message;
 
@@ -58,11 +58,11 @@ public class GameModel {
     public void run(){
 
         if (this.onLineMode) {
-            firstPlayerIA = new IA(Color.White);
+            firstPlayerIA = new AI(Color.White);
             secondPlayerDistant = new DistantPlayer(Color.Black, clientTCP);
         }
         else {
-            firstPlayerIA = new IA(Color.White);
+            firstPlayerIA = new AI(Color.White);
             secondPlayerDistant = new Manual(Color.Black);
         }
 
@@ -93,17 +93,17 @@ public class GameModel {
 
         switch (message) {
 
-            case Message.FIRST: // IA is the first player
+            case Message.FIRST: // AI is the first player
                 // init players
                 firstPlayerIA.setColor(Color.White);
                 secondPlayerDistant.setColor(Color.Black);
-                // IA place two pawn on the tray
+                // AI place two pawn on the tray
                 writeMessage(firstPlayerIA.playInTray(this.tray));
 
                 turn = Color.Black;
                 break;
 
-            case Message.SECOND: // IA is the second player
+            case Message.SECOND: // AI is the second player
                 // init player
                 firstPlayerIA.setColor(Color.Black);
                 secondPlayerDistant.setColor(Color.White);
@@ -149,7 +149,14 @@ public class GameModel {
                 break;
 
             default:
-                if (message.length() == 5) {
+                if (onLineMode){
+                    while (message.length() < 5){
+                        message += clientTCP.read();
+                    }
+
+                }
+                if (message.length() == 5)
+                {
                     // get lines and columns
                     int line1 = Integer.parseInt(String.valueOf(message.charAt(0)));
                     int column1 = Integer.parseInt(String.valueOf(message.charAt(1)));
@@ -169,13 +176,11 @@ public class GameModel {
                         this.quit = true;
                     else
                         this.nextPlayer();
-                } else {
+                }
+                else {
                     printInConsole("Strange message received ! : \"" + message + "\"");
-                    if (!onLineMode)
-                        treatMessage(Message.END);
                 }
                 break;
-
         }
     }
 

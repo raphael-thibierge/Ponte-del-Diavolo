@@ -162,7 +162,6 @@ public class Tray {
             }
         }
         return false;
-
     }
 
     public boolean canBridge(int line1, int column1, int line2, int column2)

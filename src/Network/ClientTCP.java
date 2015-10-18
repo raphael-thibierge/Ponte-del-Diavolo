@@ -40,16 +40,7 @@ public class ClientTCP
             try {
 
                 System.out.println("TCP Client is reading");
-//                int receive = input.read();
-//                while (receive >= 0 && receive <= 255){
-//                    readed += (char)receive;
-//                    receive =input.read();
 
-//                byte[] b = new byte[10]; //définition d'un tableau pour lire les données arrivées
-//                int bitsRecus = input.read(b); //il n'est pas sûr que l'on recoive 1000 bits
-//                if(bitsRecus>0) {
-//                    readed = new String(b,0, bitsRecus);
-//                }
                 readed += (char) input.read();
                 while (input.available() > 0){
                     //System.out.println("Restant : " + input.available());

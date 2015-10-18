@@ -68,7 +68,7 @@ public class CellTests {
         assertTrue(tray.placePawn(2, 0 ,Color.Black));
         assertTrue(tray.placePawn(3, 2, Color.Black));
 
-        // new Point
+        // new Pointw
         assertTrue(tray.placePawn(3, 1, Color.Black));
     }
 
