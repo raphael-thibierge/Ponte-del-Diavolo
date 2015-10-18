@@ -1,5 +1,6 @@
 package ArthurIA;
 
+import Game.Box;
 import Game.Color;
 import Game.Tray;
 import Model.Player;
@@ -17,6 +18,30 @@ public class ArthurIA extends Player {
         super(color);
     }
 
+    private boolean canBridgeOnTray(Tray tray,Color color)
+    {
+        Box[][] boxes=tray.getGrid();
+        for(int i =0;i<tray.getSize();i++)
+        {
+            for(int j=0;j<tray.getSize();j++)
+            {
+                if(boxes[i][j].getPawn().getColor()==this.color)
+                {
+                    if(i==0) // pas de test au dessus de cette case
+                    {
+                        if((tray.canBridge(i,j,i,j-2)) || (tray.canBridge(i,j,i+1,j-2)) || (tray.canBridge(i,j,i+2,j-2)) || (tray.canBridge(i,j,i+2,j-1))
+                                || (tray.canBridge(i,j,i+2,j)) || (tray.canBridge(i,j,i+2,j+1)))
+                        {
+
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     @Override
     public String playInTray(Tray tray) {
@@ -24,42 +49,9 @@ public class ArthurIA extends Player {
         String messageReturned = "";
         if (canPlay(tray)){
 
-            // your code here
-
-            /*
-                Little examples
-            */
             boolean hasBeenPlaced;
             int cptPawn=0;
 
-            /*
-                 if you want to place a pawn
-            */
-            /*hasBeenPlaced = tray.placePawn(line1, colonne1, this.color);
-            hasBeenPlaced = tray.placePawn(line2, colonne2, this.color);
-
-            messageReturned = Integer.toString(line1) + Integer.toString(colonne1);
-            messageReturned += "+";
-            messageReturned = Integer.toString(line2) + Integer.toString(colonne2);*/
-
-
-            /*
-                if place bridge
-            */
-            /*hasBeenPlaced = tray.placeBridge(line1, colonne1, line2, colonne2);
-            messageReturned = Integer.toString(line1) + Integer.toString(colonne1);
-            messageReturned += "-";
-            messageReturned = Integer.toString(line2) + Integer.toString(colonne2);*/
-
-            /*
-                you can use also :
-            */
-
-            // to know if you can place a pawn
-           // boolean possible = tray.getBox(line1, colonne2).pawnAllowedHere(this.color);
-
-            // to know if you can place a bridge
-            //possible = tray.canBridge(line1, colonne1, line2, colonne2);
 
             for(int i =0; i<tray.getSize();i++)
             {
@@ -85,6 +77,7 @@ public class ArthurIA extends Player {
                         }
                         else
                         {
+                            hasBeenPlaced=tray.placePawn(i,j,this.color);
                             messageReturned += Integer.toString(i) + Integer.toString(j);
                         }
                         cptPawn++;
