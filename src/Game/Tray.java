@@ -15,11 +15,9 @@ public class Tray {
     private List<Pawn> blackPawns = null;
     boolean initialised = false;
 
-
     public Tray() {}
 
-    public void init(int size)
-    {
+    public void init(int size) {
         // in case negative number
         if (size == 0)
             size = 1;
@@ -43,8 +41,7 @@ public class Tray {
         whitePawns = new ArrayList<>();
     }
 
-    private void initNearbyBoxes()
-    {
+    private void initNearbyBoxes(){
         for (int line = 0; line < this.size ; line++){
             for (int column = 0 ; column < this.size ; column++){
                 Map<Direction, Cell> nearbyBoxes = new HashMap<Direction, Cell>();
@@ -113,7 +110,6 @@ public class Tray {
         }
     }
 
-
     public Cell getCell(int line, int column){
         if ( this.grid != null
                 && line >= 0
@@ -164,8 +160,7 @@ public class Tray {
         return false;
     }
 
-    public boolean canBridge(int line1, int column1, int line2, int column2)
-    {
+    public boolean canBridge(int line1, int column1, int line2, int column2){
         if ( line1 < 0 || column1 < 0 || line2 < 0 || column2 < 0)
             return false;
 
@@ -189,7 +184,6 @@ public class Tray {
             return canBridge(cell1.getLine(), cell1.getColumn(), cell2.getLine(), cell2.getColumn());
         return false;
     }
-
 
     public boolean pawnBetween2Boxes(Cell cell1, Cell cell2){
 
@@ -232,18 +226,12 @@ public class Tray {
         return cptPawnPossibilities;
     }
 
-
-
     /* ========================
      *        ACCESSORS
      * ======================== */
 
     public int getSize() {
         return size;
-    }
-
-    public Cell[][] getGrid() {
-        return grid;
     }
 
     public boolean isInitialised() {
@@ -257,5 +245,4 @@ public class Tray {
             return whitePawns;
         else return blackPawns;
     }
-
 }
