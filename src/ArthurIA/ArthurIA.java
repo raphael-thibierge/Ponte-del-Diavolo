@@ -1,6 +1,6 @@
 package ArthurIA;
 
-import Game.Box;
+import Game.Cell;
 import Game.Color;
 import Game.Tray;
 import Model.Player;
@@ -20,24 +20,6 @@ public class ArthurIA extends Player {
 
     private boolean canBridgeOnTray(Tray tray,Color color)
     {
-        Box[][] boxes=tray.getGrid();
-        for(int i =0;i<tray.getSize();i++)
-        {
-            for(int j=0;j<tray.getSize();j++)
-            {
-                if(boxes[i][j].getPawn().getColor()==this.color)
-                {
-                    if(i==0) // pas de test au dessus de cette case
-                    {
-                        if((tray.canBridge(i,j,i,j-2)) || (tray.canBridge(i,j,i+1,j-2)) || (tray.canBridge(i,j,i+2,j-2)) || (tray.canBridge(i,j,i+2,j-1))
-                                || (tray.canBridge(i,j,i+2,j)) || (tray.canBridge(i,j,i+2,j+1)))
-                        {
-
-                        }
-                    }
-                }
-            }
-        }
 
         return false;
     }
@@ -57,7 +39,7 @@ public class ArthurIA extends Player {
             {
                 for(int j=0;j<tray.getSize();j++)
                 {
-                    boolean possiblePawn = tray.getBox(i, j).pawnAllowedHere(this.color);
+                    boolean possiblePawn = tray.getCell(i, j).pawnAllowedHere(this.color);
                     boolean possibleBridge = tray.canBridge(i, j, i, j-2);
                     if(possibleBridge)
                     {
