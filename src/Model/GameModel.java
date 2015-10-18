@@ -41,7 +41,7 @@ public class GameModel {
             printInConsole("Connected");
             this.onLineMode = true;
         } catch (IOException e) {
-           // e.printStackTrace();
+            // e.printStackTrace();
             printInConsole("Not connected");
             this.onLineMode = false;
         }
