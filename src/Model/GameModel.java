@@ -1,6 +1,5 @@
 package Model;
 
-import ArthurIA.ArthurIA;
 import Game.Color;
 import Game.SandBar;
 import Game.Tray;
@@ -45,7 +44,6 @@ public class GameModel {
            // e.printStackTrace();
             printInConsole("Not connected");
             this.onLineMode = false;
-            clientTCP = null;
         }
     }
 
@@ -79,25 +77,7 @@ public class GameModel {
 
                 this.nextPlayer();
             }
-<<<<<<< HEAD
-        }
-
-        else
-        {
-            firstPlayerIA = new ArthurIA(Color.White);
-            secondPlayerDistant = new Manual(Color.Black);
-            // run game
-            while(!this.end) {
-                // to treating server messages
-                this.treatMessage(readConsole());
-
-                if (!quit && this.turn == this.firstPlayerIA.getColor()) {
-                    System.out.println("Played by IA : " + firstPlayerIA.playInTray(tray));
-                    this.nextPlayer();
-                }
-=======
             if (verbose)
->>>>>>> master
                 displayInConsole(this.tray);
         }
 
@@ -115,43 +95,22 @@ public class GameModel {
 
             case Message.FIRST: // AI is the first player
                 // init players
-
                 firstPlayerIA.setColor(Color.White);
                 secondPlayerDistant.setColor(Color.Black);
-<<<<<<< HEAD
-
-                // IA place two pawn on the tray
-                String msg = firstPlayerIA.playInTray(this.tray);
-                if (this.onLineMode)
-                    this.clientTCP.write(msg);
-                else
-                    printInConsole(msg);
-
-=======
                 // AI place two pawn on the tray
                 writeMessage(firstPlayerIA.playInTray(this.tray));
->>>>>>> master
 
                 turn = Color.Black;
                 break;
 
             case Message.SECOND: // AI is the second player
                 // init player
-
                 firstPlayerIA.setColor(Color.Black);
                 secondPlayerDistant.setColor(Color.White);
 
                 this.treatMessage(readMessage());
 
-<<<<<<< HEAD
-                String colorChoice = firstPlayerIA.chooseColor();
-                if (onLineMode)
-                    clientTCP.write(colorChoice);
-                else
-                    printInConsole(colorChoice);
-=======
                 writeMessage(firstPlayerIA.chooseColor());
->>>>>>> master
 
                 if (firstPlayerIA.getColor() == Color.White) {
                     secondPlayerDistant.setColor(Color.Black);
