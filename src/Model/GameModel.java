@@ -4,6 +4,7 @@ import ArthurIA.ArthurIA;
 import Game.Color;
 import Game.SandBar;
 import Game.Tray;
+import IA.AI;
 import Network.ClientTCP;
 import Network.Message;
 
@@ -24,9 +25,11 @@ public class GameModel {
     private Player secondPlayerDistant;
 
     private boolean onLineMode = true;
+    private boolean verbose = true;
 
     private boolean quit = false;
     private boolean end = false;
+    private boolean lastTurn = false;
     private Color turn;
 
     public GameModel(String serveurIPAddress, int port, int size){
@@ -36,9 +39,11 @@ public class GameModel {
         // init tcp client
         try{
             clientTCP = new ClientTCP(serveurIPAddress, port);
+            printInConsole("Connected");
             this.onLineMode = true;
         } catch (IOException e) {
            // e.printStackTrace();
+            printInConsole("Not connected");
             this.onLineMode = false;
             clientTCP = null;
         }
@@ -53,32 +58,28 @@ public class GameModel {
     }
 
     public void run(){
-        // connect to serveur
-        if ( this.onLineMode && this.clientTCP.isConnected()) {
 
-            firstPlayerIA = new IA(Color.White);
+        if (this.onLineMode) {
+            firstPlayerIA = new AI(Color.White);
             secondPlayerDistant = new DistantPlayer(Color.Black, clientTCP);
+        }
+        else {
+            firstPlayerIA = new AI(Color.White);
+            secondPlayerDistant = new Manual(Color.Black);
+        }
 
-            if ( this.clientTCP.isConnected()) {
+        // run game
+        while(!this.quit) {
+            // treat messages
+            this.treatMessage(this.readMessage());
 
-                // run game
-                while(!this.end) {
-                    // to treating server messages
-                    this.treatMessage(clientTCP.read());
+            if (!quit && this.turn == this.firstPlayerIA.getColor()) {
 
-                    if (!quit && this.turn == this.firstPlayerIA.getColor()) {
-                        this.clientTCP.write(firstPlayerIA.playInTray(tray));
-                        this.nextPlayer();
-                    }
-                    displayInConsole(this.tray);
-                }
+                writeMessage(firstPlayerIA.playInTray(tray));
 
-                System.out.println("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
-                System.out.println("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
-
-                //end of the game, disconnect of serveur
-                clientTCP.disconnect();
+                this.nextPlayer();
             }
+<<<<<<< HEAD
         }
 
         else
@@ -94,30 +95,30 @@ public class GameModel {
                     System.out.println("Played by IA : " + firstPlayerIA.playInTray(tray));
                     this.nextPlayer();
                 }
+=======
+            if (verbose)
+>>>>>>> master
                 displayInConsole(this.tray);
-            }
-
-            System.out.println("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
-            System.out.println("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
-
         }
+
+        printInConsole("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
+        printInConsole("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
+
+        //end of the game, wait for end signal
+        this.treatMessage(this.readMessage());
+
     }
 
     public void treatMessage(String message) {
 
         switch (message) {
 
-            case "" :
-                break;
-
-            case " ":
-                break;
-
-            case Message.FIRST: // IA is the first player
+            case Message.FIRST: // AI is the first player
                 // init players
 
                 firstPlayerIA.setColor(Color.White);
                 secondPlayerDistant.setColor(Color.Black);
+<<<<<<< HEAD
 
                 // IA place two pawn on the tray
                 String msg = firstPlayerIA.playInTray(this.tray);
@@ -126,30 +127,36 @@ public class GameModel {
                 else
                     printInConsole(msg);
 
+=======
+                // AI place two pawn on the tray
+                writeMessage(firstPlayerIA.playInTray(this.tray));
+>>>>>>> master
 
                 turn = Color.Black;
                 break;
 
-            case Message.SECOND: // IA is the second player
+            case Message.SECOND: // AI is the second player
                 // init player
 
                 firstPlayerIA.setColor(Color.Black);
                 secondPlayerDistant.setColor(Color.White);
 
-                if (this.onLineMode)
-                    this.treatMessage(clientTCP.read());
-                else
-                    this.treatMessage(readConsole());
+                this.treatMessage(readMessage());
 
+<<<<<<< HEAD
                 String colorChoice = firstPlayerIA.chooseColor();
                 if (onLineMode)
                     clientTCP.write(colorChoice);
                 else
                     printInConsole(colorChoice);
+=======
+                writeMessage(firstPlayerIA.chooseColor());
+>>>>>>> master
 
                 if (firstPlayerIA.getColor() == Color.White) {
                     secondPlayerDistant.setColor(Color.Black);
                 }
+
                 turn = Color.Black;
                 break;
 
@@ -164,16 +171,33 @@ public class GameModel {
                 break;
 
             case Message.STOP: // Other player pass his turn
-                firstPlayerIA.playInTray(this.tray);
-                this.quit = true;
+                if (firstPlayerIA.getColor() == Color.Black){
+                    writeMessage(firstPlayerIA.playInTray(this.tray));
+                    nextPlayer();
+                }
+
+                lastTurn = true;
+                quit = true;
+
                 break;
 
             case Message.END: // End of the game
                 this.end = true;
+                this.quit = true;
+
+                if (onLineMode)
+                    this.clientTCP.disconnect();
                 break;
 
             default:
-                if (message.length() == 5) {
+                if (onLineMode){
+                    while (message.length() < 5){
+                        message += clientTCP.read();
+                    }
+
+                }
+                if (message.length() == 5)
+                {
                     // get lines and columns
                     int line1 = Integer.parseInt(String.valueOf(message.charAt(0)));
                     int column1 = Integer.parseInt(String.valueOf(message.charAt(1)));
@@ -183,20 +207,21 @@ public class GameModel {
                     // if distant player wants to place a bridge
                     if (message.charAt(2) == '-') {
                         if (!this.tray.placeBridge(line1, column1, line2, column2))
-                            System.err.println("Can't place distant player bridge !");
+                            printInConsole("Can't place distant player bridge !");
                     } else { // distant player wants to place 2 pawns
                         if (!this.tray.placePawn(line1, column1, secondPlayerDistant.getColor())
                                 || !this.tray.placePawn(line2, column2, secondPlayerDistant.getColor()))
-                            System.err.println("Can't place distant pawn !");
+                            printInConsole("Can't place distant pawn !");
                     }
-                    this.nextPlayer();
-                } else {
-                    System.err.println("Strange message received ! : \"" + message + "\"");
-                    if (!onLineMode)
-                        treatMessage(readConsole());
+                    if (lastTurn)
+                        this.quit = true;
+                    else
+                        this.nextPlayer();
+                }
+                else {
+                    printInConsole("Strange message received ! : \"" + message + "\"");
                 }
                 break;
-
         }
     }
 
@@ -248,16 +273,16 @@ public class GameModel {
 
             for (int column = 0 ; column < tray.getSize(); column++){
                 System.out.print("| " );
-                if (tray.getBox(line, column).getPawn() != null) {
-                    switch (tray.getBox(line, column).getPawn().getColor()) {
+                if (tray.getCell(line, column).getPawn() != null) {
+                    switch (tray.getCell(line, column).getPawn().getColor()) {
                         case Black:
-                            if (tray.getBox(line, column).getPawn().hasBridge())
+                            if (tray.getCell(line, column).getPawn().hasBridge())
                                 System.out.print("B/ ");
                             else
                                 System.out.print("B  ");
                             break;
                         case White:
-                            if (tray.getBox(line, column).getPawn().hasBridge())
+                            if (tray.getCell(line, column).getPawn().hasBridge())
                                 System.out.print("W/ ");
                             else
                                 System.out.print("W  ");
@@ -266,7 +291,7 @@ public class GameModel {
                             break;
                     }
                 } else{
-                    if (tray.getBox(line, column).isLocked())
+                    if (tray.getCell(line, column).isLocked())
                         System.out.print(" x ");
                     else
                         System.out.print("   ");
@@ -281,16 +306,28 @@ public class GameModel {
     }
 
 
-    private String readConsole()
-    {
+    private String readMessage() {
+        if (onLineMode){
+            return clientTCP.read();
+        }
         System.out.println("Read console :");
         Scanner sc = new Scanner(System.in);
         return sc.nextLine();
     }
 
-    private void printInConsole(String message){
-        System.out.println(message);
+    private void writeMessage(String message){
+        if (onLineMode)
+            clientTCP.write(message);
+        else
+            printInConsole(message);
+        if (message == Message.STOP){
+            lastTurn = true;
+        }
     }
 
+    private void printInConsole(String message){
+        if (verbose)
+            System.out.println(message);
+    }
 
 }

@@ -132,4 +132,8 @@ public class SandBar {
     public List<SandBar> getNearbySandBars() {
         return nearbySandBars;
     }
+
+    public Pawn[] getPawnList() {
+        return pawnList;
+    }
 }

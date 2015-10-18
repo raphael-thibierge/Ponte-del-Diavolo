@@ -36,20 +36,11 @@ public class ClientTCP
     public String read(){
         String readed = "";
 
-        if (isConnected()) {
+        if (connected) {
             try {
 
                 System.out.println("TCP Client is reading");
-//                int receive = input.read();
-//                while (receive >= 0 && receive <= 255){
-//                    readed += (char)receive;
-//                    receive =input.read();
 
-//                byte[] b = new byte[10]; //définition d'un tableau pour lire les données arrivées
-//                int bitsRecus = input.read(b); //il n'est pas sûr que l'on recoive 1000 bits
-//                if(bitsRecus>0) {
-//                    readed = new String(b,0, bitsRecus);
-//                }
                 readed += (char) input.read();
                 while (input.available() > 0){
                     //System.out.println("Restant : " + input.available());
@@ -67,7 +58,7 @@ public class ClientTCP
     }
 
     public void write(String string) {
-        if (isConnected()) {
+        if (connected) {
             try {
                 System.out.println("Try write : " + string);
                 output = socket.getOutputStream();
@@ -105,11 +96,12 @@ public class ClientTCP
         if (!this.connected) {
             // connect socket
             this.socket = new Socket(this.address, this.port);
-            this.connected = true;
-            // init input and output stream
 
+            // init input and output stream
             this.input = socket.getInputStream();
             this.output = socket.getOutputStream();
+
+            this.connected = true;
         }
     }
 

@@ -1,6 +1,7 @@
 courriel=raphael.thibierge@etu.u-bordeaux.fr
 compte=rthibierge
 nom=Thibierge
-application=production/Ponte-del-Diavolo/Main
+application=Main
 groupe=S3A
+prenom=raphael
 

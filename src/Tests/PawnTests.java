@@ -1,7 +1,7 @@
 package Tests;
 
+import Game.Cell;
 import Game.Tray;
-import Game.Box;
 import Game.Color;
 import Game.Pawn;
 import org.junit.Rule;
@@ -23,7 +23,7 @@ public class PawnTests
     public void newPawn_ExceptionTest()
     {
         exception.expect(NullPointerException.class);
-        Pawn pawn = new Pawn(null, new Box(0, 0));
+        Pawn pawn = new Pawn(null, new Cell(0, 0));
 
         exception.expect(NullPointerException.class);
         pawn = new Pawn(Color.Black, null);
