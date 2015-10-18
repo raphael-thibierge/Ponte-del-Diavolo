@@ -20,12 +20,22 @@ public class ArthurIA extends Player {
 
     private boolean canBridgeOnTray(Tray tray,Color color)
     {
+        Box[][] boxes=tray.getGrid();
         for(int i =0;i<tray.getSize();i++)
         {
             for(int j=0;j<tray.getSize();j++)
             {
-                tray.getBox(i,j).getPawn();
-                tray.getBox(i,j).getPawn().getColor();
+                if(boxes[i][j].getPawn().getColor()==this.color)
+                {
+                    if(i==0) // pas de test au dessus de cette case
+                    {
+                        if((tray.canBridge(i,j,i,j-2)) || (tray.canBridge(i,j,i+1,j-2)) || (tray.canBridge(i,j,i+2,j-2)) || (tray.canBridge(i,j,i+2,j-1))
+                                || (tray.canBridge(i,j,i+2,j)) || (tray.canBridge(i,j,i+2,j+1)))
+                        {
+
+                        }
+                    }
+                }
             }
         }
 
