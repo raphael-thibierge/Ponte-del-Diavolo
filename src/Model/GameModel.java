@@ -85,7 +85,8 @@ public class GameModel {
         printInConsole("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
 
         //end of the game, wait for end signal
-        this.treatMessage(this.readMessage());
+        if (!this.end)
+            this.treatMessage(this.readMessage());
 
     }
 
@@ -108,7 +109,8 @@ public class GameModel {
                 firstPlayerIA.setColor(Color.Black);
                 secondPlayerDistant.setColor(Color.White);
 
-                this.treatMessage(readMessage());
+                String msg = readMessage();
+                this.treatMessage(msg);
 
                 writeMessage(firstPlayerIA.chooseColor());
 
@@ -149,10 +151,11 @@ public class GameModel {
                 break;
 
             default:
-                if (onLineMode){
+                //if (onLineMode){
+                    printInConsole(message);
                     while (message.length() < 5){
-                        message += clientTCP.read();
-                    }
+                        message += readMessage();
+                    //}
 
                 }
                 if (message.length() == 5)

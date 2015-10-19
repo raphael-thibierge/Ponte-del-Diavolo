@@ -50,8 +50,7 @@ public class Cell {
         return false;
     }
 
-    public boolean pawnAllowedHere(Color color)
-    {
+    public boolean pawnAllowedHere(Color color) {
         // first condition
         if ( color != null
                 && !isLocked()
@@ -127,13 +126,11 @@ public class Cell {
         return false;
     }
 
-
     public boolean isNearbyOf(Cell cell){
         return cell != null && this.nearbyBoxes.containsValue(cell);
     }
 
-    public boolean inDiagonal(Cell cell)
-    {
+    public boolean inDiagonal(Cell cell) {
         return cell != null &&
                 (cell == this.nearbyBoxes.get(Direction.NORTH_EST)
                         || cell == this.nearbyBoxes.get(Direction.NORTH_WEST)
@@ -142,11 +139,16 @@ public class Cell {
                 );
     }
 
+    public void removePawn(){
+        this.pawn = null;
+        this.taken = false;
+        this.locked = false;
+    }
+
 
     /* ========================
      *        ACCESSORS
      * ======================== */
-
 
     public int getColumn() {
         return column;
@@ -186,19 +188,27 @@ public class Cell {
 
     public Map<Direction, Cell> getNearbyBoxesOrthogonal() {
         Map<Direction, Cell> map = new HashMap<>();
-        map.put(Direction.NORTH, this.nearbyBoxes.get(Direction.NORTH));
-        map.put(Direction.EST, this.nearbyBoxes.get(Direction.EST));
-        map.put(Direction.WEST, this.nearbyBoxes.get(Direction.WEST));
-        map.put(Direction.SOUTH, this.nearbyBoxes.get(Direction.SOUTH));
+        if (this.nearbyBoxes.get(Direction.NORTH) != null)
+            map.put(Direction.NORTH, this.nearbyBoxes.get(Direction.NORTH));
+        if (this.nearbyBoxes.get(Direction.EST) != null)
+            map.put(Direction.EST, this.nearbyBoxes.get(Direction.EST));
+        if (this.nearbyBoxes.get(Direction.WEST) != null)
+            map.put(Direction.WEST, this.nearbyBoxes.get(Direction.WEST));
+        if (this.nearbyBoxes.get(Direction.SOUTH) != null)
+            map.put(Direction.SOUTH, this.nearbyBoxes.get(Direction.SOUTH));
         return map;
     }
 
     public Map<Direction, Cell> getNearbyBoxesDiagonal() {
         Map<Direction, Cell> map = new HashMap<>();
-        map.put(Direction.NORTH_EST, this.nearbyBoxes.get(Direction.NORTH_EST));
-        map.put(Direction.NORTH_WEST, this.nearbyBoxes.get(Direction.NORTH_WEST));
-        map.put(Direction.SOUTH_EST, this.nearbyBoxes.get(Direction.SOUTH_EST));
-        map.put(Direction.SOUTH_WEST, this.nearbyBoxes.get(Direction.SOUTH_WEST));
+        if (this.nearbyBoxes.get(Direction.NORTH_EST) != null)
+            map.put(Direction.NORTH_EST, this.nearbyBoxes.get(Direction.NORTH_EST));
+        if (this.nearbyBoxes.get(Direction.NORTH_WEST) != null)
+            map.put(Direction.NORTH_WEST, this.nearbyBoxes.get(Direction.NORTH_WEST));
+        if (this.nearbyBoxes.get(Direction.SOUTH_EST) != null)
+            map.put(Direction.SOUTH_EST, this.nearbyBoxes.get(Direction.SOUTH_EST));
+        if (this.nearbyBoxes.get(Direction.SOUTH_WEST) != null)
+            map.put(Direction.SOUTH_WEST, this.nearbyBoxes.get(Direction.SOUTH_WEST));
         return map;
     }
 

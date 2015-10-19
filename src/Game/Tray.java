@@ -1,8 +1,9 @@
 package Game;
 
-import java.util.*;
-
-import static java.lang.Math.abs;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by raphael on 10/10/2015.
@@ -226,6 +227,33 @@ public class Tray {
         return cptPawnPossibilities;
     }
 
+    public void cancelPawn(int line, int column){
+        Cell cell = this.getCell(line, column);
+
+        if (cell != null && cell.getPawn() != null){
+            if (cell.getPawn().getColor() == Color.White)
+                whitePawns.remove(cell.getPawn());
+            else blackPawns.remove(cell.getPawn());
+            cell.removePawn();
+        }
+    }
+/*
+    public void cancelBridge(int line1, int column1, int line2, int column2){
+        Cell cell1 = getCell(line1, column1);
+        Cell cell2 = getCell(line2, column2);
+
+        if (cell1 != null && cell2 != null
+                && cell1.getPawn() != null && cell2.getPawn() != null){
+
+            if (cell1.getPawn().getBridge() != null
+                    && cell1.getPawn().getBridge().equals(cell2.getPawn().getBridge())){
+                this.bridgeList.remove(cell1.getPawn().getBridge());
+                cell1.getPawn().removeBridge();
+                cell2.getPawn().removeBridge();
+            }
+        }
+    }*/
+
     /* ========================
      *        ACCESSORS
      * ======================== */
@@ -245,4 +273,7 @@ public class Tray {
             return whitePawns;
         else return blackPawns;
     }
+
+
+
 }

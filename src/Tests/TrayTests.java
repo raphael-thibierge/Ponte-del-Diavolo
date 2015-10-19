@@ -1,13 +1,12 @@
 package Tests;
 
 import Game.Cell;
-import Game.Tray;
 import Game.Color;
 import Game.Direction;
+import Game.Tray;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -338,5 +337,36 @@ public class TrayTests {
         assertFalse(tray.pawnBetween2Boxes(cell1, cell2));
 
     }
+
+    @Test
+    public void cancelPawn_Test(){
+        tray = new Tray();
+        tray.init(2);
+
+        assertTrue(tray.placePawn(0,0, Color.Black));
+        tray.cancelPawn(0,0);
+        assertTrue(tray.getCell(0,0).getPawn() == null);
+        assertFalse(tray.getCell(0, 0).isTaken());
+        assertFalse(tray.getCell(0, 0).isLocked());
+
+    }
+/*
+    @Test
+    public void cancelBridge(){
+        tray = new Tray();
+        tray.init(3);
+
+        assertTrue(tray.placePawn(0,0, Color.Black));
+        assertTrue(tray.placePawn(2,2, Color.Black));
+        assertTrue(tray.placeBridge(2,2, 0,0));
+
+        tray.cancelBridge(0,0, 2, 2);
+        assertFalse(tray.getCell(0,0).getPawn().hasBridge());
+        assertFalse(tray.getCell(2,2).getPawn().hasBridge());
+
+        assertTrue(tray.getCell(0,0).getPawn().getBridge() == null);
+        assertTrue(tray.getCell(2,2).getPawn().getBridge() == null);
+        assertFalse(tray.getCell(1,1).isLocked());
+    }*/
 
 }

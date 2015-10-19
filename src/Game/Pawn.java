@@ -1,7 +1,5 @@
 package Game;
 
-import static junit.framework.Assert.assertTrue;
-
 /**
  * Created by raphael on 10/10/2015.
  */
@@ -13,8 +11,7 @@ public class Pawn {
     private Bridge bridge;
 
 
-    public Pawn(Color color, Cell cell) throws NullPointerException
-    {
+    public Pawn(Color color, Cell cell) throws NullPointerException {
         if (color == null || cell == null)
             throw new NullPointerException("Try to construct pawn with null color or null cell");
         this.color = color;
@@ -23,14 +20,12 @@ public class Pawn {
         updateSandBar();
     }
 
-
     public boolean belongsToIsland()
     {
         return this.sandBar != null && this.sandBar.isIsland();
     }
 
-    private void updateSandBar()
-    {
+    private void updateSandBar() {
         if ( this.cell !=null)
         {
             // no nearby sandbar founded
@@ -64,9 +59,7 @@ public class Pawn {
         }
     }
 
-
-    void updateNearbyBoxNearbySandBar(Cell cell)
-    {
+    void updateNearbyBoxNearbySandBar(Cell cell) {
         if (cell != null){
             // if pawn's color of nearby cell is the same as this pawn
             if (cell.getPawn() != null
@@ -82,14 +75,15 @@ public class Pawn {
         }
     }
 
-
     public boolean hasBridge(){
         return !(this.bridge == null);
     }
 
+    public void removeBridge(){
+        this.bridge = null;
+    }
 
     // ACCESSORS
-
 
     public Cell getCell() {
         return cell;

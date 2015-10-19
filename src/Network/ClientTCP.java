@@ -77,19 +77,6 @@ public class ClientTCP
         else System.out.println("euuuh..");
     }
 
-    public boolean isConnected()
-    {
-        if (!this.connected) {
-
-            try {
-                connect();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return this.connected;
-    }
 
     public void connect() throws IOException
     {
@@ -109,8 +96,17 @@ public class ClientTCP
     {
         if (this.connected){
             try {
-                socket.close();
+                if (this.input != null)
+                    this.input.close();
+
+                if (this.output != null)
+                    this.output.close();
+
+                if (this.socket != null)
+                    socket.close();
+
                 this.connected = false;
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

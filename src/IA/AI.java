@@ -53,7 +53,8 @@ public class AI extends Player {
         * BEGIN ALGO
         * */
 
-        if (nbFreeCells < 2)
+
+      /*  if (nbFreeCells < 2)
             placeFirstBridge();
         else {
             buildIsland();
@@ -69,8 +70,15 @@ public class AI extends Player {
                     fillTray();
 
             }
-        }
+        }*/
 
+        if (this.nbFreeCells >= 2){
+            MinMax minMax = new MinMax();
+            answer = minMax.minMax(this.tray, this.color);
+            if (answer != null){
+                this.nbPawnPlaced = 2;
+            }
+        }
 
 
         if (this.answer == null || (nbPawnPlaced < 2 && !bridgePlaced))
