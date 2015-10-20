@@ -55,6 +55,33 @@ public class GameModel {
             turn = Color.White;
     }
 
+    public void runTest(){
+        firstPlayerIA = new AI(Color.White);
+        secondPlayerDistant = new AI(Color.Black);
+        turn = Color.White;
+
+
+
+        while (firstPlayerIA.canPlay(tray) || secondPlayerDistant.canPlay(tray)) {
+            if (turn == Color.Black) {
+                String string = secondPlayerDistant.playInTray(tray);
+                if (string.equals("a")) break;
+            } else {
+                String string = firstPlayerIA.playInTray(tray);
+                if (string.equals("a")) break;
+            }
+            nextPlayer();
+            displayInConsole(tray);
+        }
+
+        printInConsole(Integer.toString(scoreFromTrayForColor(Color.Black, tray)));
+        printInConsole(Integer.toString(scoreFromTrayForColor(Color.White, tray)));
+
+
+
+
+    }
+
     public void run(){
 
         if (this.onLineMode) {
@@ -63,7 +90,7 @@ public class GameModel {
         }
         else {
             firstPlayerIA = new AI(Color.White);
-            secondPlayerDistant = new Manual(Color.Black);
+            secondPlayerDistant = new DistantPlayer(Color.Black, clientTCP);
         }
 
         // run game
@@ -151,15 +178,8 @@ public class GameModel {
                 break;
 
             default:
-                //if (onLineMode){
-                    printInConsole(message);
-                    while (message.length() < 5){
-                        message += readMessage();
-                    //}
 
-                }
-                if (message.length() == 5)
-                {
+               try {
                     // get lines and columns
                     int line1 = Integer.parseInt(String.valueOf(message.charAt(0)));
                     int column1 = Integer.parseInt(String.valueOf(message.charAt(1)));
@@ -169,19 +189,20 @@ public class GameModel {
                     // if distant player wants to place a bridge
                     if (message.charAt(2) == '-') {
                         if (!this.tray.placeBridge(line1, column1, line2, column2))
-                            printInConsole("Can't place distant player bridge !");
-                    } else { // distant player wants to place 2 pawns
+                            System.err.print("Can't place distant player bridge !");
+                    }
+
+                    else { // distant player wants to place 2 pawns
                         if (!this.tray.placePawn(line1, column1, secondPlayerDistant.getColor())
                                 || !this.tray.placePawn(line2, column2, secondPlayerDistant.getColor()))
-                            printInConsole("Can't place distant pawn !");
+                            System.err.print("Can't place distant pawn !");
                     }
                     if (lastTurn)
                         this.quit = true;
                     else
                         this.nextPlayer();
-                }
-                else {
-                    printInConsole("Strange message received ! : \"" + message + "\"");
+                } catch (Exception e){
+                    System.err.print("Error found in LECTURE CASE DEFAULT");
                 }
                 break;
         }
@@ -255,6 +276,9 @@ public class GameModel {
                 } else{
                     if (tray.getCell(line, column).isLocked())
                         System.out.print(" x ");
+                    else if (tray.getCell(line, column).isTaken())
+                        System.out.print(" - ");
+
                     else
                         System.out.print("   ");
                 }

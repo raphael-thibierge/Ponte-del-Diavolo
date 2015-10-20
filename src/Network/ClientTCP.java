@@ -1,5 +1,7 @@
 package Network;
 
+import sun.plugin2.message.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +37,7 @@ public class ClientTCP
 
     public String read(){
         String readed = "";
+        String returned = "";
 
         if (connected) {
             try {
@@ -42,10 +45,19 @@ public class ClientTCP
                 System.out.println("TCP Client is reading");
 
                 readed += (char) input.read();
-                while (input.available() > 0){
-                    //System.out.println("Restant : " + input.available());
+                if (!isMessage(readed)) {
+
+
+                    readed += (char) input.read();
+                    readed += (char) input.read();
+                    readed += (char) input.read();
                     readed += (char) input.read();
                 }
+                /*while (input.available() > 0){
+                    //System.out.println("Restant : " + input.available());
+                    readed += (char) input.read();
+                    System.out.println(readed);
+                }*/
 
                 System.out.println("TCP Client : " + readed);
                 System.out.println("TCP Client end reading");
@@ -112,4 +124,17 @@ public class ClientTCP
             }
         }
     }
+
+    public boolean isMessage(String message){
+        if (message.equals(Message.BLACK)
+                || message.equals(Message.WHITE)
+                || message.equals(Message.STOP)
+                || message.equals(Message.END)
+                || message.equals(Message.FIRST)
+                || message.equals(Message.SECOND)
+                )
+            return true;
+        return false;
+    }
+
 }

@@ -17,6 +17,7 @@ public class AI extends Player {
 
     private Strategy lastStrategy = null;
     private Strategy currentStrategy = null;
+    private int turn = 0;
 
     private Tray tray = null;
     private int nbFreeCells = 0;
@@ -34,7 +35,7 @@ public class AI extends Player {
     @Override
     public String playInTray(Tray tray) {
         System.out.println("AI " + this.color.name() + " :");
-
+        turn++;
         /*
         *   Each turn init
         * */
@@ -53,8 +54,8 @@ public class AI extends Player {
         * BEGIN ALGO
         * */
 
-
-      /*  if (nbFreeCells < 2)
+    //fillTray();
+       /* if (nbFreeCells < 2)
             placeFirstBridge();
         else {
             buildIsland();
@@ -71,14 +72,23 @@ public class AI extends Player {
 
             }
         }*/
+       // if (nbFreeCells >= 2)
+            fillTray();
+      //  else return Message.STOP;
+//
+//        if (turn >= 0){
+//            if (this.nbFreeCells >= 2){
+//                MinMax minMax = new MinMax();
+//                answer = minMax.minMax(this.tray, this.color);
+//                if (answer != null){
+//                    this.nbPawnPlaced = 2;
+//                }
+//            }
+//
+//        } else {
+//            fullRandom();
+//        }
 
-        if (this.nbFreeCells >= 2){
-            MinMax minMax = new MinMax();
-            answer = minMax.minMax(this.tray, this.color);
-            if (answer != null){
-                this.nbPawnPlaced = 2;
-            }
-        }
 
 
         if (this.answer == null || (nbPawnPlaced < 2 && !bridgePlaced))

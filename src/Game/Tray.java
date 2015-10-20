@@ -135,6 +135,8 @@ public class Tray {
         if ( cell != null){
             if( cell.placePawn(color)){
                 getPawns(color).add(cell.getPawn());
+
+
                 return true;
             }
         }
