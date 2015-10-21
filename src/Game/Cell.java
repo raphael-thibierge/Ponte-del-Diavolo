@@ -212,4 +212,13 @@ public class Cell {
         return map;
     }
 
+    @Override
+    public String toString() {
+        return "Cell{" +
+                ", line=" + line +
+                ", column=" + column +
+                "taken=" + taken +
+                ", locked=" + locked +
+                '}';
+    }
 }

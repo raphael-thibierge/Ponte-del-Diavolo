@@ -86,8 +86,8 @@ public class GameModelTests {
         assertTrue(tray.placeBridge(5, 4, 3, 4));
 
         assertTrue(GameModel.scoreFromTrayForColor(Color.White, tray) == 10);
-        System.out.println("Big Picture");
-        GameModel.displayInConsole(tray);
+        //System.out.println("Big Picture");
+        //GameModel.displayInConsole(tray);
 
     }
 

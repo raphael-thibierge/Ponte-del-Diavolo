@@ -25,4 +25,16 @@ public class Message {
         return firstPawn(line1, column1) + "-" + firstPawn(line2, column2);
     }
 
+    public static boolean isMessage(String message){
+        if (message.equals(Message.BLACK)
+                || message.equals(Message.WHITE)
+                || message.equals(Message.STOP)
+                || message.equals(Message.END)
+                || message.equals(Message.FIRST)
+                || message.equals(Message.SECOND)
+                )
+            return true;
+        return false;
+    }
+
 }

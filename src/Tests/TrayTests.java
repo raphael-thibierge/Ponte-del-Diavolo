@@ -4,9 +4,11 @@ import Game.Cell;
 import Game.Color;
 import Game.Direction;
 import Game.Tray;
+import Model.GameModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -339,7 +341,7 @@ public class TrayTests {
     }
 
     @Test
-    public void cancelPawn_Test(){
+     public void cancelPawn_Test(){
         tray = new Tray();
         tray.init(2);
 
@@ -350,6 +352,28 @@ public class TrayTests {
         assertFalse(tray.getCell(0, 0).isLocked());
 
     }
+
+    @Test
+    public void cancelPawn_RemovedFromSandBar_Test(){
+        tray = new Tray();
+        tray.init(2);
+
+        assertTrue(tray.placePawn(0,0, Color.Black));
+        assertTrue(tray.placePawn(0,1, Color.Black));
+
+        assertTrue("should be in sandBar",
+                tray.getSandBarInBox(0,0).getPawnList().contains(tray.getCell(0, 1).getPawn()));
+
+        tray.cancelPawn(0,1);
+        assertFalse("should not be in sandBar",
+                tray.getSandBarInBox(0, 0).getPawnList().contains(tray.getCell(0, 1).getPawn()));
+        assertTrue("should have only one pawn", tray.getSandBarInBox(0,0).getSize() == 1);
+
+
+        tray.cancelPawn(0,0);
+
+    }
+
 /*
     @Test
     public void cancelBridge(){
@@ -368,5 +392,40 @@ public class TrayTests {
         assertTrue(tray.getCell(2,2).getPawn().getBridge() == null);
         assertFalse(tray.getCell(1,1).isLocked());
     }*/
+
+
+    @Test
+    public void erreurMrGuibert1() {
+        Tray tray = new Tray();
+        tray.init(5);
+        assertTrue(tray.placePawn(0, 0, Color.White));
+        assertTrue(tray.placePawn(0, 1, Color.White));
+        assertTrue(tray.placePawn(0, 2, Color.Black));
+        assertTrue(tray.placePawn(0, 3, Color.Black));
+        assertTrue(tray.placePawn(1, 0, Color.White));
+        assertTrue(tray.placePawn(3, 1, Color.White));
+        assertTrue(tray.placePawn(0, 4, Color.Black));
+        assertTrue(tray.placePawn(1, 1, Color.Black));
+        assertTrue(tray.placePawn(3, 4, Color.White));
+        assertTrue(tray.placePawn(4, 2, Color.White));
+        assertTrue(tray.placePawn(2, 0, Color.Black));
+        assertTrue(tray.placePawn(2, 1, Color.Black));
+        assertTrue(tray.placePawn(2, 4, Color.White));
+        assertTrue(tray.placePawn(4, 0, Color.White));
+        assertFalse(tray.placePawn(2, 2, Color.Black));
+        assertTrue(tray.placePawn(4, 1, Color.Black));
+    }
+
+    @Test
+    public void initFromStringTest(){
+        tray = new Tray();
+        tray.initWithString(5, "00+01 c 02+03 10+31 04+11 34+42 20+21 24+40");
+
+      //  GameModel.displayInConsole(tray);
+
+    }
+
+
+
 
 }

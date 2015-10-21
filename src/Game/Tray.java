@@ -1,5 +1,8 @@
 package Game;
 
+import IA.Strategy;
+import Network.Message;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -236,6 +239,8 @@ public class Tray {
             if (cell.getPawn().getColor() == Color.White)
                 whitePawns.remove(cell.getPawn());
             else blackPawns.remove(cell.getPawn());
+            // remove pawn from sand bar
+            cell.getPawn().getSandBar().removePawn(cell.getPawn());
             cell.removePawn();
         }
     }
@@ -255,6 +260,69 @@ public class Tray {
             }
         }
     }*/
+
+
+
+    public Color initWithString(int size, String string){
+        init(size);
+        String msg ="";
+        Color turn = Color.White;
+        for (char c : string.toCharArray()){
+            if (!Message.isMessage(msg) && c != ' '){
+                msg += c;
+            } else if (msg.length() == 5){
+                placeFromString(msg, turn);
+                if (turn == Color.White) {
+                    turn = Color.Black;
+                }
+                else {
+                    turn = Color.White;
+                }
+                msg = "";
+            } else
+                msg = "";
+        }
+        if (msg.length() == 5){
+            placeFromString(msg, turn);
+        }
+        return turn;
+    }
+
+    public boolean placeFromString (String string, Color color){
+        try {
+            // get lines and columns
+
+            if (string.length() == 5){
+                int line1 = Integer.parseInt(String.valueOf(string.charAt(0)));
+                int column1 = Integer.parseInt(String.valueOf(string.charAt(1)));
+                int line2 = Integer.parseInt(String.valueOf(string.charAt(3)));
+                int column2 = Integer.parseInt(String.valueOf(string.charAt(4)));
+
+                // if distant player wants to place a bridge
+                if (string.charAt(2) == '-') {
+                    if (this.placeBridge(line1, column1, line2, column2))
+                        return true;
+                    else
+                        System.err.print("Can't place distant player bridge in (" + line1 + "," + column1 + ") (" + line2 + "," + column2 + ")"  );
+                }
+                else { // distant player wants to place 2 pawns
+                    if (this.placePawn(line1, column1, color))
+                        if (this.placePawn(line2, column2, color))
+                            return true;
+                        else
+                            System.out.println("Can't place " + color + " pawn in (" + line2 + "," + column2 + ")");
+                    else
+                        System.out.println("Can't place " + color + " pawn in (" + line1 + "," + column1 + ")");
+                }
+
+            }
+        } catch (Exception e){
+            System.err.print("Error found in LECTURE CASE DEFAULT");
+
+        }
+        return false;
+    }
+
 
     /* ========================
      *        ACCESSORS

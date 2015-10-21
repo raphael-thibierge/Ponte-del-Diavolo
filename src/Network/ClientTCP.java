@@ -45,7 +45,7 @@ public class ClientTCP
                 System.out.println("TCP Client is reading");
 
                 readed += (char) input.read();
-                if (!isMessage(readed)) {
+                if (!Message.isMessage(readed)) {
 
 
                     readed += (char) input.read();
@@ -125,16 +125,6 @@ public class ClientTCP
         }
     }
 
-    public boolean isMessage(String message){
-        if (message.equals(Message.BLACK)
-                || message.equals(Message.WHITE)
-                || message.equals(Message.STOP)
-                || message.equals(Message.END)
-                || message.equals(Message.FIRST)
-                || message.equals(Message.SECOND)
-                )
-            return true;
-        return false;
-    }
+
 
 }

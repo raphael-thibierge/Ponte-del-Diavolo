@@ -50,45 +50,31 @@ public class AI extends Player {
 
         this.nbPawnPlaced = 0;
 
-        /*
-        * BEGIN ALGO
-        * */
 
-    //fillTray();
-       /* if (nbFreeCells < 2)
-            placeFirstBridge();
-        else {
-            buildIsland();
+        switch (this.currentStrategy){
 
-            if (nbPawnPlaced == 0)
-                placeFirstBridge();
+            case FILL:
+                fillTray();
+                break;
 
+            case RANDOM:
+                fullRandom();
+                break;
 
-            if (nbPawnPlaced < 2 && !bridgePlaced){
-                if (nbFreeCells > 6)
+            case MIN_MAX:
+                if (turn >= this.tray.getSize() ){
+                    if (this.nbFreeCells >= 2){
+                        MinMax minMax = new MinMax();
+                        answer = minMax.minMax(this.tray, this.color);
+                        if (answer != null){
+                            this.nbPawnPlaced = 2;
+                        }
+                    }
+
+                } else {
                     fullRandom();
-                else
-                    fillTray();
-
-            }
-        }*/
-       // if (nbFreeCells >= 2)
-            fillTray();
-      //  else return Message.STOP;
-//
-//        if (turn >= 0){
-//            if (this.nbFreeCells >= 2){
-//                MinMax minMax = new MinMax();
-//                answer = minMax.minMax(this.tray, this.color);
-//                if (answer != null){
-//                    this.nbPawnPlaced = 2;
-//                }
-//            }
-//
-//        } else {
-//            fullRandom();
-//        }
-
+                }
+        }
 
 
         if (this.answer == null || (nbPawnPlaced < 2 && !bridgePlaced))
@@ -255,5 +241,9 @@ public class AI extends Player {
         }
         System.out.println("Color choosen by AI : " + this.color.name());
         return colorChoice;
+    }
+
+    public void setCurrentStrategy(Strategy currentStrategy) {
+        this.currentStrategy = currentStrategy;
     }
 }

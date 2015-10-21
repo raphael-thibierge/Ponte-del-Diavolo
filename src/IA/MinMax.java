@@ -10,11 +10,12 @@ import Network.Message;
  */
 public class MinMax {
 
-    int depth =  4;
+    int depth = 5;
     Tray tray = null;
     Color color = null;
     Color oppositeColor = null;
     String answer = null;
+    Boolean pruning = true;
 
     public String minMax(Tray tray, Color color)
     {
@@ -73,12 +74,14 @@ public class MinMax {
 
                                     this.tray.cancelPawn(line2, column2);
 
-                                    // elagage
-                                    if (returned < alpha.getValue()){
-                                        this.tray.cancelPawn(line1, column1);
-                                        return alpha.getValue();
+                                    // pruning
+                                    if (pruning){
+                                        if (returned < alpha.getValue()){
+                                            this.tray.cancelPawn(line1, column1);
+                                            return alpha.getValue();
+                                        }
+                                        beta.setValue( Math.min(beta.getValue(), returned));
                                     }
-                                    beta.setValue( Math.min(beta.getValue(), returned));
 
 
                                 }
@@ -120,10 +123,12 @@ public class MinMax {
                                     }
                                     this.tray.cancelPawn(line2, column2);
 
-                                    // elagage
-                                    if (returned >= beta.getValue()){
-                                        this.tray.cancelPawn(line1, column1);
-                                        return returned;
+                                    // pruning
+                                    if (pruning){
+                                        if (returned >= beta.getValue()){
+                                            this.tray.cancelPawn(line1, column1);
+                                            return returned;
+                                        }
                                     }
 
                                     alpha.setValue(Math.max(alpha.getValue(), returned));

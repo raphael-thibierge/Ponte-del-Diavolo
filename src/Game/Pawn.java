@@ -1,5 +1,7 @@
 package Game;
 
+import Model.GameModel;
+
 /**
  * Created by raphael on 10/10/2015.
  */
@@ -18,6 +20,7 @@ public class Pawn {
         this.cell = cell;
 
         updateSandBar();
+        //System.out.println(this.toString());
     }
 
     public boolean belongsToIsland()
@@ -107,5 +110,15 @@ public class Pawn {
 
     public void setBridge(Bridge bridge) {
         this.bridge = bridge;
+    }
+
+    @Override
+    public String toString() {
+        return "Pawn{" +
+                "cell=(" + cell.getLine() + ","  + cell.getColumn() +
+                ", color=" + color +
+                ", sandBar=" + sandBar +
+                ", bridge=" + hasBridge() +
+                '}';
     }
 }

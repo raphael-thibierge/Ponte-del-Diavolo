@@ -4,6 +4,7 @@ import Game.Color;
 import Game.SandBar;
 import Game.Tray;
 import IA.AI;
+import IA.Strategy;
 import Network.ClientTCP;
 import Network.Message;
 
@@ -47,12 +48,57 @@ public class GameModel {
         }
     }
 
-    private void nextPlayer()
-    {
+    private void nextPlayer() {
         if (this.turn == Color.White)
             this.turn = Color.Black;
         else
             turn = Color.White;
+    }
+
+    public void runWithString(String string, int size, Color ia){
+
+        Color second ;
+        if (ia == Color.White)
+            second = Color.Black;
+        else
+            second = Color.White;
+
+
+        if (this.onLineMode) {
+            firstPlayerIA = new AI(ia);
+            secondPlayerDistant = new DistantPlayer(second, clientTCP);
+        }else {
+            firstPlayerIA = new AI(ia);
+            secondPlayerDistant = new DistantPlayer(second, clientTCP);
+        }
+
+        turn = tray.initWithString(size, string);
+        printInConsole(turn.toString());
+
+        displayInConsole(this.tray);
+
+        if (turn == ia){
+            writeMessage(firstPlayerIA.playInTray(tray));
+            displayInConsole(tray);
+        }
+
+        // run game
+        while(!this.quit) {
+            // treat messages
+            this.treatMessage(this.readMessage());
+
+            if (!quit && this.turn == this.firstPlayerIA.getColor()) {
+
+                writeMessage(firstPlayerIA.playInTray(tray));
+
+                this.nextPlayer();
+            }
+            if (verbose)
+                displayInConsole(this.tray);
+        }
+
+        printInConsole("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
+        printInConsole("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
     }
 
     public void runTest(){
@@ -60,22 +106,29 @@ public class GameModel {
         secondPlayerDistant = new AI(Color.Black);
         turn = Color.White;
 
+        if (firstPlayerIA instanceof AI)
+            ((AI) firstPlayerIA).setCurrentStrategy(Strategy.RANDOM);
+
+        if (secondPlayerDistant instanceof AI)
+            ((AI) secondPlayerDistant).setCurrentStrategy(Strategy.MIN_MAX);
 
 
         while (firstPlayerIA.canPlay(tray) || secondPlayerDistant.canPlay(tray)) {
             if (turn == Color.Black) {
                 String string = secondPlayerDistant.playInTray(tray);
                 if (string.equals("a")) break;
+                printInConsole(string);
             } else {
                 String string = firstPlayerIA.playInTray(tray);
                 if (string.equals("a")) break;
+                printInConsole(string);
             }
             nextPlayer();
             displayInConsole(tray);
         }
 
-        printInConsole(Integer.toString(scoreFromTrayForColor(Color.Black, tray)));
-        printInConsole(Integer.toString(scoreFromTrayForColor(Color.White, tray)));
+        printInConsole(" Black : " + Integer.toString(scoreFromTrayForColor(Color.Black, tray)));
+        printInConsole(" White : " + Integer.toString(scoreFromTrayForColor(Color.White, tray)));
 
 
 
@@ -180,7 +233,7 @@ public class GameModel {
             default:
 
                try {
-                    // get lines and columns
+                    /*// get lines and columns
                     int line1 = Integer.parseInt(String.valueOf(message.charAt(0)));
                     int column1 = Integer.parseInt(String.valueOf(message.charAt(1)));
                     int line2 = Integer.parseInt(String.valueOf(message.charAt(3)));
@@ -196,7 +249,11 @@ public class GameModel {
                         if (!this.tray.placePawn(line1, column1, secondPlayerDistant.getColor())
                                 || !this.tray.placePawn(line2, column2, secondPlayerDistant.getColor()))
                             System.err.print("Can't place distant pawn !");
-                    }
+                    }*/
+
+                    if (!tray.placeFromString(message, secondPlayerDistant.getColor()))
+                        printInConsole("GRRRR");
+
                     if (lastTurn)
                         this.quit = true;
                     else

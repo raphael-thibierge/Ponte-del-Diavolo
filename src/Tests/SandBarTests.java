@@ -325,6 +325,7 @@ public class SandBarTests {
 
         assertTrue(tray.placePawn(1, 1, Color.Black));
         assertTrue("sandbar must have has neighbor", sandBar.hasNeighbors());
+        assertTrue(sandBar.getNearbySandBars().contains(tray.getSandBarInBox(1,1)));
     }
 
     @Test

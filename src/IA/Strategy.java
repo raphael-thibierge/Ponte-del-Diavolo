@@ -6,6 +6,7 @@ package IA;
 public enum Strategy {
     RANDOM,
     FILL,
-    BUILD_ISLAND
+    BUILD_ISLAND,
+    MIN_MAX
 
 }

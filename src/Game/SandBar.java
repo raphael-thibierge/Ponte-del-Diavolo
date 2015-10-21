@@ -9,7 +9,7 @@ import java.util.List;
 public class SandBar {
 
     private Color color;
-    private Pawn[] pawnList;
+    private List<Pawn> pawnList = new ArrayList<>() ;
     private int size = 0;
 
     private int MAX_SIZE = 4;
@@ -25,11 +25,10 @@ public class SandBar {
         }
 
         this.color = pawn.getColor();
-        this.pawnList = new Pawn[MAX_SIZE];
-        this.pawnList[0] = pawn;
+        this.pawnList = new ArrayList<>(); //Pawn[MAX_SIZE];
+        this.pawnList.add(pawn);
         this.size++;
     }
-
 
     public boolean addPawn(Pawn pawn) {
         // different condition to add a Pawn
@@ -40,7 +39,7 @@ public class SandBar {
                 // Vérifier case d'à côté
 
             // add pawn to list
-            this.pawnList[this.size] = pawn;
+            this.pawnList.add(pawn);
             this.size++;
 
             pawn.setSandBar(this);
@@ -68,6 +67,13 @@ public class SandBar {
             else if (!hasNeighbors())
                 return true;
         return false;
+    }
+
+    public void removePawn(Pawn pawn){
+        if (pawn != null && this.pawnList.contains(pawn)){
+            this.pawnList.remove(pawn);
+            this.size--;
+        }
     }
 
     public boolean hasNeighbors(){
@@ -112,9 +118,8 @@ public class SandBar {
 
     public boolean mergeSandBar(SandBar sandBar){
         if (mergeSandBarAllowed(sandBar)){
-            for (Pawn pawn : sandBar.pawnList){
-                this.addPawn(pawn);
-            }
+
+            sandBar.pawnList.forEach(this::addPawn);
             if (this.nearbySandBars.contains(sandBar))
                 this.nearbySandBars.remove(sandBar);
 
@@ -133,7 +138,17 @@ public class SandBar {
         return nearbySandBars;
     }
 
-    public Pawn[] getPawnList() {
+    public List<Pawn> getPawnList() {
         return pawnList;
     }
+
+    @Override
+    public String toString() {
+        return "SandBar{" +
+                "color=" + color +
+                ", size=" + size +
+                ", nearbor=" + nearbySandBars.size() +
+                '}';
+    }
+
 }
