@@ -272,7 +272,6 @@ public class SandBarTests {
         assertTrue("can receive a neighbor", sandBar.addNeighbor(sandBar1));
         assertTrue("can receive a neighbor", sandBar.addNeighbor(sandBar2));
 
-
         assertTrue("can receive 2 more pawn", sandBar.canReceiveAPawn(null));
         sandBar.addPawn(new Pawn(Color.Black, new Cell(0, 0)));
 
@@ -342,5 +341,4 @@ public class SandBarTests {
         assertTrue(tray.placePawn(1, 1, Color.Black));
 
     }
-
 }

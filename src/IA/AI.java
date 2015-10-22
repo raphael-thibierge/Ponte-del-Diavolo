@@ -30,6 +30,7 @@ public class AI extends Player {
     public AI(Color color)
     {
         super(color);
+        setCurrentStrategy(Strategy.MIN_MAX);
     }
 
     @Override
@@ -50,7 +51,6 @@ public class AI extends Player {
 
         this.nbPawnPlaced = 0;
 
-
         switch (this.currentStrategy){
 
             case FILL:
@@ -62,7 +62,7 @@ public class AI extends Player {
                 break;
 
             case MIN_MAX:
-                if (turn >= this.tray.getSize() ){
+                if (turn >= this.tray.getSize()){
                     if (this.nbFreeCells >= 2){
                         MinMax minMax = new MinMax();
                         answer = minMax.minMax(this.tray, this.color);

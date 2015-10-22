@@ -34,7 +34,6 @@ public class MinMax {
 
         if (answer != null && answer.length() == 5) {
 
-
             int line1 = Integer.parseInt(String.valueOf(answer.charAt(0)));
             int column1 = Integer.parseInt(String.valueOf(answer.charAt(1)));
             int line2 = Integer.parseInt(String.valueOf(answer.charAt(3)));
@@ -82,8 +81,6 @@ public class MinMax {
                                         }
                                         beta.setValue( Math.min(beta.getValue(), returned));
                                     }
-
-
                                 }
                             }
                         }
@@ -129,9 +126,8 @@ public class MinMax {
                                             this.tray.cancelPawn(line1, column1);
                                             return returned;
                                         }
+                                        alpha.setValue(Math.max(alpha.getValue(), returned));
                                     }
-
-                                    alpha.setValue(Math.max(alpha.getValue(), returned));
                                 }
                             }
                         }
