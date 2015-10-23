@@ -1,6 +1,7 @@
 package Tests;
 
 import Game.*;
+import Model.GameModel;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -95,6 +96,22 @@ public class BridgeTests {
         assertFalse(tray.placeBridge(1,0,1,2));
         assertFalse(tray.placeBridge(0,1, 2,1));
         assertFalse(tray.placeBridge(0,2, 2,0));
+
+    }
+
+    @Test
+    public void insertPawn_horizontal_underPridge(){
+        Tray tray = new Tray();
+        tray.init(4);
+
+        assertTrue(tray.placePawn(0,0, Color.Black));
+        assertTrue(tray.placePawn(0,2, Color.Black));
+        assertTrue(tray.placeBridge(tray.getCell(0,0), tray.getCell(0,2)));
+
+        assertTrue(tray.getCell(0,1).isLocked());
+
+        assertFalse(tray.placePawn(0,1, Color.Black));
+        assertFalse(tray.placePawn(0, 1, Color.White));
 
     }
 

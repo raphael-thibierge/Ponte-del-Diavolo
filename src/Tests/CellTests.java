@@ -1,6 +1,7 @@
 package Tests;
 
 import Game.*;
+import Model.GameModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

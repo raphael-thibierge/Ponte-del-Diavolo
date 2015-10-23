@@ -187,7 +187,7 @@ public class Tray {
 
     public boolean placeBridge(Cell cell1, Cell cell2){
         if (cell1 != null && cell2 != null)
-            return canBridge(cell1.getLine(), cell1.getColumn(), cell2.getLine(), cell2.getColumn());
+            return placeBridge(cell1.getLine(), cell1.getColumn(), cell2.getLine(), cell2.getColumn());
         return false;
     }
 
@@ -314,7 +314,6 @@ public class Tray {
                     else
                         System.out.println("Can't place " + color + " pawn in (" + line1 + "," + column1 + ")");
                 }
-
             }
         } catch (Exception e){
             System.err.print("Error found in LECTURE CASE DEFAULT");

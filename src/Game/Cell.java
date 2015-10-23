@@ -98,6 +98,20 @@ public class Cell {
                     }
                 }
             }
+            if (newSandBarSize == 4){
+                for (SandBar sandBar : sandbarFounds){
+                    if (sandBar != null && sandBar.hasNeighbors()){
+                        for (SandBar nearbySandbar : sandBar.getNearbySandBars()){
+                            if (nearbySandbar != null && !sandbarFounds.contains(nearbySandbar))
+                                return false;
+                        }
+                    }
+                }
+
+            }
+
+
+
 
             // then testing diagonal sandbar
             for (Cell nearbyCell : this.getNearbyBoxesDiagonal().values()) {
