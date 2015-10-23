@@ -7,6 +7,8 @@ import Game.Tray;
 import Model.GameModel;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -296,8 +298,10 @@ public class TrayTests {
         tray = new Tray();
         tray.init(5);
 
+
+
         // pawn
-        assertTrue(tray.placePawn(0,0,Color.Black));
+        assertTrue(tray.placePawn(0, 0, Color.Black));
         assertTrue(tray.placePawn(0, 1, Color.Black));
         assertTrue(tray.placePawn(0,2,Color.Black));
         assertTrue(tray.placePawn(1,2,Color.Black));

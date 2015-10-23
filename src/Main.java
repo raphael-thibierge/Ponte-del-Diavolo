@@ -14,6 +14,6 @@ public class Main {
 //        game.runWithString("13+30 c 01+21 00+02 03+10 11+12", 4, Color.White);
         game.runWithString("03+14 c 11+12 00+01 13+24 02+20", 5, Color.White);
         game.run();
-//        System.out.println("End of the game !");
+//        System.out.printlnc("End of the game !");
     }
 }
