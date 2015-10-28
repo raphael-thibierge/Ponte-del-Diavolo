@@ -81,15 +81,6 @@ public class Cell {
 
                                 newSandBarSize += nearbySandbar.getSize();
 
-                                if (newSandBarSize == 4 && nearbySandbar.hasNeighbors())
-                                {
-                                    for (SandBar sandBar : nearbySandbar.getNearbySandBars())
-                                    {
-                                        if (!sandbarFounds.contains(sandBar))
-                                            return false;
-                                    }
-                                }
-
                                 // if newSandBar can't have more than 4 pawn inside
                                 if (newSandBarSize > 4)
                                     return false;
@@ -107,11 +98,7 @@ public class Cell {
                         }
                     }
                 }
-
             }
-
-
-
 
             // then testing diagonal sandbar
             for (Cell nearbyCell : this.getNearbyBoxesDiagonal().values()) {

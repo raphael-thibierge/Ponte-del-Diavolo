@@ -8,6 +8,8 @@ import Game.Tray;
  */
 public abstract class Player {
 
+    protected int nbPawnPlaced = 0;
+
     protected Color color;
 
     public Player(Color color){
@@ -36,6 +38,21 @@ public abstract class Player {
     }
 
 
+    public void incrementNbPawnPlaced(){
+        this.nbPawnPlaced++;
+    }
+
+    public void resetNbPawnPlaced(){
+        this.nbPawnPlaced = 0 ;
+    }
+
+    public int getNbPawnPlaced() {
+        return nbPawnPlaced;
+    }
 
     public abstract String chooseColor();
+
+
+
+
 }

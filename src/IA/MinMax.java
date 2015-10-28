@@ -1,16 +1,20 @@
 package IA;
 
+import Game.Cell;
 import Game.Color;
+import Game.Pawn;
 import Game.Tray;
 import Model.GameModel;
 import Network.Message;
+
+import java.util.List;
 
 /**
  * Created by raph on 19/10/15.
  */
 public class MinMax {
 
-    int depth = 5;
+    int depth = 4;
     Tray tray = null;
     Color color = null;
     Color oppositeColor = null;
@@ -34,21 +38,15 @@ public class MinMax {
 
         if (answer != null && answer.length() == 5) {
 
-            int line1 = Integer.parseInt(String.valueOf(answer.charAt(0)));
-            int column1 = Integer.parseInt(String.valueOf(answer.charAt(1)));
-            int line2 = Integer.parseInt(String.valueOf(answer.charAt(3)));
-            int column2 = Integer.parseInt(String.valueOf(answer.charAt(4)));
-
-            // if distant player wants to place a bridge
-            if (answer.charAt(2) == '-') {
-                this.tray.placeBridge(line1, column1, line2, column2);
-            } else { // distant player wants to place 2 pawns
-                this.tray.placePawn(line1, column1, this.color);
-                this.tray.placePawn(line2, column2, this.color);
-            }
+            tray.placeFromString(this.answer, this.color);
         }
         else answer = null;
         return this.answer;
+
+
+        /*
+        * NOT FINISHED...
+        * */
     }
 
 
@@ -147,6 +145,36 @@ public class MinMax {
         int scoreOppositeColor = GameModel.scoreFromTrayForColor(this.oppositeColor, this.tray);
 
         return scoreColor-scoreOppositeColor;
+    }
+
+
+    private void placeFirstBridge(){
+        List<Pawn> pawnList = tray.getPawns(color);
+        if (pawnList != null){
+            // tests all bridge possibilities
+            for (int i = 0 ; i < pawnList.size() ; i ++){
+                for (int j = 0 ; j < pawnList.size() ; j++){
+
+                    Cell cell1 = pawnList.get(i).getCell();
+                    Cell cell2 = pawnList.get(j).getCell();
+                    if (cell1 != null && cell2 != null){
+
+                        // get lines and columns
+                        int line1 = cell1.getLine();
+                        int column1 = cell1.getColumn();
+                        int line2 = cell2.getLine();
+                        int column2 = cell2.getColumn();
+
+                        // test bridge
+                        if (tray.placeBridge(line1, column1, line2, column2)){
+                            this.answer = Message.bridge(line1, column1, line2, column2);
+                           // this.bridgePlaced = true;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
 
 

@@ -1,5 +1,6 @@
 package Model;
 
+import Game.Cell;
 import Game.Color;
 import Game.SandBar;
 import Game.Tray;
@@ -7,6 +8,7 @@ import IA.AI;
 import IA.Strategy;
 import Network.ClientTCP;
 import Network.Message;
+import View.MainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,19 +20,25 @@ import static java.lang.Math.abs;
 /**
  * Created by raphael on 12/10/2015.
  */
-public class GameModel {
+public class GameModel extends Thread{
+
     private Tray tray;
     private ClientTCP clientTCP;
+
     private Player firstPlayerIA;
     private Player secondPlayerDistant;
+    private Player currentPlayer = null;
 
-    private boolean onLineMode = true;
+    private boolean onLineMode = false;
     private boolean verbose = true;
 
     private boolean quit = false;
     private boolean end = false;
     private boolean lastTurn = false;
     private Color turn;
+
+    private MainView mainView;
+    private GameMode gameMode = GameMode.OnePlayerVsAI;
 
     public GameModel(String serveurIPAddress, int port, int size){
         // init tray
@@ -41,10 +49,40 @@ public class GameModel {
             clientTCP = new ClientTCP(serveurIPAddress, port);
             printInConsole("Connected");
             this.onLineMode = true;
+            this.gameMode = GameMode.AiVSDistant;
         } catch (IOException e) {
            // e.printStackTrace();
             printInConsole("Not connected");
             this.onLineMode = false;
+        }
+    }
+
+    public GameModel(int size){
+        // init tray
+        this.tray = new Tray();
+        tray.init(abs(size));
+        this.onLineMode = false;
+    }
+
+    @Override
+    public void run() {
+        super.run();
+
+        switch (this.gameMode){
+            case OnePlayerVsAI:
+                runOnePlayerVsAI();
+                break;
+
+            case TwoPLayer:
+                runTwoPlayers();
+                break;
+
+            case AiVSDistant:
+                runVsDistant();
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -53,6 +91,11 @@ public class GameModel {
             this.turn = Color.Black;
         else
             turn = Color.White;
+
+        if (currentPlayer.equals(firstPlayerIA)){
+            currentPlayer = secondPlayerDistant;
+        } else if (currentPlayer.equals(secondPlayerDistant))
+            currentPlayer = firstPlayerIA;
     }
 
     public void runWithString(String string, int size, Color ia){
@@ -75,11 +118,11 @@ public class GameModel {
         turn = tray.initWithString(size, string);
         printInConsole(turn.toString());
 
-        displayInConsole(this.tray);
+        display();
 
         if (turn == ia){
             writeMessage(firstPlayerIA.playInTray(tray));
-            displayInConsole(tray);
+            display();
         }
 
         // run game
@@ -104,10 +147,11 @@ public class GameModel {
     public void runTest(){
         firstPlayerIA = new AI(Color.White);
         secondPlayerDistant = new AI(Color.Black);
+        tray.init(10);
         turn = Color.White;
 
         if (firstPlayerIA instanceof AI)
-            ((AI) firstPlayerIA).setCurrentStrategy(Strategy.RANDOM);
+            ((AI) firstPlayerIA).setCurrentStrategy(Strategy.BUILD_ISLAND);
 
         if (secondPlayerDistant instanceof AI)
             ((AI) secondPlayerDistant).setCurrentStrategy(Strategy.MIN_MAX);
@@ -124,50 +168,99 @@ public class GameModel {
                 printInConsole(string);
             }
             nextPlayer();
-            displayInConsole(tray);
+            display();
         }
 
         printInConsole(" Black : " + Integer.toString(scoreFromTrayForColor(Color.Black, tray)));
         printInConsole(" White : " + Integer.toString(scoreFromTrayForColor(Color.White, tray)));
 
+    }
 
+    private void runOnePlayerVsAI() {
+
+        firstPlayerIA = new Manual(Color.White);
+        secondPlayerDistant = new AI(Color.Black);
+
+        currentPlayer = firstPlayerIA;
+
+        while (firstPlayerIA.canPlay(tray) || secondPlayerDistant.canPlay(tray)){
+            if (currentPlayer instanceof AI){
+
+                currentPlayer.playInTray(tray);
+
+                nextPlayer();
+
+            }
+            else {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    private void runVsDistant() {
+        if (this.onLineMode) {
+
+            // run game
+            while (!this.quit) {
+                // treat messages
+                this.treatMessage(this.readMessage());
+
+                display();
+
+                if (!quit && this.turn == this.firstPlayerIA.getColor()) {
+
+                    writeMessage(firstPlayerIA.playInTray(tray));
+
+                    this.nextPlayer();
+
+                    display();
+                }
+            }
+
+            printInConsole("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
+            printInConsole("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
+
+            //end of the game, wait for end signal
+            if (!this.end)
+                this.treatMessage(this.readMessage());
+        }
+    }
+
+    private void runTwoPlayers() {
+
+        firstPlayerIA = new Manual(Color.White);
+        secondPlayerDistant = new Manual(Color.Black);
+        currentPlayer = firstPlayerIA;
 
 
     }
 
-    public void run(){
-
-        if (this.onLineMode) {
-            firstPlayerIA = new AI(Color.White);
-            secondPlayerDistant = new DistantPlayer(Color.Black, clientTCP);
-        }
-        else {
-            firstPlayerIA = new AI(Color.White);
-            secondPlayerDistant = new DistantPlayer(Color.Black, clientTCP);
-        }
-
-        // run game
-        while(!this.quit) {
-            // treat messages
-            this.treatMessage(this.readMessage());
-
-            if (!quit && this.turn == this.firstPlayerIA.getColor()) {
-
-                writeMessage(firstPlayerIA.playInTray(tray));
-
-                this.nextPlayer();
+    public void currentPlayerPlacePawns(int line, int column){
+        if (currentPlayer instanceof Manual){
+            if (tray.placePawn(line, column, currentPlayer.getColor())){
+                currentPlayer.incrementNbPawnPlaced();
+                if (currentPlayer.getNbPawnPlaced() == 2) {
+                    currentPlayer.resetNbPawnPlaced();
+                    nextPlayer();
+                }
             }
-            if (verbose)
-                displayInConsole(this.tray);
         }
+    }
 
-        printInConsole("Player 1 score : " + scoreFromTrayForColor(firstPlayerIA.getColor(), tray));
-        printInConsole("Player 2 score : " + scoreFromTrayForColor(secondPlayerDistant.getColor(), tray) + "\n");
+    public void currentPlayerPlaceBridge(Cell cell1, Cell cell2){
+        if (currentPlayer instanceof Manual) {
+            if (cell1 != null && cell1.getPawn() != null && cell1.getPawn().getColor() != null && currentPlayer != null
+                    && cell1.getPawn().getColor() == currentPlayer.getColor()) {
+                if (this.tray.placeBridge(cell1, cell2))
+                    nextPlayer();
 
-        //end of the game, wait for end signal
-        if (!this.end)
-            this.treatMessage(this.readMessage());
-
+            }
+        }
     }
 
     public void treatMessage(String message) {
@@ -265,14 +358,13 @@ public class GameModel {
         }
     }
 
-
-
     public static int scoreFromTrayForColor(Color color, Tray tray) {
         int nbLinkedIsland = 0;
         int nbAloneIsland = 0;
 
         // not optimized
-        // TODO to optimize
+        // TODO to correct
+        // SCORE COMPUTING IS FALSE...
 
         if (tray != null &&  tray.isInitialised() && color != null ){
             List<SandBar> islandList = new ArrayList<>();
@@ -305,6 +397,15 @@ public class GameModel {
     }
 
     public static void displayInConsole(Tray tray) {
+          final String ANSI_BLACK = "\u001B[30m";
+          final String ANSI_RED = "\u001B[31m";
+          final String ANSI_GREEN = "\u001B[32m";
+          final String ANSI_YELLOW = "\u001B[33m";
+          final String ANSI_BLUE = "\u001B[34m";
+          final String ANSI_PURPLE = "\u001B[35m";
+          final String ANSI_CYAN = "\u001B[36m";
+        final String ANSI_RESET = "\u001B[0m";
+
         for (int line = 0 ; line < tray.getSize() ; line++){
             for (int column = 0 ; column < tray.getSize(); column++){
                 System.out.print("+----");
@@ -317,15 +418,15 @@ public class GameModel {
                     switch (tray.getCell(line, column).getPawn().getColor()) {
                         case Black:
                             if (tray.getCell(line, column).getPawn().hasBridge())
-                                System.out.print("B/ ");
+                                System.out.print(ANSI_BLUE + "B/ " + ANSI_RESET);
                             else
-                                System.out.print("B  ");
+                            System.out.print(ANSI_BLUE + "B  " + ANSI_RESET);
                             break;
                         case White:
                             if (tray.getCell(line, column).getPawn().hasBridge())
-                                System.out.print("W/ ");
+                                System.out.print(ANSI_GREEN + "W/ " + ANSI_RESET);
                             else
-                                System.out.print("W  ");
+                                System.out.print(ANSI_GREEN + "W  " + ANSI_RESET);
                             break;
                         default:
                             break;
@@ -347,7 +448,6 @@ public class GameModel {
         }
         System.out.print("+\n");
     }
-
 
     private String readMessage() {
         if (onLineMode){
@@ -373,4 +473,27 @@ public class GameModel {
             System.out.println(message);
     }
 
+    public Tray getTray() {
+        return tray;
+    }
+
+    public void setMainView(MainView mainView) {
+        this.mainView = mainView;
+    }
+
+    private void display(){
+        if (verbose)
+            displayInConsole(this.tray);
+        if (mainView != null)
+            mainView.repaint();
+    }
+
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
 }

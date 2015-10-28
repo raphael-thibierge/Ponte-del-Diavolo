@@ -112,8 +112,6 @@ public class Scenario {
         assertTrue(tray.placeFromString("02+04", Color.White));
         assertTrue(tray.placeFromString("31-50", Color.Black));
         assertFalse(tray.placeFromString("05+14", Color.White));
-
-
 //        GameModel.displayInConsole(tray);
     }
 
@@ -134,8 +132,8 @@ public class Scenario {
         assertTrue(tray.placeFromString("42+45", Color.Black));
         assertTrue(tray.placeFromString("30+33", Color.White));
         assertTrue(tray.placeFromString("11+55", Color.Black));
-    //    assertFalse(tray.placeFromString("40+44", Color.White));
         GameModel.displayInConsole(tray);
+        assertFalse(tray.placeFromString("40+44", Color.White));
     }
 
     @Test
@@ -152,5 +150,4 @@ public class Scenario {
         assertFalse(tray.placeFromString("05+14", Color.White));
 //        GameModel.displayInConsole(tray);
     }
-
 }

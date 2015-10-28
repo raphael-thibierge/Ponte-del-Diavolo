@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.random;
 
 /**
  * Created by raphael on 13/10/15.
@@ -24,13 +25,13 @@ public class AI extends Player {
     private boolean bridgePlaced;
 
     String answer = null;
-    int nbPawnPlaced = 0;
+    int cptIsland = 0;
 
 
     public AI(Color color)
     {
         super(color);
-        setCurrentStrategy(Strategy.MIN_MAX);
+        setCurrentStrategy(Strategy.BUILD_ISLAND);
     }
 
     @Override
@@ -57,23 +58,48 @@ public class AI extends Player {
                 fillTray();
                 break;
 
+            case BUILD_ISLAND:
+                if (cptIsland >= 2)
+                    placeFirstBridge();
+                /*if (nbFreeCells < 8){
+                    minMax();
+                    if (this.answer != null && this.answer.length() == 5)
+                        return this.answer;
+                    System.out.println("Null answer");
+
+                }*/
+
+                buildIsland();
+
+                if (!bridgePlaced && nbPawnPlaced < 2)
+                    if (nbFreeCells > 10)
+                        fullRandom();
+                    else
+                        fillTray();
+                break;
+
             case RANDOM:
                 fullRandom();
+                if (!bridgePlaced && nbPawnPlaced < 2)
+                    fillTray();
                 break;
 
             case MIN_MAX:
-                if (turn >= this.tray.getSize()){
-                    if (this.nbFreeCells >= 2){
-                        MinMax minMax = new MinMax();
-                        answer = minMax.minMax(this.tray, this.color);
-                        if (answer != null){
-                            this.nbPawnPlaced = 2;
-                        }
-                    }
+                minMax();
+                System.out.println("after MIN MAX");
+                if (nbPawnPlaced < 2) {
+                    if (nbFreeCells > 6){
+                        fullRandom();
+                        System.out.println("after full random");
 
-                } else {
-                    fullRandom();
+                    }
+                    else{
+                        fillTray();
+                        System.out.println("after fill tray");
+
+                    }
                 }
+                break;
         }
 
 
@@ -83,7 +109,18 @@ public class AI extends Player {
     }
 
 
-
+    private void minMax(){
+        if (turn >= (this.tray.getSize()*3)/2 ){
+            if (this.nbFreeCells >= 2){
+                MinMax minMax = new MinMax();
+                this.answer = minMax.minMax(this.tray, this.color);
+                if (answer != null){
+                    System.out.println(">>" +answer);
+                    this.nbPawnPlaced = 2;
+                }
+            }
+        }
+    }
 
     private void placeFirstBridge(){
         List<Pawn> pawnList = tray.getPawns(color);
@@ -103,7 +140,11 @@ public class AI extends Player {
                         int column2 = cell2.getColumn();
 
                         // test bridge
-                        if (tray.placeBridge(line1, column1, line2, column2)){
+                        if (tray.canBridge(line1, column1, line2, column2)
+                                &&( (tray.getCell(line1,column1).getPawn().belongsToIsland() && tray.getCell(line2,column2).getPawn().getSandBar().getSize() > 2)
+                                || (tray.getCell(line2,column2).getPawn().belongsToIsland() && tray.getCell(line1,column1).getPawn().getSandBar().getSize() > 2)
+                                )){
+                            tray.placeBridge(line1, column1, line2, column2);
                             this.answer = Message.bridge(line1, column1, line2, column2);
                             this.bridgePlaced = true;
                             return;
@@ -126,10 +167,7 @@ public class AI extends Player {
         return cpt;
     }
 
-
-
-    private void buildIsland()
-    {
+    private void buildIsland() {
         /*
         * If there a lot of free cells, AI can choose randomly the place of the Island
         * then it has to choose a place
@@ -155,15 +193,27 @@ public class AI extends Player {
                         sandBarsTreated.add(pawn.getSandBar());
 
                         // try to put a pawn near each pawn of the sandbar
-                        for (Pawn sandBarPawn : pawn.getSandBar().getPawnList()){
-                            for (Cell nearbyCell : sandBarPawn.getCell().getNearbyBoxesOrthogonal().values()){
-                                if (nearbyCell != null && this.tray.placePawn(nearbyCell.getLine(), nearbyCell.getColumn(), this.color)){
-                                    if (nbPawnPlaced == 0){
+
+                        List<Pawn> sandbarPawnList = new ArrayList<>();
+                        // to have no concurence
+                        for (Pawn sandBarPawn : pawn.getSandBar().getPawnList()) {
+                            sandbarPawnList.add(sandBarPawn);
+
+                        }
+
+                        for (Pawn sandBarPawn : sandbarPawnList) {
+
+                            for (Cell nearbyCell : sandBarPawn.getCell().getNearbyBoxesOrthogonal().values()) {
+                                if (nearbyCell != null && this.tray.placePawn(nearbyCell.getLine(), nearbyCell.getColumn(), this.color)) {
+                                    if (nbPawnPlaced == 0) {
                                         answer = Message.firstPawn(nearbyCell.getLine(), nearbyCell.getColumn());
+                                        if (nearbyCell.getPawn().belongsToIsland())
+                                            cptIsland++;
                                         nbPawnPlaced++;
-                                    }
-                                    else {
+                                    } else {
                                         answer += Message.secondPawn(nearbyCell.getLine(), nearbyCell.getColumn());
+                                        if (nearbyCell.getPawn().belongsToIsland())
+                                            cptIsland++;
                                         nbPawnPlaced++;
                                         return;
                                     }
@@ -175,8 +225,6 @@ public class AI extends Player {
             }
         }
     }
-
-
 
     private void fullRandom(){
         int line, column;
@@ -196,11 +244,12 @@ public class AI extends Player {
             }
 
             else if (tray.getCell(line, column).pawnAllowedHere(this.color) && this.nbPawnPlaced < 2) {
-                this.tray.placePawn(line, column, this.color);
                 if (this.nbPawnPlaced == 0){
+                    this.tray.placePawn(line, column, this.color);
                     this.nbPawnPlaced++;
                     answer = Message.firstPawn(line, column);
                 } else if (this.nbPawnPlaced == 1){
+                    this.tray.placePawn(line, column, this.color);
                     this.nbPawnPlaced++;
                     answer += Message.secondPawn(line, column);
                     return;
@@ -211,10 +260,9 @@ public class AI extends Player {
     }
 
     private void fillTray(){
-
         for (int line = 0 ; line < tray.getSize() ; line++){
             for (int colum = 0 ; colum < tray.getSize() ; colum++){
-                if (tray.placePawn(line, colum, this.color)){
+                if (nbPawnPlaced < 2 && tray.placePawn(line, colum, this.color)){
                     if (this.nbPawnPlaced == 0 ){
                         answer = Message.firstPawn(line, colum);
                         this.nbPawnPlaced++;

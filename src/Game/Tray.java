@@ -3,15 +3,12 @@ package Game;
 import IA.Strategy;
 import Network.Message;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by raphael on 10/10/2015.
  */
-public class Tray {
+public class Tray extends Observable {
     private int size = 0;
     private Cell[][] grid = null;
     private List<Bridge> bridgeList = null ;
@@ -78,8 +75,6 @@ public class Tray {
                     nearbyBoxes.put(Direction.SOUTH, null);
                 }
 
-
-
                 // NORTH_WEST BOX
                 if (line != 0 && column != 0){
                     nearbyBoxes.put(Direction.NORTH_WEST, getCell(line - 1, column - 1));
@@ -138,8 +133,6 @@ public class Tray {
         if ( cell != null){
             if( cell.placePawn(color)){
                 getPawns(color).add(cell.getPawn());
-
-
                 return true;
             }
         }
@@ -244,24 +237,6 @@ public class Tray {
             cell.removePawn();
         }
     }
-/*
-    public void cancelBridge(int line1, int column1, int line2, int column2){
-        Cell cell1 = getCell(line1, column1);
-        Cell cell2 = getCell(line2, column2);
-
-        if (cell1 != null && cell2 != null
-                && cell1.getPawn() != null && cell2.getPawn() != null){
-
-            if (cell1.getPawn().getBridge() != null
-                    && cell1.getPawn().getBridge().equals(cell2.getPawn().getBridge())){
-                this.bridgeList.remove(cell1.getPawn().getBridge());
-                cell1.getPawn().removeBridge();
-                cell2.getPawn().removeBridge();
-            }
-        }
-    }*/
-
-
 
     public Color initWithString(int size, String string){
         init(size);
@@ -343,6 +318,9 @@ public class Tray {
         else return blackPawns;
     }
 
+    public List<Bridge> getBridgeList() {
+        return bridgeList;
+    }
 
 
 }
