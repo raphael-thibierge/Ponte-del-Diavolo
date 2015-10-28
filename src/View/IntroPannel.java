@@ -17,10 +17,7 @@ public class IntroPannel extends JPanel {
     private JButton onePlayerButton;
     private JButton twoPlayerButton;
 
-//    private final int BUTTON_WIDTH  = 400;
-//    private final int BUTTON_HEIGHT = 100;
-
-    public IntroPannel(Controller controller, int height){
+    public IntroPannel(Controller controller){
         super();
 
         this.controller = controller;
@@ -32,9 +29,6 @@ public class IntroPannel extends JPanel {
                 controller.loadOnePlayer();
             }
         });
-//        onePlayerButton.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
-//        onePlayerButton.setLocation(100, 100);
-
 
         twoPlayerButton = new JButton("Two Players");
         twoPlayerButton.addActionListener(new ActionListener() {
@@ -43,14 +37,10 @@ public class IntroPannel extends JPanel {
                 controller.loadTwoPlayer();
             }
         });
-//
-//      twoPlayerButton.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
-//      twoPlayerButton.setLocation(100, 300);
 
         this.add(onePlayerButton);
         this.add(twoPlayerButton);
 
         this.setVisible(true);
-
     }
 }

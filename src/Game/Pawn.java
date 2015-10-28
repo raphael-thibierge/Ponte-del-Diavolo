@@ -20,7 +20,6 @@ public class Pawn {
         this.cell = cell;
 
         updateSandBar();
-        //System.out.println(this.toString());
     }
 
     public boolean belongsToIsland()

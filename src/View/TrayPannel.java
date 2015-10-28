@@ -1,5 +1,6 @@
 package View;
 
+import Controller.Controller;
 import Game.*;
 import Model.GameModel;
 import Model.Manual;
@@ -36,9 +37,9 @@ public class TrayPannel extends JPanel {
     private Color bridgeColor = Color.GRAY;
 
 
-    public TrayPannel(GameModel model, int size){
-        this.tray = model.getTray();
-        this.gameModel = model;
+    public TrayPannel(Controller controller, int size){
+        this.tray = controller.getGameModel().getTray();
+        this.gameModel = controller.getGameModel();
         this.setSize(size, size);
 
         cellSize = size / tray.getSize();
@@ -75,7 +76,7 @@ public class TrayPannel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
 
-                model.currentPlayerPlacePawns(getLine(), getColumn());
+                gameModel.currentPlayerPlacePawns(getLine(), getColumn());
                 repaint();
             }
 
@@ -90,7 +91,7 @@ public class TrayPannel extends JPanel {
                     cell2 = tray.getCell(getLine(), getColumn());
 
                     if (cell2 != null){
-                        model.currentPlayerPlaceBridge(cell1, cell2);
+                        gameModel.currentPlayerPlaceBridge(cell1, cell2);
                         cell1 = null;
                         cell2 = null;
                         repaint();
