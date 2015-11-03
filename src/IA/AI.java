@@ -31,7 +31,7 @@ public class AI extends Player {
     public AI(Color color)
     {
         super(color);
-        setCurrentStrategy(Strategy.BUILD_ISLAND);
+        setCurrentStrategy(Strategy.MIN_MAX);
     }
 
     @Override
@@ -89,6 +89,7 @@ public class AI extends Player {
                 System.out.println("after MIN MAX");
                 if (nbPawnPlaced < 2) {
                     if (nbFreeCells > 6){
+                        buildIsland();
                         fullRandom();
                         System.out.println("after full random");
 
@@ -110,12 +111,12 @@ public class AI extends Player {
 
 
     private void minMax(){
-        if (turn >= (this.tray.getSize()*3)/2 ){
+        if (turn >= (this.tray.getSize())/2 ){
             if (this.nbFreeCells >= 2){
                 MinMax minMax = new MinMax();
                 this.answer = minMax.minMax(this.tray, this.color);
                 if (answer != null){
-                    System.out.println(">>" +answer);
+                    System.out.println(">> AI : " +answer);
                     this.nbPawnPlaced = 2;
                 }
             }

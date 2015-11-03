@@ -73,6 +73,11 @@ public class SandBar {
         if (pawn != null && this.pawnList.contains(pawn)){
             this.pawnList.remove(pawn);
             this.size--;
+
+
+
+
+
         }
     }
 
@@ -151,4 +156,13 @@ public class SandBar {
                 '}';
     }
 
+    public void updateLinked() {
+        this.linked = false;
+        for (Pawn pawn : pawnList){
+            if (pawn.hasBridge()){
+                this.linked = true;
+                break;
+            }
+        }
+    }
 }

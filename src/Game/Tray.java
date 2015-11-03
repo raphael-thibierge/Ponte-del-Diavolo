@@ -1,6 +1,5 @@
 package Game;
 
-import IA.Strategy;
 import Network.Message;
 
 import java.util.*;
@@ -171,7 +170,7 @@ public class Tray extends Observable {
     public boolean placeBridge(int line1, int column1, int line2, int column2){
         if (canBridge(line1, column1,  line2, column2)){
             Bridge bridge = new Bridge(getCell(line1, column1).getPawn(), getCell(line2, column2).getPawn());
-            bridge.lockPawnBetween2Boxes(this);
+            bridge.setLockPawnBetween2Boxes(this, true);
             bridgeList.add(bridge);
             return true;
         }
@@ -322,5 +321,31 @@ public class Tray extends Observable {
         return bridgeList;
     }
 
+    public void cancelBridge(Cell cell, Cell cell1) {
 
+        // get pawn bases
+        if ((cell != null) && (cell1 != null)){
+            Pawn base1 = cell.getPawn();
+            Pawn base2 = cell1.getPawn();
+
+            if (base1 != null && base2 != null && base1.hasBridge() && base2.hasBridge() && base1.getBridge() == base2.getBridge()){
+                // remove bridge from bridge list
+                bridgeList.remove(base1.getBridge());
+
+                // unlock pawns between bases
+                base1.getBridge().setLockPawnBetween2Boxes(this, false);
+
+
+                // remove bridge from the both bases
+                base1.setBridge(null);
+                base2.setBridge(null);
+
+                base1.getSandBar().updateLinked();
+                base2.getSandBar().updateLinked();
+
+
+
+            }
+        }
+    }
 }

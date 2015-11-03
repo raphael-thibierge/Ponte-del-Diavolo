@@ -2,6 +2,7 @@ package Tests;
 
 import Game.Color;
 import Game.Tray;
+import Model.GameMode;
 import Model.GameModel;
 import org.junit.Test;
 
@@ -15,8 +16,8 @@ public class GameModelTests {
     @Test
     public void static_scoreFromNbIsland_Test()
     {
-        assertTrue("With 4 linked Island, score must be 10", GameModel.scoreFromNbIsland(4, 0) == 10);
-        assertTrue("With 4 Island, score must be 10", GameModel.scoreFromNbIsland(2, 2) == 5);
+        assertTrue("With 4 linked Island, score must be 10", GameModel.scoreFromNbIsland(4) == 10);
+        assertTrue("With 4 Island, score must be 10", GameModel.scoreFromNbIsland(2) == 3);
     }
 
     @Test

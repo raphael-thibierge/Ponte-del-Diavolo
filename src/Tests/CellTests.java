@@ -1,6 +1,7 @@
 package Tests;
 
 import Game.*;
+import Model.GameMode;
 import Model.GameModel;
 import org.junit.Test;
 
@@ -425,6 +426,44 @@ public class CellTests {
         // the last ones are allowed
         assertTrue(tray.placePawn(0, 0, Color.Black));
         assertTrue(tray.placePawn(3, 3, Color.Black));
+
+    }
+
+
+    @Test
+    public void PawnAlreadyAlloow_AfterRemove(){
+        Tray tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(0, 0, Color.Black));
+        assertTrue(tray.placePawn(0, 1, Color.Black));
+        assertTrue(tray.placePawn(1, 0, Color.Black));
+        assertTrue(tray.placePawn(1, 1, Color.Black));
+
+        assertFalse(tray.getCell(1, 1).pawnAllowedHere(Color.Black));
+
+        tray.cancelPawn(1, 1);
+        assertTrue(tray.getCell(1,1).pawnAllowedHere(Color.Black));
+
+    }
+
+    @Test
+    public void PawnAlreadyAlloow_AfterRemove_NearIsland(){
+        Tray tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(0, 2, Color.Black));
+        assertTrue(tray.placePawn(1, 2, Color.Black));
+        assertTrue(tray.placePawn(2, 2, Color.Black));
+        assertTrue(tray.placePawn(3, 2, Color.Black));
+
+        assertFalse(tray.getCell(1,1).pawnAllowedHere(Color.Black));
+        GameModel.displayInConsole(tray);
+        assertTrue(tray.getCell(1, 0).pawnAllowedHere(Color.Black));
+
+        tray.cancelPawn(3, 2);
+        assertFalse(tray.getSandBarInBox(0,2).isIsland());
+        assertTrue(tray.getCell(1,1).pawnAllowedHere(Color.Black));
 
     }
 

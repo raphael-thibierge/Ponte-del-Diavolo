@@ -1,9 +1,6 @@
 package Model;
 
-import Game.Cell;
-import Game.Color;
-import Game.SandBar;
-import Game.Tray;
+import Game.*;
 import IA.AI;
 import IA.Strategy;
 import Network.ClientTCP;
@@ -359,52 +356,95 @@ public class GameModel extends Thread{
     }
 
     public static int scoreFromTrayForColor(Color color, Tray tray) {
-        int nbLinkedIsland = 0;
-        int nbAloneIsland = 0;
-
-        // not optimized
-        // TODO to correct
-        // SCORE COMPUTING IS FALSE...
 
         if (tray != null &&  tray.isInitialised() && color != null ){
-            List<SandBar> islandList = new ArrayList<>();
-            // test all box in tray
-            for (int line = 0 ; line < tray.getSize() ; line++){
-                for (int column = 0 ; column < tray.getSize() ; column++){
-                    SandBar sandBar = tray.getSandBarInBox(line, column);
-                    if (sandBar != null && sandBar.getColor() == color && sandBar.isIsland())
-                    {
-                        if (!islandList.contains(sandBar)){
-                            islandList.add(sandBar);
 
-                            if (sandBar.isLinked())
-                                nbLinkedIsland++;
-                            else
-                                nbAloneIsland++;
-                        }
+            List<List<SandBar>>linkedSandbarList = new ArrayList<>();
+            List<Pawn> pawnsTreated = new ArrayList<>();
+            // for each pawn not treated
+            for (Pawn pawn : tray.getPawns(color)) {
+                if (pawn != null && !pawnsTreated.contains(pawn)) {
+
+                    // try get sandbar in cell
+                    SandBar sandBar = pawn.getSandBar();
+
+                        for (Pawn sandbarPawn : sandBar.getPawnList()) {
+
+                            Bridge bridge = sandbarPawn.getBridge();
+
+                            if (bridge != null) {
+                                boolean founded = false;
+                                for (List<SandBar> linkedSandbar : linkedSandbarList) {
+                                    if (linkedSandbar.contains(bridge.getBase1().getSandBar())
+                                            || linkedSandbar.contains(bridge.getBase2().getSandBar())) {
+
+                                        founded = true;
+
+                                        if (!linkedSandbar.contains(bridge.getBase1().getSandBar()))
+                                            linkedSandbar.add(bridge.getBase1().getSandBar());
+
+                                        if (!linkedSandbar.contains(bridge.getBase2().getSandBar()))
+                                            linkedSandbar.add(bridge.getBase2().getSandBar());
+                                    }
+                                }
+
+                                if (!founded) {
+                                    // create a new linked sandbar list
+                                    List<SandBar> linkedSandbar = new ArrayList<>();
+                                    linkedSandbar.add(bridge.getBase1().getSandBar());
+                                    linkedSandbar.add(bridge.getBase2().getSandBar());
+                                    linkedSandbarList.add(linkedSandbar);
+                                }
+                            } else if (sandBar.isIsland()) {
+
+                                boolean founded = false;
+                                for (List<SandBar> sandBarList : linkedSandbarList) {
+                                    if (sandBarList.contains(sandBar)) {
+                                        founded = true;
+                                    }
+                                }
+                                if (!founded) {
+                                    List<SandBar> sandBarList = new ArrayList<>();
+                                    sandBarList.add(sandBar);
+                                    linkedSandbarList.add(sandBarList);
+                                }
+                            }
+                            pawnsTreated.add(sandbarPawn);
                     }
                 }
             }
-            return scoreFromNbIsland(nbLinkedIsland, nbAloneIsland);
+
+            int result = 0 ;
+            for (List<SandBar> sandBarList : linkedSandbarList){
+                int cpt = 0;
+
+                for (SandBar sandBar : sandBarList){
+                    if (sandBar.isIsland())
+                        cpt++;
+                }
+                result += scoreFromNbIsland(cpt);
+            }
+
+            return result;
         }
         return -1;
     }
 
-    public static int scoreFromNbIsland(int nbLinkedIsland, int nbAloneIsland){
-        if (nbLinkedIsland >= 0 && nbAloneIsland >= 0)
-            return ( nbLinkedIsland * ( nbLinkedIsland + 1 ) ) / 2 + nbAloneIsland;
+    public static int scoreFromNbIsland(int nbLinkedIsland){
+        if (nbLinkedIsland >= 0)
+            return ( nbLinkedIsland * ( nbLinkedIsland + 1 ) ) / 2 ;
         return 0;
     }
 
     public static void displayInConsole(Tray tray) {
-          final String ANSI_BLACK = "\u001B[30m";
+          /*final String ANSI_BLACK = "\u001B[30m";
           final String ANSI_RED = "\u001B[31m";
           final String ANSI_GREEN = "\u001B[32m";
           final String ANSI_YELLOW = "\u001B[33m";
           final String ANSI_BLUE = "\u001B[34m";
           final String ANSI_PURPLE = "\u001B[35m";
           final String ANSI_CYAN = "\u001B[36m";
-        final String ANSI_RESET = "\u001B[0m";
+        final String ANSI_RESET = "\u001B[0m";*/
 
         for (int line = 0 ; line < tray.getSize() ; line++){
             for (int column = 0 ; column < tray.getSize(); column++){
@@ -418,15 +458,15 @@ public class GameModel extends Thread{
                     switch (tray.getCell(line, column).getPawn().getColor()) {
                         case Black:
                             if (tray.getCell(line, column).getPawn().hasBridge())
-                                System.out.print(ANSI_BLUE + "B/ " + ANSI_RESET);
+                                System.out.print(/*ANSI_BLUE +*/ "B/ " /*+ ANSI_RESET*/);
                             else
-                            System.out.print(ANSI_BLUE + "B  " + ANSI_RESET);
+                            System.out.print(/*ANSI_BLUE +*/ "B  " /*+ ANSI_RESET*/);
                             break;
                         case White:
                             if (tray.getCell(line, column).getPawn().hasBridge())
-                                System.out.print(ANSI_GREEN + "W/ " + ANSI_RESET);
+                                System.out.print(/*ANSI_GREEN +*/ "W/ " /*+ ANSI_RESET*/);
                             else
-                                System.out.print(ANSI_GREEN + "W  " + ANSI_RESET);
+                                System.out.print(/*ANSI_GREEN +*/ "W  " /*+ ANSI_RESET*/);
                             break;
                         default:
                             break;

@@ -37,7 +37,7 @@ public class Bridge {
         return false;
     }
 
-    public void lockPawnBetween2Boxes(Tray tray){
+    public void setLockPawnBetween2Boxes(Tray tray, boolean locked){
         Cell cell1 = base1.getCell();
         Cell cell2 = base2.getCell();
         if (cell1 != null && cell2 != null){
@@ -46,19 +46,20 @@ public class Bridge {
 
             if ( lineOffset % 2 == 0){
                 if ( columnOffset % 2 == 0)
-                    tray.getCell(lineOffset / 2, columnOffset / 2).setLocked(true);
+                    tray.getCell(lineOffset / 2, columnOffset / 2).setLocked(locked);
 
                 else {
-                    tray.getCell(lineOffset / 2, columnOffset / 2).setLocked(true);
-                    tray.getCell(lineOffset / 2, columnOffset / 2 + 1).setLocked(true);
+                    tray.getCell(lineOffset / 2, columnOffset / 2).setLocked(locked);
+                    tray.getCell(lineOffset / 2, columnOffset / 2 + 1).setLocked(locked);
                 }
             }
             else {
-                tray.getCell(lineOffset / 2, columnOffset / 2).setLocked(true);
-                tray.getCell(lineOffset / 2 + 1, columnOffset / 2).setLocked(true);
+                tray.getCell(lineOffset / 2, columnOffset / 2).setLocked(locked);
+                tray.getCell(lineOffset / 2 + 1, columnOffset / 2).setLocked(locked);
             }
         }
     }
+
 
     public Pawn getBase1() {
         return base1;

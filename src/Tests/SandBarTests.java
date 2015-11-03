@@ -341,4 +341,24 @@ public class SandBarTests {
         assertTrue(tray.placePawn(1, 1, Color.Black));
 
     }
+
+
+    @Test
+    public void cancelPawnInIsland(){
+        Tray tray = new Tray();
+        tray.init(5);
+
+        assertTrue(tray.placePawn(0,1, Color.Black));
+        assertTrue(tray.placePawn(0,2, Color.Black));
+        assertTrue(tray.placePawn(0,3, Color.Black));
+        assertTrue(tray.placePawn(0,4, Color.Black));
+
+        tray.cancelPawn(0,3);
+
+        assertFalse(tray.getSandBarInBox(0,2).equals(tray.getSandBarInBox(0,4)));
+
+        assertTrue(tray.placePawn(0,3, Color.Black));
+    }
+
+
 }

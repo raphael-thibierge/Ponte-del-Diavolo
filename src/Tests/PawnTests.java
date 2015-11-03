@@ -57,4 +57,11 @@ public class PawnTests
 
     }
 
+    @Test
+    public void placeAndCancelIsland(){
+        Tray tray = new Tray();
+        tray.init(5);
+
+    }
+
 }
